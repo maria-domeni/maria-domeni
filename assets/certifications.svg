@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Certifications: Data Analytics and Advanced Data Analytics from Google; Data Analyst and Business Intelligence Analyst from IBM; Strategic Business Analytics from ESSEC Business School; Python III, SQL Databases for Data Analysis and Power BI from Udemy; Agile with Atlassian Jira from Atlassian.">
+  <title>Certifications</title>
+
+  <defs>
+    <clipPath id="c"><rect width="1200" height="360" rx="14"/></clipPath>
+    <!-- Providers keep their brand colours: here, recognition is the point. -->
+    <pattern id="ibmStripes" width="3" height="2.6" patternUnits="userSpaceOnUse">
+      <rect width="3" height="1.7" fill="#1F70C1"/>
+    </pattern>
+
+    <g id="m-google">
+      <path d="M23 12.2c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.6z" fill="#4285F4"/>
+      <path d="M12 24c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3C3.7 21.5 7.6 24 12 24z" fill="#34A853"/>
+      <path d="M5.6 14.7a7.2 7.2 0 0 1 0-4.6v-3H1.8a12 12 0 0 0 0 10.6l3.8-3z" fill="#FBBC05"/>
+      <path d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3C17.7 1.2 15.1 0 12 0 7.6 0 3.7 2.5 1.8 6.2l3.8 2.9C6.5 6.8 9 4.8 12 4.8z" fill="#EA4335"/>
+    </g>
+    <g id="m-ibm">
+      <text x="12" y="16.5" text-anchor="middle" font-family="Helvetica,Arial,sans-serif"
+            font-weight="700" font-size="12.5" letter-spacing="-.5" fill="url(#ibmStripes)">IBM</text>
+    </g>
+    <g id="m-essec">
+      <rect x="0" y="6" width="24" height="12" rx="2" fill="#003B71"/>
+      <text x="12" y="14.6" text-anchor="middle" font-family="Georgia,'Times New Roman',serif"
+            font-weight="700" font-size="6" letter-spacing=".5" fill="#ffffff">ESSEC</text>
+    </g>
+    <g id="m-udemy">
+      <path d="M12 3 1.5 8.2 12 13.4l10.5-5.2z" fill="#A435F0"/>
+      <path d="M5.2 11.4v4.9c0 2.2 3 3.9 6.8 3.9s6.8-1.7 6.8-3.9v-4.9L12 14.9z" fill="#A435F0" opacity=".55"/>
+    </g>
+    <g id="m-atlassian">
+      <path d="M7.6 11.3a.55.55 0 0 0-.95.1L1.3 21.9a.55.55 0 0 0 .49.83h7.1c.2 0 .38-.11.47-.29 1.53-3.16.6-7.97-1.76-11.14z" fill="#2684FF"/>
+      <path d="M11.55 1.3c-2.55 4.06-2.38 8.6-.66 12l3.5 7c.09.18.27.29.47.29h7.1a.55.55 0 0 0 .49-.83L12.5 1.3a.55.55 0 0 0-.95 0z" fill="#0052CC"/>
+    </g>
+  </defs>
+
+  <g clip-path="url(#c)">
+    <rect width="1200" height="360" fill="#070C17"/>
+
+    <text x="56" y="48" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
+          font-size="13" letter-spacing="3.4" fill="#35D6E7">CERTIFICATIONS</text>
+
+    <g fill="#ffffff">
+      <rect x="56" y="86"  width="46" height="46" rx="10"/><rect x="456" y="86"  width="46" height="46" rx="10"/><rect x="856" y="86"  width="46" height="46" rx="10"/>
+      <rect x="56" y="176" width="46" height="46" rx="10"/><rect x="456" y="176" width="46" height="46" rx="10"/><rect x="856" y="176" width="46" height="46" rx="10"/>
+      <rect x="56" y="266" width="46" height="46" rx="10"/><rect x="456" y="266" width="46" height="46" rx="10"/><rect x="856" y="266" width="46" height="46" rx="10"/>
+    </g>
+
+    <g transform="translate(67,97)"><use href="#m-google"/></g>
+    <g transform="translate(467,97)"><use href="#m-google"/></g>
+    <g transform="translate(867,97)"><use href="#m-ibm"/></g>
+
+    <g transform="translate(67,187)"><use href="#m-ibm"/></g>
+    <g transform="translate(467,187)"><use href="#m-essec"/></g>
+    <g transform="translate(867,187)"><use href="#m-udemy"/></g>
+
+    <g transform="translate(67,277)"><use href="#m-udemy"/></g>
+    <g transform="translate(467,277)"><use href="#m-udemy"/></g>
+    <g transform="translate(867,277)"><use href="#m-atlassian"/></g>
+
+    <g font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
+       font-size="15" fill="#E7ECF6">
+      <text x="118" y="110">Data Analytics</text>
+      <text x="518" y="110">Advanced Data Analytics</text>
+      <text x="918" y="110">Data Analyst</text>
+
+      <text x="118" y="200">Business Intelligence</text>
+      <text x="518" y="200">Strategic Business</text>
+      <text x="918" y="200">Python III</text>
+
+      <text x="118" y="290">SQL for Data Analysis</text>
+      <text x="518" y="290">Power BI</text>
+      <text x="918" y="290">Agile with Jira</text>
+    </g>
+
+    <g font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
+       font-size="11.5" letter-spacing="1.8" fill="#68768F">
+      <text x="118" y="128">GOOGLE</text>
+      <text x="518" y="128">GOOGLE</text>
+      <text x="918" y="128">IBM</text>
+
+      <text x="118" y="218">ANALYST · IBM</text>
+      <text x="518" y="218">ANALYTICS · ESSEC</text>
+      <text x="918" y="218">TO ADVANCED · UDEMY</text>
+
+      <text x="118" y="308">UDEMY</text>
+      <text x="518" y="308">TO ADVANCED · UDEMY</text>
+      <text x="918" y="308">ATLASSIAN</text>
+    </g>
+  </g>
+
+  <rect x=".5" y=".5" width="1199" height="359" rx="14" fill="none" stroke="#8CACF0" stroke-opacity=".14"/>
+</svg>
