@@ -1,121 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Maria Domeni — Data Analyst. Turning data into strategic decisions.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 232" width="1200" height="232" role="img" aria-label="psql session: SELECT who, what, why FROM me; returns one row — Maria Domeni, Data Analyst, turning data into strategic decisions.">
   <title>Maria Domeni — Data Analyst</title>
 
   <defs>
-    <!-- GitHub renders repo SVGs through <img>, so no web font ever loads and
-         type is sized for the ~0.73 scale of the profile column. The wordmark
-         is monospace on purpose: it resolves identically on every machine,
-         and it is the portfolio's own voice anyway. -->
-    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#2F6BFF"/>
-      <stop offset="1" stop-color="#35D6E7"/>
-    </linearGradient>
-    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2F6BFF" stop-opacity=".22"/>
-      <stop offset="1" stop-color="#2F6BFF" stop-opacity="0"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="78%" cy="0%" r="70%">
-      <stop offset="0" stop-color="#2F6BFF" stop-opacity=".16"/>
-      <stop offset="1" stop-color="#2F6BFF" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="gridFade" cx="42%" cy="34%" r="72%">
-      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
-      <stop offset=".65" stop-color="#fff" stop-opacity=".35"/>
-      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-    </radialGradient>
-    <mask id="gridMask"><rect width="1200" height="360" fill="url(#gridFade)"/></mask>
-    <clipPath id="card"><rect width="1200" height="360" rx="16"/></clipPath>
+    <clipPath id="card"><rect width="1200" height="232" rx="12"/></clipPath>
   </defs>
 
-  <g clip-path="url(#card)">
-    <rect width="1200" height="360" fill="#05080F"/>
-    <rect width="1200" height="360" fill="url(#glow)"/>
+  <g clip-path="url(#card)" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace">
+    <rect width="1200" height="232" fill="#05080F"/>
 
-    <g mask="url(#gridMask)" stroke="#8CACF0" stroke-opacity=".085" stroke-width="1">
-      <path d="M40 0V360M80 0V360M120 0V360M160 0V360M200 0V360M240 0V360M280 0V360M320 0V360M360 0V360M400 0V360M440 0V360M480 0V360M520 0V360M560 0V360M600 0V360M640 0V360M680 0V360M720 0V360M760 0V360M800 0V360M840 0V360M880 0V360M920 0V360M960 0V360M1000 0V360M1040 0V360M1080 0V360M1120 0V360M1160 0V360"/>
-      <path d="M0 40H1200M0 80H1200M0 120H1200M0 160H1200M0 200H1200M0 240H1200M0 280H1200M0 320H1200"/>
-    </g>
+    <!-- window chrome -->
+    <rect width="1200" height="38" fill="#0A1122"/>
+    <line x1="0" y1="38" x2="1200" y2="38" stroke="#8CACF0" stroke-opacity=".14"/>
+    <circle cx="26" cy="19" r="5" fill="#DE6E78"/>
+    <circle cx="46" cy="19" r="5" fill="#D9A44F"/>
+    <circle cx="66" cy="19" r="5" fill="#35D6E7"/>
+    <text x="92" y="24" font-size="12.5" fill="#5A6880">psql — analytics@maria-domeni</text>
+    <text x="1176" y="24" text-anchor="end" font-size="12.5" fill="#5A6880">0.042s</text>
 
-    <!-- data particles and connections -->
-    <g stroke="#5D8CFF" stroke-opacity=".16" stroke-width=".8">
-      <path d="M150 62 L268 118 M268 118 L196 220 M420 78 L512 142 M512 142 L438 250
-               M598 54 L664 130 M900 306 L982 252 M1042 318 L982 252 M196 220 L96 288"/>
-    </g>
-    <g fill="#35D6E7">
-      <circle cx="150" cy="62"  r="2.1"><animate attributeName="opacity" values=".25;.8;.25" dur="6s"   repeatCount="indefinite"/></circle>
-      <circle cx="268" cy="118" r="1.6"><animate attributeName="opacity" values=".7;.2;.7"   dur="7.5s" repeatCount="indefinite"/></circle>
-      <circle cx="196" cy="220" r="2.4"><animate attributeName="opacity" values=".3;.75;.3"  dur="9s"   repeatCount="indefinite"/></circle>
-      <circle cx="96"  cy="288" r="1.5"><animate attributeName="opacity" values=".6;.2;.6"   dur="8s"   repeatCount="indefinite"/></circle>
-      <circle cx="420" cy="78"  r="1.8"><animate attributeName="opacity" values=".2;.7;.2"   dur="6.8s" repeatCount="indefinite"/></circle>
-      <circle cx="512" cy="142" r="2.2"><animate attributeName="opacity" values=".75;.25;.75" dur="10s" repeatCount="indefinite"/></circle>
-      <circle cx="438" cy="250" r="1.5"><animate attributeName="opacity" values=".3;.7;.3"   dur="7.2s" repeatCount="indefinite"/></circle>
-      <circle cx="598" cy="54"  r="1.7"><animate attributeName="opacity" values=".65;.2;.65" dur="8.6s" repeatCount="indefinite"/></circle>
-      <circle cx="664" cy="130" r="1.4"><animate attributeName="opacity" values=".25;.6;.25" dur="9.4s" repeatCount="indefinite"/></circle>
-      <circle cx="982" cy="252" r="1.6"><animate attributeName="opacity" values=".6;.2;.6"   dur="7.8s" repeatCount="indefinite"/></circle>
-    </g>
+    <!-- the query -->
+    <text x="40" y="76" font-size="15.5">
+      <tspan fill="#35D6E7">analytics=#</tspan><tspan fill="#E7ECF6" xml:space="preserve">  </tspan><tspan fill="#5D8CFF">SELECT</tspan><tspan fill="#C5CFE2"> who, what, why </tspan><tspan fill="#5D8CFF">FROM</tspan><tspan fill="#C5CFE2"> me;</tspan>
+    </text>
 
-    <!-- brand mark: a symmetric lattice, broken at exactly one node -->
-    <g transform="translate(56,42) scale(1.25)">
-      <g fill="none" stroke="#A6B3CB" stroke-width="1.6" stroke-linecap="round">
-        <path d="M4 21 L13 6 L22 21"/><path d="M8 15.5 L18 15.5"/>
-      </g>
-      <circle cx="4"  cy="21"     r="1.7" fill="#68768F"/>
-      <circle cx="22" cy="21"     r="1.7" fill="#68768F"/>
-      <circle cx="19.4" cy="11.4" r="2.4" fill="#35D6E7"/>
-    </g>
+    <!-- result header -->
+    <text x="40"  y="116" font-size="14" fill="#5A6880">who</text>
+    <text x="268" y="116" font-size="14" fill="#5A6880">what</text>
+    <text x="476" y="116" font-size="14" fill="#5A6880">why</text>
 
-    <text x="104" y="68" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-          font-size="14" letter-spacing="4" fill="#35D6E7">DATA ANALYST</text>
+    <line x1="40" y1="130" x2="1000" y2="130" stroke="#8CACF0" stroke-opacity=".18"/>
+    <line x1="250" y1="100" x2="250" y2="168" stroke="#8CACF0" stroke-opacity=".18"/>
+    <line x1="458" y1="100" x2="458" y2="168" stroke="#8CACF0" stroke-opacity=".18"/>
 
-    <text x="56" y="118" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-          font-size="15" fill="#5A6880">SELECT insight FROM raw_data ORDER BY impact DESC;</text>
+    <!-- the one row -->
+    <text x="40"  y="156" font-size="16.5" font-weight="700" fill="#E7ECF6">Maria Domeni</text>
+    <text x="268" y="156" font-size="16.5" fill="#35D6E7">Data Analyst</text>
+    <text x="476" y="156" font-size="16.5" fill="#A6B3CB">turning data into strategic decisions</text>
 
-    <text x="56" y="192" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-          font-size="52" font-weight="700" letter-spacing="1" fill="#E7ECF6">MARIA DOMENI</text>
+    <text x="40" y="192" font-size="13.5" fill="#5A6880">(1 row)</text>
 
-    <rect x="56" y="214" width="240" height="3" rx="1.5" fill="url(#line)">
-      <animate attributeName="width" from="0" to="240" dur="1.5s" begin=".5s"
-               fill="freeze" calcMode="spline" keySplines=".16 1 .3 1" keyTimes="0;1"/>
+    <!-- cursor waiting on the next prompt -->
+    <text x="40" y="216" font-size="15.5" fill="#35D6E7">analytics=#</text>
+    <rect x="146" y="204" width="9" height="17" fill="#35D6E7">
+      <animate attributeName="opacity" values="1;1;0;0" dur="1.1s" repeatCount="indefinite" keyTimes="0;.5;.5;1"/>
     </rect>
-
-    <text x="56" y="266" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-          font-size="21" fill="#A6B3CB">Turning data into <tspan fill="#35D6E7">strategic decisions</tspan>.</text>
-
-    <text x="56" y="316" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-          font-size="14" letter-spacing=".4" fill="#5A6880">São Paulo, BR   ·   SQL · Power BI · Python · Excel</text>
-
-    <!-- 24 months of net revenue, drawing itself once -->
-    <g>
-      <path d="M684 270 H1144" stroke="#8CACF0" stroke-opacity=".18" stroke-width="1" stroke-dasharray="2 6"/>
-      <path d="M684 110 H1144" stroke="#8CACF0" stroke-opacity=".08" stroke-width="1" stroke-dasharray="2 6"/>
-      <path d="M684 190 H1144" stroke="#8CACF0" stroke-opacity=".08" stroke-width="1" stroke-dasharray="2 6"/>
-
-      <path fill="url(#area)" opacity="1"
-            d="M684,176.9 L704,184.2 L724,172.5 L744,150.0 L764,147.8 L784,176.9 L804,202.4 L824,174.0 L844,181.3 L864,160.2 L884,168.9 L904,171.1 L924,170.4 L944,174.0 L964,155.1 L984,136.2 L1004,123.8 L1024,185.6 L1044,189.3 L1064,175.5 L1084,166.7 L1104,137.6 L1124,157.3 L1144,168.2 L1144,270 L684,270 Z">
-        <animate attributeName="opacity" from="0" to="1" dur="1.1s" begin="1.4s" fill="freeze"/>
-      </path>
-
-      <path fill="none" stroke="url(#line)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
-            pathLength="1" stroke-dasharray="1" stroke-dashoffset="0"
-            d="M684,176.9 L704,184.2 L724,172.5 L744,150.0 L764,147.8 L784,176.9 L804,202.4 L824,174.0 L844,181.3 L864,160.2 L884,168.9 L904,171.1 L924,170.4 L944,174.0 L964,155.1 L984,136.2 L1004,123.8 L1024,185.6 L1044,189.3 L1064,175.5 L1084,166.7 L1104,137.6 L1124,157.3 L1144,168.2">
-        <animate attributeName="stroke-dashoffset" from="1" to="0" dur="2.1s" begin=".35s"
-                 fill="freeze" calcMode="spline" keySplines=".16 1 .3 1" keyTimes="0;1"/>
-      </path>
-
-      <g opacity="1">
-        <animate attributeName="opacity" from="0" to="1" dur=".8s" begin="2.1s" fill="freeze"/>
-        <circle cx="1004" cy="123.8" r="3.6" fill="#35D6E7"/>
-        <circle cx="804"  cy="202.4" r="3.6" fill="#5D8CFF"/>
-        <text x="1004" y="110" text-anchor="middle"
-              font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-              font-size="13" fill="#35D6E7">peak $201K</text>
-      </g>
-
-      <text x="1144" y="298" text-anchor="end"
-            font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-            font-size="12.5" fill="#5A6880">net revenue · 24 months · $K</text>
-    </g>
   </g>
 
-  <rect x=".5" y=".5" width="1199" height="359" rx="16" fill="none" stroke="#8CACF0" stroke-opacity=".14"/>
+  <rect x=".5" y=".5" width="1199" height="231" rx="12" fill="none" stroke="#8CACF0" stroke-opacity=".16"/>
 </svg>

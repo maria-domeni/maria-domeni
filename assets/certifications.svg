@@ -1,9 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Certifications: Data Analytics and Advanced Data Analytics from Google; Data Analyst and Business Intelligence Analyst from IBM; Strategic Business Analytics from ESSEC Business School; Python III, SQL Databases for Data Analysis and Power BI from Udemy; Agile with Atlassian Jira from Atlassian.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 196" width="1200" height="196" role="img" aria-label="Nine certifications: Data Analytics and Advanced Data Analytics from Google; Data Analyst and Business Intelligence Analyst from IBM; Strategic Business Analytics from ESSEC Business School; Python III, SQL Databases for Data Analysis and Power BI from Udemy; Agile with Atlassian Jira from Atlassian.">
   <title>Certifications</title>
 
   <defs>
-    <clipPath id="c"><rect width="1200" height="360" rx="14"/></clipPath>
-    <!-- Providers keep their brand colours: here, recognition is the point. -->
+    <clipPath id="c"><rect width="1200" height="196" rx="14"/></clipPath>
     <pattern id="ibmStripes" width="3" height="2.6" patternUnits="userSpaceOnUse">
       <rect width="3" height="1.7" fill="#1F70C1"/>
     </pattern>
@@ -33,60 +32,49 @@
     </g>
   </defs>
 
-  <g clip-path="url(#c)">
-    <rect width="1200" height="360" fill="#070C17"/>
-
-    <text x="56" y="48" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-          font-size="13" letter-spacing="3.4" fill="#35D6E7">CERTIFICATIONS</text>
+  <g clip-path="url(#c)" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace">
+    <rect width="1200" height="196" fill="#070C17"/>
 
     <g fill="#ffffff">
-      <rect x="56" y="86"  width="46" height="46" rx="10"/><rect x="456" y="86"  width="46" height="46" rx="10"/><rect x="856" y="86"  width="46" height="46" rx="10"/>
-      <rect x="56" y="176" width="46" height="46" rx="10"/><rect x="456" y="176" width="46" height="46" rx="10"/><rect x="856" y="176" width="46" height="46" rx="10"/>
-      <rect x="56" y="266" width="46" height="46" rx="10"/><rect x="456" y="266" width="46" height="46" rx="10"/><rect x="856" y="266" width="46" height="46" rx="10"/>
+      <rect x="40"  y="34"  width="34" height="34" rx="8"/><rect x="440" y="34"  width="34" height="34" rx="8"/><rect x="820" y="34"  width="34" height="34" rx="8"/>
+      <rect x="40"  y="88"  width="34" height="34" rx="8"/><rect x="440" y="88"  width="34" height="34" rx="8"/><rect x="820" y="88"  width="34" height="34" rx="8"/>
+      <rect x="40"  y="142" width="34" height="34" rx="8"/><rect x="440" y="142" width="34" height="34" rx="8"/><rect x="820" y="142" width="34" height="34" rx="8"/>
     </g>
 
-    <g transform="translate(67,97)"><use href="#m-google"/></g>
-    <g transform="translate(467,97)"><use href="#m-google"/></g>
-    <g transform="translate(867,97)"><use href="#m-ibm"/></g>
+    <g transform="translate(45,39) scale(.999)"><use href="#m-google"/></g>
+    <g transform="translate(445,39)"><use href="#m-google"/></g>
+    <g transform="translate(825,39)"><use href="#m-ibm"/></g>
+    <g transform="translate(45,93)"><use href="#m-ibm"/></g>
+    <g transform="translate(445,93)"><use href="#m-essec"/></g>
+    <g transform="translate(825,93)"><use href="#m-udemy"/></g>
+    <g transform="translate(45,147)"><use href="#m-udemy"/></g>
+    <g transform="translate(445,147)"><use href="#m-udemy"/></g>
+    <g transform="translate(825,147)"><use href="#m-atlassian"/></g>
 
-    <g transform="translate(67,187)"><use href="#m-ibm"/></g>
-    <g transform="translate(467,187)"><use href="#m-essec"/></g>
-    <g transform="translate(867,187)"><use href="#m-udemy"/></g>
-
-    <g transform="translate(67,277)"><use href="#m-udemy"/></g>
-    <g transform="translate(467,277)"><use href="#m-udemy"/></g>
-    <g transform="translate(867,277)"><use href="#m-atlassian"/></g>
-
-    <g font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-       font-size="15" fill="#E7ECF6">
-      <text x="118" y="110">Data Analytics</text>
-      <text x="518" y="110">Advanced Data Analytics</text>
-      <text x="918" y="110">Data Analyst</text>
-
-      <text x="118" y="200">Business Intelligence</text>
-      <text x="518" y="200">Strategic Business</text>
-      <text x="918" y="200">Python III</text>
-
-      <text x="118" y="290">SQL for Data Analysis</text>
-      <text x="518" y="290">Power BI</text>
-      <text x="918" y="290">Agile with Jira</text>
+    <g font-size="14" fill="#E7ECF6">
+      <text x="88"  y="49">Data Analytics</text>
+      <text x="488" y="49">Advanced Data Analytics</text>
+      <text x="868" y="49">Data Analyst</text>
+      <text x="88"  y="103">Business Intelligence Analyst</text>
+      <text x="488" y="103">Strategic Business Analytics</text>
+      <text x="868" y="103">Python III</text>
+      <text x="88"  y="157">SQL for Data Analysis</text>
+      <text x="488" y="157">Power BI</text>
+      <text x="868" y="157">Agile with Jira</text>
     </g>
 
-    <g font-family="'IBM Plex Mono','Cascadia Mono',Consolas,'DejaVu Sans Mono',monospace"
-       font-size="11.5" letter-spacing="1.8" fill="#68768F">
-      <text x="118" y="128">GOOGLE</text>
-      <text x="518" y="128">GOOGLE</text>
-      <text x="918" y="128">IBM</text>
-
-      <text x="118" y="218">ANALYST · IBM</text>
-      <text x="518" y="218">ANALYTICS · ESSEC</text>
-      <text x="918" y="218">TO ADVANCED · UDEMY</text>
-
-      <text x="118" y="308">UDEMY</text>
-      <text x="518" y="308">TO ADVANCED · UDEMY</text>
-      <text x="918" y="308">ATLASSIAN</text>
+    <g font-size="11" letter-spacing="1.6" fill="#5A6880">
+      <text x="88"  y="64">GOOGLE</text>
+      <text x="488" y="64">GOOGLE</text>
+      <text x="868" y="64">IBM</text>
+      <text x="88"  y="118">IBM</text>
+      <text x="488" y="118">ESSEC BUSINESS SCHOOL</text>
+      <text x="868" y="118">UDEMY</text>
+      <text x="88"  y="172">UDEMY</text>
+      <text x="488" y="172">UDEMY</text>
+      <text x="868" y="172">ATLASSIAN</text>
     </g>
   </g>
 
-  <rect x=".5" y=".5" width="1199" height="359" rx="14" fill="none" stroke="#8CACF0" stroke-opacity=".14"/>
+  <rect x=".5" y=".5" width="1199" height="195" rx="14" fill="none" stroke="#8CACF0" stroke-opacity=".14"/>
 </svg>
