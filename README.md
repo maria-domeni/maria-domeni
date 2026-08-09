@@ -18,4 +18,4 @@ São Paulo, BR · Portuguese | English | Spanish
 
 [LinkedIn](https://www.linkedin.com/in/mariaeduardadomeni/)
 
-<mariadomenidata@gmail.com
+mariadomenidata@gmail.com
