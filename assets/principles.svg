@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 262" width="1200" height="262" role="img" aria-label="How I work. One: one source of truth, everything else is a copy with an expiration date. Two: a dashboard that needs a manual is a report that failed. Three: a number without a reference range is not information, it is noise with a decimal point.">
+  <title>How I work</title>
+  <defs><clipPath id="cp"><rect width="1200" height="262" rx="16"/></clipPath></defs>
+
+  <g clip-path="url(#cp)">
+    <rect width="1200" height="262" fill="#070C17"/>
+
+    <text x="40" y="48" font-family="'IBM Plex Mono','Cascadia Mono',Consolas,monospace"
+          font-size="13" letter-spacing="4.5" fill="#35D6E7">HOW I WORK</text>
+
+    <g font-family="'IBM Plex Mono','Cascadia Mono',Consolas,monospace" font-size="12" fill="#35D6E7">
+      <text x="40" y="104">01</text>
+      <text x="40" y="164">02</text>
+      <text x="40" y="224">03</text>
+    </g>
+
+    <g font-family="'Segoe UI',system-ui,-apple-system,Helvetica,Arial,sans-serif" font-size="17" fill="#C5CFE2">
+      <text x="86" y="105">One source of truth. Everything else is a copy with an expiration date.</text>
+      <text x="86" y="165">A dashboard that needs a manual is a report that failed.</text>
+      <text x="86" y="225">A number without a reference range isn't information — it's noise with a decimal point.</text>
+    </g>
+
+    <g stroke="#8CACF0" stroke-opacity=".11" stroke-width="1">
+      <path d="M40 128 H1160 M40 188 H1160"/>
+    </g>
+  </g>
+  <rect x=".5" y=".5" width="1199" height="261" rx="16" fill="none" stroke="#8CACF0" stroke-opacity=".14"/>
+</svg>
