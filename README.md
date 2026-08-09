@@ -1,4 +1,4 @@
-<img src="assets/hero.svg" alt="Maria Domeni — Data Analyst, BI & Operations Analytics" width="100%">
+<img src="assets/hero-v2.svg" alt="Maria Domeni — Data Analyst, BI & Operations Analytics" width="100%">
 
 ## The question comes first.
 
