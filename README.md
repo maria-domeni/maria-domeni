@@ -14,6 +14,6 @@ I work the whole way through. I pull the data, model it, write the SQL, build th
 
 ---
 
-São Paulo, BR · Portuguese &amp; English · [LinkedIn](https://www.linkedin.com/in/mariaeduardadomeni/)
+São Paulo, BR · Portuguese ; English ; Spanish· [LinkedIn](https://www.linkedin.com/in/mariaeduardadomeni/)
 
-<!-- Falta: seu e-mail nesta linha, e o link do portfolio quando estiver no ar. -->
+<mariadomenidata@gmail.com
