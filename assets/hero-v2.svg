@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+<title id="title">Maria Domeni — Data Analyst, BI &amp; Operations Analytics</title>
+<desc id="desc">Data Analyst focused on turning operational data into decisions.</desc>
+<rect width="1200" height="360" rx="24" fill="#070b14"/>
+<g opacity=".35" stroke="#16d9ff" stroke-width="1">
+<path d="M760 65h350M700 120h420M780 175h310M690 230h390M760 285h350"/>
+<path d="M780 65v220M850 65v220M920 65v220M990 65v220M1060 65v220M1130 65v220"/>
+</g>
+<g fill="#16d9ff"><circle cx="780" cy="65" r="3"/><circle cx="850" cy="120" r="3"/><circle cx="920" cy="175" r="3"/><circle cx="990" cy="230" r="3"/><circle cx="1060" cy="120" r="3"/><circle cx="1130" cy="285" r="3"/></g>
+<text x="70" y="78" fill="#16d9ff" font-family="monospace" font-size="14" letter-spacing="6">DATA ANALYST · BI</text>
+<text x="70" y="150" fill="#f3f7ff" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700">Maria Domeni</text>
+<rect x="70" y="175" width="82" height="4" rx="2" fill="#16d9ff"/>
+<text x="70" y="225" fill="#f3f7ff" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="600">The question comes first.</text>
+<text x="70" y="263" fill="#9aa8bd" font-family="monospace" font-size="15">DATA → SQL → MODEL → BI → DECISION</text>
+<text x="70" y="315" fill="#64748b" font-family="monospace" font-size="13">São Paulo, Brazil · Business Intelligence · Operations Analytics</text>
+</svg>
