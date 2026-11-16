@@ -12,6 +12,7 @@
   --surface-2: #f6f6f9;
   --fill: rgba(118, 118, 128, 0.12);
   --fill-2: rgba(118, 118, 128, 0.2);
+  --thumb: #ffffff;
   --sep: rgba(60, 60, 67, 0.14);
   --label: #111114;
   --label-2: #5c5c66;
@@ -46,6 +47,7 @@
     --surface-2: #26262b;
     --fill: rgba(118, 118, 128, 0.24);
     --fill-2: rgba(118, 118, 128, 0.36);
+    --thumb: #5c5c64;
     --sep: rgba(110, 110, 120, 0.34);
     --label: #f5f5f7;
     --label-2: #a8a8b3;
@@ -70,6 +72,7 @@
   --surface-2: #26262b;
   --fill: rgba(118, 118, 128, 0.24);
   --fill-2: rgba(118, 118, 128, 0.36);
+  --thumb: #5c5c64;
   --sep: rgba(110, 110, 120, 0.34);
   --label: #f5f5f7;
   --label-2: #a8a8b3;

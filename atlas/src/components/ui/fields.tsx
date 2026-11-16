@@ -155,12 +155,21 @@ export function Segmented<T extends string>({
     <div
       role="radiogroup"
       aria-label={label}
+      onKeyDown={(event) => {
+        const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+        if (step === 0) return;
+        event.preventDefault();
+        const next = options[(index + step + options.length) % options.length];
+        onChange(next.value);
+        const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+        buttons[options.indexOf(next)]?.focus();
+      }}
       className={cx("relative grid rounded-[11px] bg-fill p-[3px]", className)}
       style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
     >
       <span
         aria-hidden
-        className="absolute top-[3px] bottom-[3px] left-[3px] rounded-[9px] bg-surface shadow-[0_1px_4px_rgba(0,0,0,0.14)] transition-transform duration-300 ease-(--e-out)"
+        className="absolute top-[3px] bottom-[3px] left-[3px] rounded-[9px] bg-(--thumb) shadow-[0_1px_4px_rgba(0,0,0,0.14)] transition-transform duration-300 ease-(--e-out)"
         style={{
           width: `calc((100% - 6px) / ${options.length})`,
           transform: `translateX(${index * 100}%)`,
@@ -174,6 +183,7 @@ export function Segmented<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
+            tabIndex={selected ? 0 : -1}
             onClick={() => onChange(option.value)}
             className={cx(
               "relative z-[1] flex h-9 items-center justify-center gap-1.5 rounded-[9px] px-2 text-[15px] transition-colors",

@@ -182,7 +182,7 @@ function Toolbar({ editor }: { editor: Editor | null }) {
     >
       {groups.map((group, index) => (
         <div key={index} className="flex flex-none items-center gap-0.5">
-          {index > 0 ? <span aria-hidden className="mx-1 h-5 w-px bg-sep" /> : null}
+          {index > 0 ? <span aria-hidden className="mx-0.5 h-5 w-px bg-sep" /> : null}
           {group.map((tool) => (
             <button
               key={tool.key}
@@ -195,7 +195,7 @@ function Toolbar({ editor }: { editor: Editor | null }) {
               onMouseDown={(event) => event.preventDefault()}
               onClick={tool.run}
               className={cx(
-                "pressable inline-flex h-10 w-9 flex-none items-center justify-center rounded-[10px] disabled:opacity-30",
+                "pressable inline-flex h-10 w-[34px] flex-none items-center justify-center rounded-[10px] disabled:opacity-30",
                 tool.active ? "bg-accent-soft text-accent" : "text-label-2",
               )}
             >

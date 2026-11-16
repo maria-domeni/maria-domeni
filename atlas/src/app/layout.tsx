@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "Atlas", statusBarStyle: "default" },
   formatDetection: { telephone: false, date: false, address: false, email: false },
   robots: { index: false, follow: false },
+  // iPadOS antigos só abrem em tela cheia com esta marcação
+  other: { "apple-mobile-web-app-capable": "yes" },
 };
 
 export const viewport: Viewport = {

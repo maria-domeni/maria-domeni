@@ -173,8 +173,8 @@ export default function TodayScreen() {
                       leading={<ColorBar color={discipline?.color ?? "indigo"} />}
                       title={lesson.title || "Aula sem tema"}
                       subtitle={[
-                        discipline?.name,
                         timeRange(discipline),
+                        discipline?.name,
                         LESSON_TYPE_LABEL[lesson.type],
                       ]
                         .filter(Boolean)

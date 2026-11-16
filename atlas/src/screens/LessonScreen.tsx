@@ -306,7 +306,7 @@ function LessonEditor({
         {activeTab === "durante" ? (
           <>
             <RichEditor
-              initialHtml={initial.notes}
+              initialHtml={draft.notes}
               onChange={(html) => change({ notes: html })}
               placeholder="Anote a aula aqui…"
               label="Anotações da aula"
