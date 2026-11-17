@@ -45,7 +45,7 @@ Decisões que valem para as próximas fases:
 
 ## Fontes
 
-Inter, Nunito, Lexend, Lora, Fraunces e Caveat, sob a SIL Open Font License 1.1 (permite uso comercial). Veja `src/app/fonts/LEIA-ME.md`.
+Inter, Nunito, Lexend, Lora, Fraunces e Caveat, sob a SIL Open Font License 1.1 (permite uso comercial). Veja `src/app/fonts/LICENCA.md`.
 
 ## Próximas fases
 
