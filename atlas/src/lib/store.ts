@@ -93,6 +93,8 @@ export async function createDiscipline(input: DisciplineInput): Promise<Discipli
     name: input.name.trim(),
     professor: input.professor ?? "",
     color: input.color ?? nextColor(siblings.map((d) => d.color)),
+    emoji: input.emoji ?? "",
+    coverImageId: input.coverImageId ?? null,
     status: input.status ?? "andamento",
     weekdays: [...(input.weekdays ?? [])].sort((a, b) => a - b),
     startTime: input.startTime ?? "",
@@ -133,7 +135,7 @@ async function removeDiscipline(id: string): Promise<void> {
 }
 
 /** Primeira cor da paleta ainda não usada no semestre; se todas já foram, a menos usada. */
-export function nextColor(used: ColorKey[]): ColorKey {
+export function nextColor(used: string[]): ColorKey {
   const free = COLOR_KEYS.find((c) => !used.includes(c));
   if (free) return free;
   const count = (c: ColorKey) => used.filter((u) => u === c).length;

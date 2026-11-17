@@ -21,9 +21,15 @@ export function useAppearanceSync(): void {
   const settings = useSettings();
   const theme = settings?.theme;
   const accent = settings?.accent;
+  const customAccent = settings?.customAccent;
+  const fontBody = settings?.fontBody;
+  const fontTitle = settings?.fontTitle;
+  const textScale = settings?.textScale;
+  const background = settings?.background;
   useEffect(() => {
-    if (theme && accent) applyAppearance({ theme, accent });
-  }, [theme, accent]);
+    if (!theme || !accent || !customAccent || !fontBody || !fontTitle || !textScale || !background) return;
+    applyAppearance({ theme, accent, customAccent, fontBody, fontTitle, textScale, background });
+  }, [theme, accent, customAccent, fontBody, fontTitle, textScale, background]);
 }
 
 function subscribeToClock(onChange: () => void) {

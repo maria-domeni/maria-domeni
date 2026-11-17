@@ -1,15 +1,40 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
-import type { ButtonHTMLAttributes, ComponentType, ReactNode } from "react";
+import type { ButtonHTMLAttributes, ComponentType, CSSProperties, ReactNode } from "react";
+import { colorVariants, isHexColor } from "@/lib/color";
 import { markLinkNavigation } from "@/lib/router";
-import { DIFFICULTY_LABEL, type ColorKey, type Difficulty } from "@/lib/types";
+import { COLOR_KEYS, DIFFICULTY_LABEL, type ColorKey, type Difficulty } from "@/lib/types";
 
 export function cx(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
 type IconType = ComponentType<{ size?: number | string; strokeWidth?: number; className?: string }>;
+
+/* ---------- Cor da disciplina ---------- */
+
+const variantCache = new Map<string, { light: string; dark: string }>();
+
+/**
+ * Classe e estilo que definem var(--dc) para uma cor de disciplina, seja da
+ * paleta ("rosa") ou livre ("#aa33cc").
+ */
+export function tint(color: string, className?: string): { className: string; style?: CSSProperties } {
+  if (isHexColor(color)) {
+    let variants = variantCache.get(color);
+    if (!variants) {
+      variants = colorVariants(color);
+      variantCache.set(color, variants);
+    }
+    return {
+      className: cx("dc", className),
+      style: { "--dc-l": variants.light, "--dc-d": variants.dark } as CSSProperties,
+    };
+  }
+  const key = COLOR_KEYS.includes(color as ColorKey) ? color : "indigo";
+  return { className: cx(`dc dc-${key}`, className) };
+}
 
 /* ---------- Botões ---------- */
 
@@ -162,7 +187,7 @@ export function Section({
   return (
     <section className={cx("mt-9", className)}>
       <div className="mb-2.5 flex min-h-9 items-end justify-between gap-3 px-1">
-        <h2 className="text-[22px] leading-7 font-bold tracking-[-0.02em]">
+        <h2 className="font-display text-[22px] leading-7 font-bold tracking-[-0.02em]">
           {title}
           {count !== undefined && count > 0 ? (
             <span className="ml-2 text-[17px] font-semibold text-label-3">{count}</span>
@@ -269,19 +294,12 @@ export function DifficultyChip({ value }: { value: Difficulty }) {
 }
 
 /** Barra colorida da disciplina, usada à esquerda das linhas. */
-export function ColorBar({ color, className }: { color: ColorKey; className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={cx(`dc dc-${color} block h-9 w-1 rounded-full bg-dc`, className)}
-    />
-  );
+export function ColorBar({ color, className }: { color: string; className?: string }) {
+  return <span aria-hidden {...tint(color, cx("block h-9 w-1 rounded-full bg-dc", className))} />;
 }
 
-export function ColorDot({ color, className }: { color: ColorKey; className?: string }) {
-  return (
-    <span aria-hidden className={cx(`dc dc-${color} block size-2.5 rounded-full bg-dc`, className)} />
-  );
+export function ColorDot({ color, className }: { color: string; className?: string }) {
+  return <span aria-hidden {...tint(color, cx("block size-2.5 rounded-full bg-dc", className))} />;
 }
 
 export function IconBadge({
@@ -320,7 +338,7 @@ export function EmptyState({
       <span className="mb-4 inline-flex size-14 items-center justify-center rounded-[18px] bg-accent-soft text-accent">
         <Icon size={28} strokeWidth={2} />
       </span>
-      <h3 className="text-[20px] leading-6 font-bold tracking-[-0.02em]">{title}</h3>
+      <h3 className="font-display text-[20px] leading-6 font-bold tracking-[-0.02em]">{title}</h3>
       {children ? (
         <p className="mt-1.5 max-w-[42ch] text-[15px] leading-[21px] text-label-2">{children}</p>
       ) : null}

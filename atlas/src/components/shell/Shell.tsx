@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { BookOpen, PanelLeft, Repeat2, Settings2, Sun } from "lucide-react";
 import type { ComponentType, ReactNode } from "react";
 import { ColorDot, Link, cx } from "@/components/ui/basics";
+import { Avatar } from "@/components/ui/media";
 import { db } from "@/lib/db";
 import { useSettingsOrDefault, useToday } from "@/lib/hooks";
 import type { Route } from "@/lib/router";
@@ -55,7 +56,7 @@ function useShellData() {
     [today, settings.currentSemesterId],
     null,
   );
-  return { dueCount, sidebar };
+  return { dueCount, sidebar, settings };
 }
 
 export function Logo({ size = 30 }: { size?: number }) {
@@ -121,7 +122,8 @@ function SidebarLink({
 }
 
 export function Shell({ route, children }: { route: Route | null; children: ReactNode }) {
-  const { dueCount, sidebar } = useShellData();
+  const { dueCount, sidebar, settings } = useShellData();
+  const hasProfile = settings.profileName.trim() !== "" || settings.avatarImageId !== null;
   const isActive = (item: NavItem) => !!route && item.match.includes(route.name);
   const activeDisciplineId = route?.name === "disciplina" ? route.id : null;
 
@@ -178,7 +180,30 @@ export function Shell({ route, children }: { route: Route | null; children: Reac
         </nav>
 
         <div className="flex-none border-t border-sep px-2.5 pt-2 pb-[calc(10px+env(safe-area-inset-bottom))]">
-          <SidebarLink item={SETTINGS_NAV} active={isActive(SETTINGS_NAV)} />
+          {hasProfile ? (
+            <Link
+              to="#/ajustes"
+              aria-current={isActive(SETTINGS_NAV) ? "page" : undefined}
+              className={cx(
+                "row-pressable flex min-h-[52px] items-center gap-3 rounded-[12px] px-2.5 py-1.5",
+                isActive(SETTINGS_NAV) && "bg-accent-soft",
+              )}
+            >
+              <Avatar imageId={settings.avatarImageId} name={settings.profileName} size={36} />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15.5px] leading-5 font-semibold">
+                  {settings.profileName.trim() || "Seu perfil"}
+                </span>
+                <span className="block truncate text-[13px] leading-[17px] text-label-2">
+                  {settings.course.trim() || "Ajustes"}
+                </span>
+              </span>
+              <Settings2 size={19} strokeWidth={2.1} className="flex-none text-label-3" />
+              <span className="sr-only">Ajustes</span>
+            </Link>
+          ) : (
+            <SidebarLink item={SETTINGS_NAV} active={isActive(SETTINGS_NAV)} />
+          )}
         </div>
       </aside>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Pipette } from "lucide-react";
 import {
   useId,
   useLayoutEffect,
@@ -10,13 +10,9 @@ import {
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from "react";
-import {
-  COLOR_KEYS,
-  COLOR_LABEL,
-  WEEKDAY_SHORT,
-  type ColorKey,
-} from "@/lib/types";
-import { cx } from "./basics";
+import { colorVariants, isHexColor } from "@/lib/color";
+import { COLOR_KEYS, COLOR_LABEL, WEEKDAY_SHORT } from "@/lib/types";
+import { cx, tint } from "./basics";
 
 const CONTROL =
   "w-full rounded-[13px] bg-fill px-3.5 text-[17px] text-label transition-shadow focus:shadow-[0_0_0_2px_var(--accent)]";
@@ -87,8 +83,8 @@ export function TextArea({ className, minRows = 3, bare, value, ...rest }: TextA
       rows={minRows}
       value={value}
       className={cx(
-        "block w-full resize-none overflow-hidden text-[17px] leading-[1.5]",
-        bare ? "bg-transparent" : cx(CONTROL, "py-2.5"),
+        "block w-full resize-none overflow-hidden leading-[1.5]",
+        bare ? "bg-transparent text-(length:--note-size)" : cx(CONTROL, "py-2.5"),
         className,
       )}
       {...rest}
@@ -234,12 +230,49 @@ export function WeekdayPicker({
   );
 }
 
+/** Amostra que abre o seletor de cores do aparelho, para escolher qualquer cor. */
+export function CustomColorSwatch({
+  value,
+  selected,
+  onChange,
+  label,
+}: {
+  value: string;
+  selected: boolean;
+  onChange: (hex: string) => void;
+  label: string;
+}) {
+  const shown = isHexColor(value) ? value : "#7c3aed";
+  const ring = colorVariants(shown).light;
+  return (
+    <label
+      title={label}
+      className="pressable relative inline-flex size-10 cursor-pointer items-center justify-center rounded-full text-white"
+      style={{
+        background: selected
+          ? shown
+          : "conic-gradient(from 0deg, #ef4444, #f59e0b, #84cc16, #06b6d4, #6366f1, #d946ef, #ef4444)",
+        boxShadow: selected ? `0 0 0 3px var(--surface), 0 0 0 5px ${ring}` : undefined,
+      }}
+    >
+      {selected ? <Check size={18} strokeWidth={3} /> : <Pipette size={17} strokeWidth={2.4} />}
+      <input
+        type="color"
+        value={shown}
+        aria-label={label}
+        onChange={(event) => onChange(event.target.value.toLowerCase())}
+        className="absolute inset-0 size-full cursor-pointer opacity-0"
+      />
+    </label>
+  );
+}
+
 export function ColorPicker({
   value,
   onChange,
 }: {
-  value: ColorKey;
-  onChange: (value: ColorKey) => void;
+  value: string;
+  onChange: (value: string) => void;
 }) {
   return (
     <div className="flex flex-wrap gap-2.5" role="radiogroup" aria-label="Cor">
@@ -254,15 +287,24 @@ export function ColorPicker({
             aria-label={COLOR_LABEL[color]}
             title={COLOR_LABEL[color]}
             onClick={() => onChange(color)}
-            className={cx(
-              `dc dc-${color} pressable inline-flex size-10 items-center justify-center rounded-full bg-dc text-white`,
-              selected && "shadow-[0_0_0_3px_var(--surface),0_0_0_5px_var(--dc)]",
+            {...tint(
+              color,
+              cx(
+                "pressable inline-flex size-10 items-center justify-center rounded-full bg-dc text-white",
+                selected && "shadow-[0_0_0_3px_var(--surface),0_0_0_5px_var(--dc)]",
+              ),
             )}
           >
             {selected ? <Check size={18} strokeWidth={3} /> : null}
           </button>
         );
       })}
+      <CustomColorSwatch
+        value={value}
+        selected={isHexColor(value)}
+        onChange={onChange}
+        label="Escolher outra cor"
+      />
     </div>
   );
 }

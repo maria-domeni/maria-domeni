@@ -91,7 +91,7 @@ export function Page({ title, eyebrow, subtitle, back, actions, titleSlot, child
             </p>
           ) : null}
           {titleSlot ?? (
-            <h1 className="text-[34px] leading-[41px] font-bold tracking-[-0.028em] break-words">
+            <h1 className="font-display text-[34px] leading-[41px] font-bold tracking-[-0.028em] break-words">
               {title}
             </h1>
           )}

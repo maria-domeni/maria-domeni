@@ -10,6 +10,7 @@ import {
   TextInput,
   WeekdayPicker,
 } from "@/components/ui/fields";
+import { EmojiPicker, ImageField } from "@/components/ui/media";
 import { Sheet, useConfirm, useToast } from "@/components/ui/overlays";
 import { addDays, todayISO, weekdayOf } from "@/lib/dates";
 import { navigate } from "@/lib/router";
@@ -29,7 +30,6 @@ import {
   LESSON_TYPE_LABEL,
   STATUS_LABEL,
   TASK_TYPE_LABEL,
-  type ColorKey,
   type Discipline,
   type DisciplineStatus,
   type ISODate,
@@ -194,7 +194,9 @@ function DisciplineForm({
   const toast = useToast();
   const [name, setName] = useState(discipline?.name ?? "");
   const [professor, setProfessor] = useState(discipline?.professor ?? "");
-  const [color, setColor] = useState<ColorKey | null>(discipline?.color ?? null);
+  const [color, setColor] = useState<string | null>(discipline?.color ?? null);
+  const [emoji, setEmoji] = useState(discipline?.emoji ?? "");
+  const [coverImageId, setCoverImageId] = useState<string | null>(discipline?.coverImageId ?? null);
   const [weekdays, setWeekdays] = useState<number[]>(discipline?.weekdays ?? []);
   const [startTime, setStartTime] = useState(discipline?.startTime ?? "");
   const [endTime, setEndTime] = useState(discipline?.endTime ?? "");
@@ -219,6 +221,8 @@ function DisciplineForm({
       notebookLmUrl: safeUrl(notebookLmUrl) ?? "",
       theaUrl: safeUrl(theaUrl) ?? "",
       ementa,
+      emoji,
+      coverImageId,
     };
     if (discipline) {
       await updateDiscipline(discipline.id, { ...data, color: color ?? discipline.color });
@@ -256,7 +260,7 @@ function DisciplineForm({
           <TextInput
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ex.: Processos de Avaliação Psicológica"
+            placeholder="Ex.: Metodologia de Pesquisa"
             autoFocus={!discipline}
             autoComplete="off"
           />
@@ -301,6 +305,22 @@ function DisciplineForm({
               Se você não escolher, o Atlas usa uma cor ainda livre no semestre.
             </p>
           ) : null}
+        </div>
+        <div>
+          <span className="mb-2 block px-0.5 text-[14px] font-semibold text-label-2">Símbolo</span>
+          <EmojiPicker value={emoji} onChange={setEmoji} />
+        </div>
+        <div>
+          <span className="mb-2 block px-0.5 text-[14px] font-semibold text-label-2">Capa</span>
+          <ImageField
+            imageId={coverImageId}
+            onChange={setCoverImageId}
+            maxEdge={1600}
+            label="capa"
+          />
+          <p className="mt-1.5 px-0.5 text-[13px] leading-[17px] text-label-3">
+            Opcional. Sem imagem, a capa usa a cor da disciplina.
+          </p>
         </div>
         <Field
           label="Link do caderno no NotebookLM"
@@ -401,7 +421,7 @@ function LessonForm({
           <TextInput
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex.: Entrevista psicológica"
+            placeholder="Ex.: Introdução ao tema"
             autoFocus
             autoComplete="off"
           />
@@ -512,7 +532,7 @@ function TaskForm({
           <TextInput
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex.: Prova P2, Relatório de estágio"
+            placeholder="Ex.: Prova P2, entrega do trabalho"
             autoFocus={!task}
             autoComplete="off"
           />

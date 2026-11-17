@@ -35,6 +35,47 @@ export type AccentKey = "indigo" | "azul" | "rosa" | "verde" | "laranja" | "lila
 
 export type ThemeMode = "auto" | "claro" | "escuro";
 
+export type FontKey = "sistema" | "inter" | "nunito" | "lexend" | "lora" | "fraunces";
+
+/** "igual" usa a mesma fonte do restante do app. */
+export type TitleFontKey = FontKey | "caveat" | "igual";
+
+export type BackgroundStyle = "liso" | "suave" | "aurora";
+
+export type TextScale = "pequeno" | "padrao" | "grande";
+
+export type CoverPreset =
+  | "destaque"
+  | "aurora"
+  | "por-do-sol"
+  | "oceano"
+  | "floresta"
+  | "lavanda"
+  | "grafite";
+
+export interface Cover {
+  kind: "nenhuma" | "predefinida" | "imagem";
+  preset: CoverPreset;
+  imageId: string | null;
+}
+
+export type TodaySectionKey = "resumo" | "aulas" | "revisoes" | "prazos" | "leituras";
+
+export interface TodaySection {
+  key: TodaySectionKey;
+  visible: boolean;
+}
+
+/** Imagem guardada no aparelho (capas, foto de perfil, imagens das anotações). */
+export interface ImageRecord {
+  id: string;
+  type: string;
+  data: ArrayBuffer;
+  width: number;
+  height: number;
+  createdAt: string;
+}
+
 export interface Semester {
   id: string;
   number: number;
@@ -49,7 +90,10 @@ export interface Discipline {
   semesterId: string;
   name: string;
   professor: string;
-  color: ColorKey;
+  /** Uma cor da paleta (ColorKey) ou uma cor livre no formato #rrggbb. */
+  color: string;
+  emoji: string;
+  coverImageId: string | null;
   status: DisciplineStatus;
   /** 0 = domingo … 6 = sábado */
   weekdays: number[];
@@ -117,29 +161,67 @@ export interface Task {
 }
 
 export interface Settings {
+  /** Já passou pela configuração inicial */
+  onboarded: boolean;
   profileName: string;
   course: string;
   institution: string;
   totalSemesters: number;
   currentSemesterId: string | null;
+  avatarImageId: string | null;
   /** Dias após a aula para cada revisão (R1, R2, R3…) */
   reviewIntervals: number[];
   /** Dias até o reforço quando uma revisão é marcada como Difícil. 0 desliga. */
   hardReinforceDays: number;
   theme: ThemeMode;
-  accent: AccentKey;
+  accent: AccentKey | "personalizada";
+  /** Cor livre (#rrggbb), usada quando accent é "personalizada" */
+  customAccent: string;
+  fontBody: FontKey;
+  fontTitle: TitleFontKey;
+  /** Tamanho do texto das anotações */
+  textScale: TextScale;
+  background: BackgroundStyle;
+  todayCover: Cover;
+  /** Ordem e visibilidade das seções da tela Hoje */
+  todaySections: TodaySection[];
 }
 
+export const TODAY_SECTION_KEYS: TodaySectionKey[] = [
+  "resumo",
+  "aulas",
+  "revisoes",
+  "prazos",
+  "leituras",
+];
+
+export const TODAY_SECTION_LABEL: Record<TodaySectionKey, string> = {
+  resumo: "Resumo em números",
+  aulas: "Aulas de hoje",
+  revisoes: "Revisões",
+  prazos: "Prazos",
+  leituras: "Leitura prévia",
+};
+
 export const DEFAULT_SETTINGS: Settings = {
+  onboarded: false,
   profileName: "",
-  course: "Psicologia",
-  institution: "UMC",
-  totalSemesters: 10,
+  course: "",
+  institution: "",
+  totalSemesters: 8,
   currentSemesterId: null,
+  avatarImageId: null,
   reviewIntervals: [1, 7, 30],
   hardReinforceDays: 3,
   theme: "auto",
   accent: "indigo",
+  customAccent: "#7c3aed",
+  fontBody: "sistema",
+  fontTitle: "igual",
+  textScale: "padrao",
+  background: "aurora",
+  todayCover: { kind: "predefinida", preset: "destaque", imageId: null },
+  todaySections: TODAY_SECTION_KEYS.map((key) => ({ key, visible: true })),
 };
 
 export const LESSON_TYPE_LABEL: Record<LessonType, string> = {
@@ -203,6 +285,61 @@ export const ACCENT_LABEL: Record<AccentKey, string> = {
   verde: "Verde",
   laranja: "Laranja",
   lilas: "Lilás",
+};
+
+export const FONT_KEYS: FontKey[] = ["sistema", "inter", "nunito", "lexend", "lora", "fraunces"];
+
+export const TITLE_FONT_KEYS: TitleFontKey[] = [
+  "igual",
+  "sistema",
+  "inter",
+  "nunito",
+  "lexend",
+  "lora",
+  "fraunces",
+  "caveat",
+];
+
+export const FONT_LABEL: Record<TitleFontKey, string> = {
+  igual: "Igual ao app",
+  sistema: "Do sistema",
+  inter: "Inter",
+  nunito: "Nunito",
+  lexend: "Lexend",
+  lora: "Lora",
+  fraunces: "Fraunces",
+  caveat: "Caveat",
+};
+
+export const FONT_HINT: Record<TitleFontKey, string> = {
+  igual: "Mesma fonte",
+  sistema: "Padrão do aparelho",
+  inter: "Neutra",
+  nunito: "Arredondada",
+  lexend: "Leitura fácil",
+  lora: "Serifada",
+  fraunces: "Editorial",
+  caveat: "Manuscrita",
+};
+
+export const COVER_PRESETS: CoverPreset[] = [
+  "destaque",
+  "aurora",
+  "por-do-sol",
+  "oceano",
+  "floresta",
+  "lavanda",
+  "grafite",
+];
+
+export const COVER_LABEL: Record<CoverPreset, string> = {
+  destaque: "Cor de destaque",
+  aurora: "Aurora",
+  "por-do-sol": "Pôr do sol",
+  oceano: "Oceano",
+  floresta: "Floresta",
+  lavanda: "Lavanda",
+  grafite: "Grafite",
 };
 
 export const WEEKDAY_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];

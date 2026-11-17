@@ -15,7 +15,9 @@ import {
   Section,
   cx,
   safeUrl,
+  tint,
 } from "@/components/ui/basics";
+import { DisciplineCover } from "@/components/ui/media";
 import { useToast } from "@/components/ui/overlays";
 import { db } from "@/lib/db";
 import { diffDays, formatShort, formatWeekday } from "@/lib/dates";
@@ -98,11 +100,37 @@ export default function DisciplineScreen({ id }: { id: string }) {
   return (
     <Page
       title={discipline.name}
-      eyebrow={
-        <span className={`dc dc-${discipline.color} text-dc`}>
-          {semester ? `${semester.number}º semestre` : "Disciplina"}
-          {discipline.status !== "andamento" ? ` · ${STATUS_LABEL[discipline.status]}` : ""}
-        </span>
+      titleSlot={
+        <>
+          <DisciplineCover
+            color={discipline.color}
+            imageId={discipline.coverImageId}
+            className="h-[132px] rounded-[26px] shadow-card md:h-[150px]"
+          />
+          <div className="relative -mt-8 flex items-end gap-3.5 px-4 md:px-5">
+            <span
+              aria-hidden
+              {...tint(
+                discipline.color,
+                "inline-flex size-[68px] flex-none items-center justify-center rounded-[20px] bg-surface text-[34px] leading-none font-bold text-dc shadow-[0_4px_16px_rgba(0,0,0,0.14),0_0_0_0.5px_rgba(0,0,0,0.06)]",
+              )}
+            >
+              {discipline.emoji || discipline.name.trim().charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <p
+            {...tint(
+              discipline.color,
+              "mt-3 text-[13px] leading-[18px] font-semibold tracking-[0.03em] text-dc uppercase",
+            )}
+          >
+            {semester ? `${semester.number}º semestre` : "Disciplina"}
+            {discipline.status !== "andamento" ? ` · ${STATUS_LABEL[discipline.status]}` : ""}
+          </p>
+          <h1 className="font-display text-[34px] leading-[41px] font-bold tracking-[-0.028em] break-words">
+            {discipline.name}
+          </h1>
+        </>
       }
       subtitle={meta || undefined}
       back={{ to: "#/cadernos", label: "Cadernos" }}
@@ -146,7 +174,10 @@ export default function DisciplineScreen({ id }: { id: string }) {
                 to={`#/aula/${lesson.id}`}
                 leading={
                   <span
-                    className={`dc dc-${discipline.color} inline-flex size-10 items-center justify-center rounded-[12px] bg-dc-soft text-[15px] font-bold text-dc tabular-nums`}
+                    {...tint(
+                      discipline.color,
+                      "inline-flex size-10 items-center justify-center rounded-[12px] bg-dc-soft text-[15px] font-bold text-dc tabular-nums",
+                    )}
                   >
                     {lesson.number ?? "–"}
                   </span>

@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { parseBackup, BackupError } from "./backup";
+import { colorVariants, contrast, isHexColor } from "./color";
+import { base64ToBytes, bytesToBase64, imageIdsInHtml } from "./images";
 import { addDays, diffDays, formatRelative, isISODate, weekdayOf, weekProgress } from "./dates";
 import { completeReview, dueQueue, lessonDifficulty, planReviews, undoReview } from "./reviews";
 import { parseHash } from "./router";
-import { normalizeIntervals, normalizeSettings } from "./settings";
+import {
+  appearanceAttributes,
+  normalizeIntervals,
+  normalizeSettings,
+  normalizeTodaySections,
+} from "./settings";
 import { buildToday, resolveCurrentSemester, type TodayInput } from "./today";
 import type { Discipline, Lesson, Review, Semester, Task } from "./types";
 
@@ -40,6 +47,8 @@ const discipline = (over: Partial<Discipline> = {}): Discipline => ({
   name: "Avaliação Psicológica",
   professor: "",
   color: "indigo",
+  emoji: "",
+  coverImageId: null,
   status: "andamento",
   weekdays: [],
   startTime: "",
@@ -321,6 +330,88 @@ describe("ajustes", () => {
     expect(s.totalSemesters).toBe(20);
     expect(s.hardReinforceDays).toBe(0);
     expect(s.reviewIntervals).toEqual([1, 7, 30]);
+    expect(s.onboarded).toBe(false);
+    expect(s.course).toBe("");
+  });
+
+  it("valida as opções de aparência", () => {
+    const s = normalizeSettings({
+      accent: "personalizada",
+      customAccent: "#AB12CD",
+      fontBody: "comic" as never,
+      fontTitle: "caveat",
+      background: "neon" as never,
+      textScale: "grande",
+      todayCover: { kind: "imagem", preset: "oceano", imageId: null },
+    });
+    expect(s.accent).toBe("personalizada");
+    expect(s.customAccent).toBe("#ab12cd");
+    expect(s.fontBody).toBe("sistema");
+    expect(s.fontTitle).toBe("caveat");
+    expect(s.background).toBe("aurora");
+    expect(s.textScale).toBe("grande");
+    // capa "imagem" sem imagem volta para a predefinida escolhida
+    expect(s.todayCover).toEqual({ kind: "predefinida", preset: "oceano", imageId: null });
+    expect(normalizeSettings({ customAccent: "vermelho" }).customAccent).toBe("#7c3aed");
+  });
+
+  it("mantém todas as seções da tela Hoje, sem repetir", () => {
+    const sections = normalizeTodaySections([
+      { key: "prazos", visible: false },
+      { key: "prazos", visible: true },
+      { key: "inventada", visible: true },
+      { key: "aulas" },
+    ]);
+    expect(sections.map((s) => s.key)).toEqual(["prazos", "aulas", "resumo", "revisoes", "leituras"]);
+    expect(sections[0].visible).toBe(false);
+    expect(sections[1].visible).toBe(true);
+  });
+
+  it("gera os atributos do tema, com cores só no destaque personalizado", () => {
+    const base = normalizeSettings({ theme: "escuro", accent: "rosa", fontBody: "lora" });
+    const preset = appearanceAttributes(base);
+    expect(preset.attrs).toMatchObject({ "data-theme": "dark", "data-accent": "rosa", "data-font": "lora" });
+    expect(preset.vars).toEqual({ "--accent-l": null, "--accent-d": null });
+    const custom = appearanceAttributes({ ...base, theme: "auto", accent: "personalizada", customAccent: "#ffe066" });
+    expect(custom.attrs["data-theme"]).toBeNull();
+    expect(custom.vars["--accent-l"]).toMatch(/^#[0-9a-f]{6}$/);
+    expect(custom.vars["--accent-d"]).toMatch(/^#[0-9a-f]{6}$/);
+  });
+});
+
+describe("cores livres", () => {
+  it("reconhece cores no formato #rrggbb", () => {
+    expect(isHexColor("#a1B2c3")).toBe(true);
+    expect(isHexColor("#abc")).toBe(false);
+    expect(isHexColor("rosa")).toBe(false);
+    expect(isHexColor(null)).toBe(false);
+  });
+
+  it("deriva versões legíveis no claro e no escuro para qualquer cor", () => {
+    for (const hex of ["#ffe066", "#000000", "#ffffff", "#7c3aed", "#00e5ff", "#ff0055", "#808080"]) {
+      const { light, dark } = colorVariants(hex);
+      expect(contrast(light, "#ffffff"), `${hex} no claro`).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(dark, "#1b1b1f"), `${hex} no escuro`).toBeGreaterThanOrEqual(5.5);
+    }
+  });
+
+  it("não mexe em cores que já têm contraste suficiente", () => {
+    expect(colorVariants("#4f46e5").light).toBe("#4f46e5");
+  });
+});
+
+describe("imagens", () => {
+  it("converte bytes para base64 e de volta", () => {
+    const bytes = new Uint8Array(70_000).map((_, i) => (i * 31) % 256);
+    const back = new Uint8Array(base64ToBytes(bytesToBase64(bytes.buffer)));
+    expect(back.length).toBe(bytes.length);
+    expect(back.every((b, i) => b === bytes[i])).toBe(true);
+  });
+
+  it("encontra as imagens citadas em uma anotação", () => {
+    const html = '<p>oi</p><img data-image-id="a1" data-size="m" alt=""><img data-image-id="b2" alt="">';
+    expect(imageIdsInHtml(html)).toEqual(["a1", "b2"]);
+    expect(imageIdsInHtml("<p>sem imagem</p>")).toEqual([]);
   });
 });
 
@@ -361,10 +452,44 @@ describe("backup", () => {
     },
   };
 
+  it("lê backups com imagens, cores livres e personalização (formato 2)", () => {
+    const v2 = {
+      ...valid,
+      formatVersion: 2,
+      data: {
+        ...valid.data,
+        disciplines: [
+          { id: "d1", semesterId: "s1", name: "Psicodinâmica", color: "#AA33CC", emoji: "🧠", coverImageId: "img1" },
+          { id: "d2", semesterId: "s1", name: "Outra", color: "#zzzzzz", coverImageId: "nao-existe" },
+        ],
+        images: [
+          { id: "img1", type: "image/png", width: 2, height: 2, data: "iVBORw0KGgo=" },
+          { id: "svg", type: "image/svg+xml", width: 1, height: 1, data: "PHN2Zz4=" },
+          { id: "ruim", type: "image/png", width: 1, height: 1, data: "<script>" },
+        ],
+        settings: {
+          avatarImageId: "img1",
+          todayCover: { kind: "imagem", preset: "aurora", imageId: "sumiu" },
+          fontTitle: "fraunces",
+        },
+      },
+    };
+    const file = parseBackup(JSON.stringify(v2));
+    expect(file.data.images.map((i) => i.id)).toEqual(["img1"]);
+    expect(file.data.disciplines[0]).toMatchObject({ color: "#aa33cc", emoji: "🧠", coverImageId: "img1" });
+    expect(file.data.disciplines[1]).toMatchObject({ color: "indigo", emoji: "", coverImageId: null });
+    expect(file.data.settings.avatarImageId).toBe("img1");
+    expect(file.data.settings.todayCover).toEqual({ kind: "predefinida", preset: "aurora", imageId: null });
+    expect(file.data.settings.fontTitle).toBe("fraunces");
+    expect(file.data.settings.onboarded).toBe(true);
+  });
+
   it("lê um backup válido, completa campos e descarta registros órfãos", () => {
     const file = parseBackup(JSON.stringify(valid));
     expect(file.data.disciplines).toHaveLength(1);
     expect(file.data.disciplines[0]).toMatchObject({ color: "rosa", weekdays: [2], status: "andamento" });
+    expect(file.data.disciplines[0]).toMatchObject({ emoji: "", coverImageId: null });
+    expect(file.data.images).toEqual([]);
     expect(file.data.lessons).toHaveLength(1);
     expect(file.data.lessons[0]).toMatchObject({ reviewsOn: true, attended: null, feynman: "" });
     expect(file.data.reviews.map((r) => r.id)).toEqual(["r1"]);

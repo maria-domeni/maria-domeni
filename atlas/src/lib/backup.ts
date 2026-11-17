@@ -1,9 +1,32 @@
+import { isHexColor } from "./color";
 import { DATA_TABLES, db, type DataTableName } from "./db";
 import { isISODate, todayISO } from "./dates";
+import { base64ToBytes, bytesToBase64, IMAGE_TYPES, pruneImages } from "./images";
 import { normalizeSettings } from "./settings";
-import type { Discipline, Lesson, Review, Semester, Settings, Task } from "./types";
+import {
+  COLOR_KEYS,
+  type Discipline,
+  type Lesson,
+  type Review,
+  type Semester,
+  type Settings,
+  type Task,
+} from "./types";
 
-export const BACKUP_FORMAT_VERSION = 1;
+/** v1: dados de estudo. v2: inclui imagens e personalização. */
+export const BACKUP_FORMAT_VERSION = 2;
+
+const MAX_IMAGE_BASE64_LENGTH = 16 * 1024 * 1024;
+
+/** Imagem dentro do arquivo de backup, com os bytes em base64. */
+export interface BackupImage {
+  id: string;
+  type: string;
+  width: number;
+  height: number;
+  createdAt: string;
+  data: string;
+}
 export const LAST_BACKUP_KEY = "atlas-ultimo-backup";
 
 export interface BackupData {
@@ -12,6 +35,7 @@ export interface BackupData {
   lessons: Lesson[];
   reviews: Review[];
   tasks: Task[];
+  images: BackupImage[];
   settings: Settings;
 }
 
@@ -25,14 +49,24 @@ export interface BackupFile {
 export class BackupError extends Error {}
 
 export async function exportBackup(): Promise<BackupFile> {
-  const [semesters, disciplines, lessons, reviews, tasks, settingsRow] = await Promise.all([
+  await pruneImages();
+  const [semesters, disciplines, lessons, reviews, tasks, imageRows, settingsRow] = await Promise.all([
     db.semesters.toArray(),
     db.disciplines.toArray(),
     db.lessons.toArray(),
     db.reviews.toArray(),
     db.tasks.toArray(),
+    db.images.toArray(),
     db.settings.get("app"),
   ]);
+  const images: BackupImage[] = imageRows.map((image) => ({
+    id: image.id,
+    type: image.type,
+    width: image.width,
+    height: image.height,
+    createdAt: image.createdAt,
+    data: bytesToBase64(image.data),
+  }));
   return {
     app: "atlas",
     formatVersion: BACKUP_FORMAT_VERSION,
@@ -43,6 +77,7 @@ export async function exportBackup(): Promise<BackupFile> {
       lessons,
       reviews,
       tasks,
+      images,
       settings: normalizeSettings(settingsRow?.value),
     },
   };
@@ -99,6 +134,29 @@ export function parseBackup(text: string): BackupFile {
   const data = parsed.data;
   const stamp = new Date().toISOString();
 
+  const images: BackupImage[] = [];
+  for (const r of rowsOf(data, "images")) {
+    if (
+      !IMAGE_TYPES.includes(r.type as string) ||
+      typeof r.data !== "string" ||
+      r.data.length === 0 ||
+      r.data.length > MAX_IMAGE_BASE64_LENGTH ||
+      !/^[A-Za-z0-9+/]+={0,2}$/.test(r.data)
+    ) {
+      continue;
+    }
+    images.push({
+      id: r.id as string,
+      type: r.type as string,
+      width: Number.isFinite(Number(r.width)) ? Math.max(1, Math.round(Number(r.width))) : 1,
+      height: Number.isFinite(Number(r.height)) ? Math.max(1, Math.round(Number(r.height))) : 1,
+      createdAt: str(r.createdAt, stamp),
+      data: r.data,
+    });
+  }
+  const imageIds = new Set(images.map((image) => image.id));
+  const imageOrNull = (v: unknown) => (typeof v === "string" && imageIds.has(v) ? v : null);
+
   const semesters: Semester[] = rowsOf(data, "semesters").map((r) => ({
     id: r.id as string,
     number: Number.isFinite(Number(r.number)) ? Math.round(Number(r.number)) : 1,
@@ -116,11 +174,9 @@ export function parseBackup(text: string): BackupFile {
       semesterId: r.semesterId as string,
       name: str(r.name, "Disciplina"),
       professor: str(r.professor),
-      color: oneOf(
-        r.color,
-        ["vermelho", "laranja", "amarelo", "verde", "turquesa", "azul", "indigo", "rosa"] as const,
-        "indigo",
-      ),
+      color: isHexColor(r.color) ? r.color.toLowerCase() : oneOf(r.color, COLOR_KEYS, "indigo"),
+      emoji: str(r.emoji).slice(0, 16),
+      coverImageId: imageOrNull(r.coverImageId),
       status: oneOf(r.status, ["andamento", "concluida", "futura"] as const, "andamento"),
       weekdays: Array.isArray(r.weekdays)
         ? [...new Set(r.weekdays.map(Number))].filter((n) => Number.isInteger(n) && n >= 0 && n <= 6)
@@ -209,12 +265,18 @@ export function parseBackup(text: string): BackupFile {
   if (settings.currentSemesterId && !semesterIds.has(settings.currentSemesterId)) {
     settings.currentSemesterId = null;
   }
+  settings.avatarImageId = imageOrNull(settings.avatarImageId);
+  if (settings.todayCover.imageId && !imageIds.has(settings.todayCover.imageId)) {
+    settings.todayCover = { ...settings.todayCover, kind: "predefinida", imageId: null };
+  }
+  // quem restaura um backup com dados já passou pela configuração inicial
+  if (semesters.length > 0) settings.onboarded = true;
 
   return {
     app: "atlas",
     formatVersion: version,
     exportedAt: str(parsed.exportedAt, stamp),
-    data: { semesters, disciplines, lessons, reviews, tasks, settings },
+    data: { semesters, disciplines, lessons, reviews, tasks, images, settings },
   };
 }
 
@@ -222,9 +284,19 @@ export function parseBackup(text: string): BackupFile {
 export async function restoreBackup(file: BackupFile): Promise<void> {
   await db.transaction(
     "rw",
-    [db.semesters, db.disciplines, db.lessons, db.reviews, db.tasks, db.settings],
+    [db.semesters, db.disciplines, db.lessons, db.reviews, db.tasks, db.images, db.settings],
     async () => {
       for (const table of DATA_TABLES) await db.table(table).clear();
+      await db.images.bulkAdd(
+        file.data.images.map((image) => ({
+          id: image.id,
+          type: image.type,
+          width: image.width,
+          height: image.height,
+          createdAt: image.createdAt,
+          data: base64ToBytes(image.data),
+        })),
+      );
       await db.semesters.bulkAdd(file.data.semesters);
       await db.disciplines.bulkAdd(file.data.disciplines);
       await db.lessons.bulkAdd(file.data.lessons);
@@ -238,7 +310,7 @@ export async function restoreBackup(file: BackupFile): Promise<void> {
 export async function eraseEverything(): Promise<void> {
   await db.transaction(
     "rw",
-    [db.semesters, db.disciplines, db.lessons, db.reviews, db.tasks, db.settings],
+    [db.semesters, db.disciplines, db.lessons, db.reviews, db.tasks, db.images, db.settings],
     async () => {
       for (const table of DATA_TABLES) await db.table(table).clear();
       await db.settings.clear();
@@ -247,13 +319,15 @@ export async function eraseEverything(): Promise<void> {
 }
 
 export function backupSummary(file: BackupFile): string {
-  const { semesters, disciplines, lessons } = file.data;
+  const { semesters, disciplines, lessons, images } = file.data;
   const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-  return [
+  const parts = [
     plural(semesters.length, "semestre", "semestres"),
     plural(disciplines.length, "disciplina", "disciplinas"),
     plural(lessons.length, "aula", "aulas"),
-  ].join(", ");
+  ];
+  if (images.length > 0) parts.push(plural(images.length, "imagem", "imagens"));
+  return parts.join(", ");
 }
 
 /**

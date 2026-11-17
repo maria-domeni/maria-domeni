@@ -2,6 +2,7 @@ import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
 import { eraseEverything, exportBackup, parseBackup, restoreBackup } from "./backup";
 import { db } from "./db";
+import { pruneImages } from "./images";
 import {
   createDiscipline,
   createLesson,
@@ -13,6 +14,7 @@ import {
   markReview,
   reopenReview,
   saveSettings,
+  updateDiscipline,
   updateLesson,
 } from "./store";
 
@@ -100,9 +102,40 @@ describe("banco local", () => {
 
     await restoreBackup(parseBackup(text));
     const after = await exportBackup();
-    expect(after.data).toEqual(before.data);
+    // restaurar um backup com dados dispensa a configuração inicial
+    expect(after.data).toEqual({ ...before.data, settings: { ...before.data.settings, onboarded: true } });
     expect(after.data.lessons[0].notes).toBe("<p>Transferência</p>");
     expect(after.data.reviews).toHaveLength(4);
+  });
+
+  it("guarda imagens, leva no backup e apaga as que ninguém usa", async () => {
+    const { discipline, lesson } = await seed();
+    const bytes = (n: number) => new Uint8Array([n, n + 1, n + 2]).buffer;
+    const old = "2020-01-01T00:00:00.000Z";
+    await db.images.bulkAdd([
+      { id: "capa", type: "image/png", data: bytes(1), width: 2, height: 2, createdAt: old },
+      { id: "nota", type: "image/jpeg", data: bytes(10), width: 4, height: 3, createdAt: old },
+      { id: "solta", type: "image/png", data: bytes(20), width: 1, height: 1, createdAt: old },
+      { id: "recente", type: "image/png", data: bytes(30), width: 1, height: 1, createdAt: new Date().toISOString() },
+    ]);
+    await updateDiscipline(discipline.id, { coverImageId: "capa", emoji: "🧠", color: "#aa33cc" });
+    await updateLesson(lesson.id, { notes: '<p>oi</p><img data-image-id="nota" data-size="m" alt="">' });
+
+    const backup = await exportBackup();
+    // "solta" não é usada por nada; "recente" ainda está no período de carência
+    expect(backup.data.images.map((i) => i.id).sort()).toEqual(["capa", "nota", "recente"]);
+    expect(backup.formatVersion).toBe(2);
+
+    await eraseEverything();
+    expect(await db.images.count()).toBe(0);
+    await restoreBackup(parseBackup(JSON.stringify(backup)));
+    const restored = await db.images.get("nota");
+    expect(restored?.type).toBe("image/jpeg");
+    expect([...new Uint8Array(restored!.data)]).toEqual([10, 11, 12]);
+    expect((await db.disciplines.get(discipline.id))?.coverImageId).toBe("capa");
+    expect((await db.disciplines.get(discipline.id))?.color).toBe("#aa33cc");
+    expect(await pruneImages(0)).toBe(1);
+    expect((await db.images.toArray()).map((i) => i.id).sort()).toEqual(["capa", "nota"]);
   });
 
   it("distribui cores diferentes entre as disciplinas do semestre", async () => {

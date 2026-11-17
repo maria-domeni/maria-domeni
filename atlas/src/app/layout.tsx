@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { APPEARANCE_BOOT_SCRIPT } from "@/lib/settings";
+import { fontVariables } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Atlas",
-  description: "Central de estudos de Psicologia: aulas, anotações e revisão espaçada.",
+  description: "Central de estudos para a faculdade: aulas, anotações e revisão espaçada.",
   applicationName: "Atlas",
   appleWebApp: { capable: true, title: "Atlas", statusBarStyle: "default" },
   formatDetection: { telephone: false, date: false, address: false, email: false },
@@ -25,7 +26,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" className={fontVariables} data-bg="aurora" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: APPEARANCE_BOOT_SCRIPT }} />
       </head>

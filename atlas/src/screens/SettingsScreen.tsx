@@ -1,11 +1,20 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { Check, Download, Minus, Plus, Trash2, Upload } from "lucide-react";
+import { ArrowDown, ArrowUp, Ban, Check, Download, Minus, Plus, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ACCENT_SWATCH } from "@/components/forms/Onboarding";
 import { Page, ScreenSkeleton } from "@/components/shell/Page";
 import { Button, Card, IconButton, cx } from "@/components/ui/basics";
-import { Segmented, Select, SettingRow, Switch, TextInput } from "@/components/ui/fields";
+import {
+  CustomColorSwatch,
+  Segmented,
+  Select,
+  SettingRow,
+  Switch,
+  TextInput,
+} from "@/components/ui/fields";
+import { Avatar, ImageField } from "@/components/ui/media";
 import { useConfirm, useToast } from "@/components/ui/overlays";
 import {
   BackupError,
@@ -24,22 +33,34 @@ import { saveSettings } from "@/lib/store";
 import {
   ACCENT_KEYS,
   ACCENT_LABEL,
+  COVER_LABEL,
+  COVER_PRESETS,
   DEFAULT_SETTINGS,
-  type AccentKey,
+  FONT_HINT,
+  FONT_KEYS,
+  FONT_LABEL,
+  TITLE_FONT_KEYS,
+  TODAY_SECTION_LABEL,
+  type BackgroundStyle,
   type Settings,
+  type TextScale,
   type ThemeMode,
+  type TitleFontKey,
 } from "@/lib/types";
 
-const ACCENT_SWATCH: Record<AccentKey, string> = {
-  indigo: "#4f46e5",
-  azul: "#0a66d6",
-  rosa: "#cf2f66",
-  verde: "#17804a",
-  laranja: "#c2500a",
-  lilas: "#8f33c4",
-};
+const MAX_BACKUP_BYTES = 200 * 1024 * 1024;
 
-const MAX_BACKUP_BYTES = 80 * 1024 * 1024;
+/** Família usada para desenhar a amostra de cada fonte. */
+const FONT_SAMPLE: Record<TitleFontKey, string> = {
+  igual: "var(--f-app)",
+  sistema: "var(--f-system)",
+  inter: "var(--font-inter), var(--f-system)",
+  nunito: "var(--font-nunito), var(--f-system)",
+  lexend: "var(--font-lexend), var(--f-system)",
+  lora: "var(--font-lora), Georgia, serif",
+  fraunces: "var(--font-fraunces), Georgia, serif",
+  caveat: "var(--font-caveat), cursive",
+};
 
 export default function SettingsScreen() {
   const settings = useSettings();
@@ -116,7 +137,7 @@ function SettingsBody({
     const ok = await confirm({
       title: "Apagar todos os dados?",
       message:
-        "Semestres, disciplinas, aulas, revisões, prazos e ajustes deste aparelho serão apagados. Não dá para desfazer.",
+        "Semestres, disciplinas, aulas, imagens, revisões, prazos e ajustes deste aparelho serão apagados. Não dá para desfazer.",
       confirmLabel: "Apagar tudo",
       destructive: true,
     });
@@ -125,9 +146,29 @@ function SettingsBody({
     toast("Dados apagados");
   }
 
+  function moveSection(index: number, delta: number) {
+    const next = [...settings.todaySections];
+    const target = index + delta;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    update({ todaySections: next });
+  }
+
+  const cover = settings.todayCover;
+
   return (
     <Page title="Ajustes">
       <Group title="Perfil">
+        <div className="flex items-center gap-4 px-4 py-3.5">
+          <ImageField
+            shape="round"
+            label="foto"
+            maxEdge={512}
+            imageId={settings.avatarImageId}
+            onChange={(avatarImageId) => update({ avatarImageId })}
+            placeholder={<Avatar imageId={null} name={settings.profileName} size={72} />}
+          />
+        </div>
         <SettingRow label="Seu nome" htmlFor="perfil-nome">
           <CommitInput
             id="perfil-nome"
@@ -176,6 +217,184 @@ function SettingsBody({
         </SettingRow>
       </Group>
 
+      <Group title="Aparência">
+        <Block label="Tema">
+          <Segmented<ThemeMode>
+            label="Tema"
+            value={settings.theme}
+            onChange={(theme) => update({ theme })}
+            options={[
+              { value: "auto", label: "Automático" },
+              { value: "claro", label: "Claro" },
+              { value: "escuro", label: "Escuro" },
+            ]}
+          />
+        </Block>
+        <Block label="Cor de destaque">
+          <div className="flex flex-wrap gap-3" role="radiogroup" aria-label="Cor de destaque">
+            {ACCENT_KEYS.map((accent) => {
+              const selected = settings.accent === accent;
+              return (
+                <button
+                  key={accent}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={ACCENT_LABEL[accent]}
+                  title={ACCENT_LABEL[accent]}
+                  onClick={() => update({ accent })}
+                  className="pressable inline-flex size-10 items-center justify-center rounded-full text-white"
+                  style={{
+                    backgroundColor: ACCENT_SWATCH[accent],
+                    boxShadow: selected
+                      ? `0 0 0 3px var(--surface), 0 0 0 5px ${ACCENT_SWATCH[accent]}`
+                      : undefined,
+                  }}
+                >
+                  {selected ? <Check size={19} strokeWidth={3} /> : null}
+                </button>
+              );
+            })}
+            <CustomColorSwatch
+              value={settings.customAccent}
+              selected={settings.accent === "personalizada"}
+              onChange={(customAccent) => update({ accent: "personalizada", customAccent })}
+              label="Escolher outra cor de destaque"
+            />
+          </div>
+        </Block>
+        <Block label="Fundo" hint="Aurora põe um brilho suave na cor de destaque atrás das telas.">
+          <Segmented<BackgroundStyle>
+            label="Fundo"
+            value={settings.background}
+            onChange={(background) => update({ background })}
+            options={[
+              { value: "liso", label: "Liso" },
+              { value: "suave", label: "Colorido" },
+              { value: "aurora", label: "Aurora" },
+            ]}
+          />
+        </Block>
+        <Block label="Fonte do app">
+          <FontPicker
+            label="Fonte do app"
+            options={FONT_KEYS}
+            value={settings.fontBody}
+            onChange={(fontBody) => update({ fontBody: fontBody as Settings["fontBody"] })}
+          />
+        </Block>
+        <Block label="Fonte dos títulos">
+          <FontPicker
+            label="Fonte dos títulos"
+            options={TITLE_FONT_KEYS}
+            value={settings.fontTitle}
+            onChange={(fontTitle) => update({ fontTitle })}
+          />
+        </Block>
+        <Block label="Tamanho do texto das anotações">
+          <Segmented<TextScale>
+            label="Tamanho do texto das anotações"
+            value={settings.textScale}
+            onChange={(textScale) => update({ textScale })}
+            options={[
+              { value: "pequeno", label: "Pequeno" },
+              { value: "padrao", label: "Padrão" },
+              { value: "grande", label: "Grande" },
+            ]}
+          />
+        </Block>
+      </Group>
+
+      <Group title="Tela Hoje" footer="Escolha a capa do topo e quais blocos aparecem, na ordem que preferir.">
+        <Block label="Capa">
+          <div className="flex flex-wrap gap-2.5" role="radiogroup" aria-label="Capa da tela Hoje">
+            <button
+              type="button"
+              role="radio"
+              aria-checked={cover.kind === "nenhuma"}
+              aria-label="Sem capa"
+              title="Sem capa"
+              onClick={() => update({ todayCover: { ...cover, kind: "nenhuma" } })}
+              className={cx(
+                "pressable inline-flex h-12 w-[68px] items-center justify-center rounded-[13px] bg-fill text-label-2",
+                cover.kind === "nenhuma" && "shadow-[0_0_0_3px_var(--surface),0_0_0_5px_var(--accent)]",
+              )}
+            >
+              <Ban size={19} strokeWidth={2.2} />
+            </button>
+            {COVER_PRESETS.map((preset) => {
+              const selected = cover.kind === "predefinida" && cover.preset === preset;
+              return (
+                <button
+                  key={preset}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={COVER_LABEL[preset]}
+                  title={COVER_LABEL[preset]}
+                  onClick={() => update({ todayCover: { ...cover, kind: "predefinida", preset } })}
+                  className={cx(
+                    `cover cover-${preset} pressable inline-flex h-12 w-[68px] items-center justify-center rounded-[13px]`,
+                    selected && "shadow-[0_0_0_3px_var(--surface),0_0_0_5px_var(--accent)]",
+                  )}
+                >
+                  {selected ? <Check size={19} strokeWidth={3} /> : null}
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-4">
+            <p className="mb-2 text-[14px] font-semibold text-label-2">Ou use uma imagem sua</p>
+            <ImageField
+              label="imagem"
+              maxEdge={2000}
+              imageId={cover.kind === "imagem" ? cover.imageId : null}
+              onChange={(imageId) =>
+                update({
+                  todayCover: imageId
+                    ? { ...cover, kind: "imagem", imageId }
+                    : { ...cover, kind: "predefinida", imageId: null },
+                })
+              }
+            />
+          </div>
+        </Block>
+        {settings.todaySections.map((section, index) => (
+          <div key={section.key} className="flex min-h-[56px] items-center gap-2 py-1.5 pr-4 pl-2">
+            <IconButton
+              icon={ArrowUp}
+              label={`Subir ${TODAY_SECTION_LABEL[section.key]}`}
+              tone="neutral"
+              disabled={index === 0}
+              onClick={() => moveSection(index, -1)}
+              className="!size-9"
+            />
+            <IconButton
+              icon={ArrowDown}
+              label={`Descer ${TODAY_SECTION_LABEL[section.key]}`}
+              tone="neutral"
+              disabled={index === settings.todaySections.length - 1}
+              onClick={() => moveSection(index, 1)}
+              className="!size-9"
+            />
+            <span className={cx("min-w-0 flex-1 truncate text-[17px]", !section.visible && "text-label-3")}>
+              {TODAY_SECTION_LABEL[section.key]}
+            </span>
+            <Switch
+              label={`Mostrar ${TODAY_SECTION_LABEL[section.key]}`}
+              checked={section.visible}
+              onChange={(visible) =>
+                update({
+                  todaySections: settings.todaySections.map((s) =>
+                    s.key === section.key ? { ...s, visible } : s,
+                  ),
+                })
+              }
+            />
+          </div>
+        ))}
+      </Group>
+
       <Group
         title="Revisão espaçada"
         footer="Mudar os intervalos reagenda as revisões pendentes de todas as aulas. As já feitas não mudam."
@@ -192,9 +411,7 @@ function SettingsBody({
           <Switch
             label="Reforço quando for Difícil"
             checked={settings.hardReinforceDays > 0}
-            onChange={(on) =>
-              update({ hardReinforceDays: on ? DEFAULT_SETTINGS.hardReinforceDays : 0 })
-            }
+            onChange={(on) => update({ hardReinforceDays: on ? DEFAULT_SETTINGS.hardReinforceDays : 0 })}
           />
         </SettingRow>
         {settings.hardReinforceDays > 0 ? (
@@ -210,56 +427,12 @@ function SettingsBody({
         ) : null}
       </Group>
 
-      <Group title="Aparência">
-        <div className="px-4 py-3.5">
-          <p className="mb-2 text-[17px]">Tema</p>
-          <Segmented<ThemeMode>
-            label="Tema"
-            value={settings.theme}
-            onChange={(theme) => update({ theme })}
-            options={[
-              { value: "auto", label: "Automático" },
-              { value: "claro", label: "Claro" },
-              { value: "escuro", label: "Escuro" },
-            ]}
-          />
-        </div>
-        <div className="px-4 py-3.5">
-          <p className="mb-2.5 text-[17px]">Cor de destaque</p>
-          <div className="flex flex-wrap gap-3" role="radiogroup" aria-label="Cor de destaque">
-            {ACCENT_KEYS.map((accent) => {
-              const selected = settings.accent === accent;
-              return (
-                <button
-                  key={accent}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  aria-label={ACCENT_LABEL[accent]}
-                  title={ACCENT_LABEL[accent]}
-                  onClick={() => update({ accent })}
-                  className="pressable inline-flex size-11 items-center justify-center rounded-full text-white"
-                  style={{
-                    backgroundColor: ACCENT_SWATCH[accent],
-                    boxShadow: selected
-                      ? `0 0 0 3px var(--surface), 0 0 0 5px ${ACCENT_SWATCH[accent]}`
-                      : undefined,
-                  }}
-                >
-                  {selected ? <Check size={20} strokeWidth={3} /> : null}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </Group>
-
       <Group
         title="Seus dados"
         footer={
           persisted === false
             ? "Tudo fica guardado só neste aparelho. Instale o Atlas na Tela de Início e faça backup com frequência: o navegador pode limpar dados de sites pouco usados."
-            : "Tudo fica guardado só neste aparelho. O backup é um arquivo .json que você pode salvar no app Arquivos, no iCloud ou no computador."
+            : "Tudo fica guardado só neste aparelho. O backup é um arquivo .json, com as imagens, que você pode salvar no app Arquivos, no iCloud ou no computador."
         }
       >
         <SettingRow
@@ -297,11 +470,11 @@ function SettingsBody({
       </Group>
 
       {!standalone ? (
-        <Group title="Instalar no iPad">
+        <Group title="Instalar no iPad ou no celular">
           <ol className="list-decimal space-y-1.5 py-3.5 pr-4 pl-9 text-[16px] leading-[22px]">
-            <li>Abra o Atlas no Safari.</li>
-            <li>Toque em Compartilhar.</li>
-            <li>Escolha “Adicionar à Tela de Início”.</li>
+            <li>Abra o Atlas no navegador (Safari no iPad e no iPhone).</li>
+            <li>Toque em Compartilhar, ou no menu do navegador.</li>
+            <li>Escolha “Adicionar à Tela de Início” ou “Instalar app”.</li>
           </ol>
           <p className="px-4 pb-3.5 text-[14px] leading-[19px] text-label-2">
             Instalado, o Atlas abre em tela cheia e funciona sem internet.
@@ -309,7 +482,7 @@ function SettingsBody({
         </Group>
       ) : null}
 
-      <p className="mt-8 px-1 text-center text-[13px] text-label-3">Atlas · Fase 1</p>
+      <p className="mt-8 px-1 text-center text-[13px] text-label-3">Atlas</p>
     </Page>
   );
 }
@@ -321,6 +494,65 @@ function Group({ title, footer, children }: { title: string; footer?: string; ch
       <Card className="divide-y divide-sep">{children}</Card>
       {footer ? <p className="mt-2 px-4 text-[13.5px] leading-[18px] text-label-2">{footer}</p> : null}
     </section>
+  );
+}
+
+function Block({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
+  return (
+    <div className="px-4 py-3.5">
+      <p className="mb-2.5 text-[17px]">{label}</p>
+      {children}
+      {hint ? <p className="mt-2 text-[13.5px] leading-[18px] text-label-2">{hint}</p> : null}
+    </div>
+  );
+}
+
+function FontPicker<T extends TitleFontKey>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly T[];
+  value: T;
+  onChange: (value: T) => void;
+}) {
+  return (
+    <div
+      role="radiogroup"
+      aria-label={label}
+      className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pt-1 pb-1.5"
+    >
+      {options.map((font) => {
+        const selected = font === value;
+        return (
+          <button
+            key={font}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onChange(font)}
+            className={cx(
+              "pressable flex w-[112px] flex-none flex-col items-start rounded-[16px] px-3 pt-2.5 pb-2.5 text-left",
+              selected ? "bg-accent-soft shadow-[inset_0_0_0_2px_var(--accent)]" : "bg-fill",
+            )}
+          >
+            <span
+              aria-hidden
+              className="text-[28px] leading-[34px] font-semibold"
+              style={{ fontFamily: FONT_SAMPLE[font] }}
+            >
+              Aa
+            </span>
+            <span className="mt-1 w-full truncate text-[14px] leading-[18px] font-semibold">
+              {FONT_LABEL[font]}
+            </span>
+            <span className="w-full truncate text-[12.5px] leading-4 text-label-2">{FONT_HINT[font]}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -426,20 +658,16 @@ function IntervalsEditor({
         {values.map((value, index) => (
           <label key={index} className="block">
             <span className="mb-1 block text-center text-[12.5px] font-semibold text-label-3">R{index + 1}</span>
-            <div className="flex items-center gap-1">
-              <TextInput
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={365}
-                value={value}
-                aria-label={`Dias até a revisão R${index + 1}`}
-                onChange={(e) =>
-                  setValues((prev) => prev.map((v, i) => (i === index ? e.target.value : v)))
-                }
-                className="!h-10 !w-[76px] text-center tabular-nums"
-              />
-            </div>
+            <TextInput
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={365}
+              value={value}
+              aria-label={`Dias até a revisão R${index + 1}`}
+              onChange={(e) => setValues((prev) => prev.map((v, i) => (i === index ? e.target.value : v)))}
+              className="!h-10 !w-[76px] text-center tabular-nums"
+            />
           </label>
         ))}
         <IconButton
@@ -463,12 +691,10 @@ function IntervalsEditor({
         />
       </div>
       {!valid ? (
-        <p className="mt-2 text-[14px] text-danger">
-          Use números de 1 a 365, em ordem crescente e sem repetir.
-        </p>
+        <p className="mt-2 text-[14px] text-danger">Use números de 1 a 365, em ordem crescente e sem repetir.</p>
       ) : null}
       {dirty ? (
-        <div className={cx("mt-3 flex gap-2")}>
+        <div className="mt-3 flex gap-2">
           <Button size="sm" disabled={!valid} onClick={() => onChange(parsed)}>
             Aplicar
           </Button>

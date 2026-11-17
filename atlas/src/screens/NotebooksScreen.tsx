@@ -5,7 +5,8 @@ import { BookOpen, ChevronDown, Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import { DisciplineSheet, SemesterSheet } from "@/components/forms/Sheets";
 import { Page, ScreenSkeleton } from "@/components/shell/Page";
-import { Button, Chip, EmptyState, IconButton, Link, cx } from "@/components/ui/basics";
+import { Button, Chip, EmptyState, IconButton, Link, cx, tint } from "@/components/ui/basics";
+import { DisciplineCover } from "@/components/ui/media";
 import { db } from "@/lib/db";
 import { formatShort } from "@/lib/dates";
 import { useSettingsOrDefault, useToday } from "@/lib/hooks";
@@ -73,7 +74,7 @@ export default function NotebooksScreen() {
   return (
     <Page
       title="Cadernos"
-      subtitle={`${settings.course} · ${settings.institution}`}
+      subtitle={[settings.course, settings.institution].filter((v) => v.trim() !== "").join(" · ") || undefined}
       actions={
         <Button variant="plain" icon={Plus} onClick={() => setSemesterSheet({ open: true })}>
           Semestre
@@ -119,7 +120,7 @@ export default function NotebooksScreen() {
                     !isOpen && "-rotate-90",
                   )}
                 />
-                <h2 className="truncate text-[22px] leading-7 font-bold tracking-[-0.02em]">
+                <h2 className="font-display truncate text-[22px] leading-7 font-bold tracking-[-0.02em]">
                   {semester.number}º semestre
                 </h2>
                 {isCurrent ? <Chip tone="accent">Atual</Chip> : null}
@@ -149,7 +150,7 @@ export default function NotebooksScreen() {
                 <button
                   type="button"
                   onClick={() => setDisciplineSheet({ open: true, semesterId: semester.id })}
-                  className="pressable flex min-h-[112px] items-center justify-center gap-2 rounded-[20px] border-[1.5px] border-dashed border-fill-2 text-[16px] font-semibold text-accent"
+                  className="pressable flex min-h-[176px] items-center justify-center gap-2 rounded-[22px] border-[1.5px] border-dashed border-fill-2 text-[16px] font-semibold text-accent"
                 >
                   <Plus size={19} strokeWidth={2.5} />
                   Nova disciplina
@@ -198,29 +199,43 @@ function DisciplineCard({
   return (
     <Link
       to={`#/disciplina/${discipline.id}`}
-      className={`dc dc-${discipline.color} pressable relative flex min-h-[112px] flex-col overflow-hidden rounded-[20px] bg-surface py-3.5 pr-4 pl-5 shadow-card`}
+      {...tint(
+        discipline.color,
+        "pressable relative flex min-h-[176px] flex-col overflow-hidden rounded-[22px] bg-surface shadow-card",
+      )}
     >
-      <span aria-hidden className="absolute inset-y-0 left-0 w-[5px] bg-dc" />
-      <div className="flex items-start gap-2">
-        <h3 className="line-clamp-2 min-w-0 flex-1 text-[18px] leading-[23px] font-semibold tracking-[-0.015em]">
+      <DisciplineCover
+        color={discipline.color}
+        imageId={discipline.coverImageId}
+        className="h-[76px] flex-none"
+      >
+        {stats && stats.due > 0 ? (
+          <span className="glass absolute top-2.5 right-2.5 inline-flex h-6 items-center rounded-full px-2.5 text-[12.5px] font-semibold text-white">
+            {stats.due} {stats.due === 1 ? "revisão" : "revisões"}
+          </span>
+        ) : null}
+      </DisciplineCover>
+      <span
+        aria-hidden
+        className="absolute top-[52px] left-4 inline-flex size-12 items-center justify-center rounded-[15px] bg-surface text-[24px] leading-none font-bold text-dc shadow-[0_2px_10px_rgba(0,0,0,0.12),0_0_0_0.5px_rgba(0,0,0,0.06)]"
+      >
+        {discipline.emoji || discipline.name.trim().charAt(0).toUpperCase()}
+      </span>
+      <div className="flex flex-1 flex-col px-4 pt-8 pb-3.5">
+        <h3 className="font-display line-clamp-2 text-[18px] leading-[23px] font-semibold tracking-[-0.015em]">
           {discipline.name}
         </h3>
-        {stats && stats.due > 0 ? (
-          <Chip tone="red">
-            {stats.due} {stats.due === 1 ? "revisão" : "revisões"}
-          </Chip>
+        {discipline.professor ? (
+          <p className="mt-0.5 truncate text-[14.5px] text-label-2">{discipline.professor}</p>
         ) : null}
+        <p className="mt-auto truncate pt-2.5 text-[13.5px] text-label-2">
+          <span className="font-semibold text-dc">
+            {stats?.lessons ?? 0} {stats?.lessons === 1 ? "aula" : "aulas"}
+          </span>
+          {schedule ? ` · ${schedule}` : ""}
+          {discipline.status !== "andamento" ? ` · ${STATUS_LABEL[discipline.status]}` : ""}
+        </p>
       </div>
-      {discipline.professor ? (
-        <p className="mt-0.5 truncate text-[14.5px] text-label-2">{discipline.professor}</p>
-      ) : null}
-      <p className="mt-auto truncate pt-3 text-[13.5px] text-label-2">
-        <span className="font-semibold text-dc">
-          {stats?.lessons ?? 0} {stats?.lessons === 1 ? "aula" : "aulas"}
-        </span>
-        {schedule ? ` · ${schedule}` : ""}
-        {discipline.status !== "andamento" ? ` · ${STATUS_LABEL[discipline.status]}` : ""}
-      </p>
     </Link>
   );
 }

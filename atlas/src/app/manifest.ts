@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "Atlas",
     short_name: "Atlas",
-    description: "Central de estudos de Psicologia: aulas, anotações e revisão espaçada.",
+    description: "Central de estudos para a faculdade: aulas, anotações e revisão espaçada.",
     lang: "pt-BR",
     start_url: "/",
     scope: "/",

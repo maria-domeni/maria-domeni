@@ -12,6 +12,7 @@ import {
   EmptyState,
   IconButton,
   cx,
+  tint,
 } from "@/components/ui/basics";
 import { Segmented, Select, Switch, TextArea, TextInput } from "@/components/ui/fields";
 import { useConfirm, useToast } from "@/components/ui/overlays";
@@ -165,7 +166,8 @@ function LessonEditor({
       title={draft.title || "Aula sem tema"}
       back={{ to: `#/disciplina/${discipline.id}`, label: discipline.name }}
       eyebrow={
-        <span className={`dc dc-${discipline.color} text-dc`}>
+        <span {...tint(discipline.color, "text-dc")}>
+          {discipline.emoji ? `${discipline.emoji} ` : ""}
           {discipline.name}
           {draft.number ? ` · Aula ${draft.number}` : ""}
         </span>
@@ -196,7 +198,7 @@ function LessonEditor({
           placeholder="Tema da aula"
           aria-label="Tema da aula"
           autoFocus={initial.title === ""}
-          className="!text-[34px] !leading-[41px] font-bold tracking-[-0.028em]"
+          className="font-display !text-[34px] !leading-[41px] font-bold tracking-[-0.028em]"
         />
       }
     >

@@ -7,7 +7,8 @@
 :root {
   color-scheme: light;
 
-  --bg: #f3f3f6;
+  --bg-base: #f3f3f6;
+  --bg: var(--bg-base);
   --surface: #ffffff;
   --surface-2: #f6f6f9;
   --fill: rgba(118, 118, 128, 0.12);
@@ -23,7 +24,9 @@
   --warning: #a35c00;
   --yellow: #8a6a00;
 
-  --sh-card: 0 1px 2px rgba(17, 17, 20, 0.04), 0 0 0 0.5px rgba(17, 17, 20, 0.04);
+  --sh-card:
+    0 1px 2px rgba(17, 17, 20, 0.04), 0 8px 24px -12px rgba(17, 17, 20, 0.12),
+    0 0 0 0.5px rgba(17, 17, 20, 0.05);
   --sh-float: 0 12px 40px rgba(17, 17, 20, 0.16), 0 0 0 0.5px rgba(17, 17, 20, 0.06);
 
   --accent-l: #4f46e5;
@@ -37,12 +40,71 @@
 
   --e-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --e-spring: cubic-bezier(0.32, 1.28, 0.6, 1);
+
+  --f-system:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --f-app: var(--f-system);
+  --f-title: var(--f-app);
+  --note-size: 17px;
+}
+
+/* Fundo (Ajustes > Aparência) */
+:root[data-bg="suave"] {
+  --bg: color-mix(in srgb, var(--accent) 7%, var(--bg-base));
+}
+:root[data-bg="aurora"] {
+  --bg: color-mix(in srgb, var(--accent) 3%, var(--bg-base));
+}
+
+/* Fontes (Ajustes > Aparência) */
+:root[data-font="inter"] {
+  --f-app: var(--font-inter), var(--f-system);
+}
+:root[data-font="nunito"] {
+  --f-app: var(--font-nunito), var(--f-system);
+}
+:root[data-font="lexend"] {
+  --f-app: var(--font-lexend), var(--f-system);
+}
+:root[data-font="lora"] {
+  --f-app: var(--font-lora), Georgia, "Times New Roman", serif;
+}
+:root[data-font="fraunces"] {
+  --f-app: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+:root[data-font-title="sistema"] {
+  --f-title: var(--f-system);
+}
+:root[data-font-title="inter"] {
+  --f-title: var(--font-inter), var(--f-system);
+}
+:root[data-font-title="nunito"] {
+  --f-title: var(--font-nunito), var(--f-system);
+}
+:root[data-font-title="lexend"] {
+  --f-title: var(--font-lexend), var(--f-system);
+}
+:root[data-font-title="lora"] {
+  --f-title: var(--font-lora), Georgia, "Times New Roman", serif;
+}
+:root[data-font-title="fraunces"] {
+  --f-title: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+:root[data-font-title="caveat"] {
+  --f-title: var(--font-caveat), "Bradley Hand", "Segoe Print", cursive;
+}
+:root[data-scale="pequeno"] {
+  --note-size: 15.5px;
+}
+:root[data-scale="grande"] {
+  --note-size: 19.5px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0b0b0d;
+    --bg-base: #0b0b0d;
     --surface: #1b1b1f;
     --surface-2: #26262b;
     --fill: rgba(118, 118, 128, 0.24);
@@ -67,7 +129,7 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b0b0d;
+  --bg-base: #0b0b0d;
   --surface: #1b1b1f;
   --surface-2: #26262b;
   --fill: rgba(118, 118, 128, 0.24);
@@ -172,9 +234,8 @@
   --color-dc: var(--dc);
   --color-dc-soft: color-mix(in srgb, var(--dc) 14%, transparent);
 
-  --font-sans:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--f-app);
+  --font-display: var(--f-title);
 
   --shadow-card: var(--sh-card);
   --shadow-float: var(--sh-float);
@@ -195,7 +256,7 @@
   body {
     background: var(--bg);
     color: var(--label);
-    font-family: var(--font-sans);
+    font-family: var(--f-app);
     font-size: 17px;
     line-height: 1.38;
     letter-spacing: -0.01em;
@@ -513,7 +574,7 @@
 
 @layer components {
   .atlas-prose {
-    font-size: 17px;
+    font-size: var(--note-size);
     line-height: 1.55;
     min-height: 42dvh;
     padding: 18px 20px 28px;
@@ -522,6 +583,10 @@
   }
   .atlas-prose > * + * {
     margin-top: 0.7em;
+  }
+  .atlas-prose h2,
+  .atlas-prose h3 {
+    font-family: var(--f-title);
   }
   .atlas-prose h2 {
     font-size: 1.32em;
@@ -636,5 +701,154 @@
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Fundo aurora, títulos e capas                                       */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  /* Brilho suave atrás de tudo, na cor de destaque */
+  :root[data-bg="aurora"] body {
+    background: transparent;
+  }
+  :root[data-bg="aurora"] body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 46% at 92% -6%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%),
+      radial-gradient(46% 40% at 6% 4%, color-mix(in srgb, #f0619a 15%, transparent), transparent 70%),
+      radial-gradient(54% 44% at 58% 108%, color-mix(in srgb, #38bdf8 13%, transparent), transparent 72%);
+  }
+}
+
+@layer components {
+  /* Caveat tem letras menores: iguala a altura das minúsculas à das outras fontes */
+  :root[data-font-title="caveat"] .font-display {
+    font-size-adjust: 0.5;
+    letter-spacing: 0;
+  }
+  :root:is([data-font-title="lora"], [data-font-title="fraunces"]) .font-display,
+  :root:is([data-font="lora"], [data-font="fraunces"]):is([data-font-title="igual"], :not([data-font-title]))
+    .font-display {
+    letter-spacing: -0.012em;
+  }
+
+  /* Capas: gradiente pronto ou imagem enviada */
+  .cover {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    color: #fff;
+    background-color: var(--accent-solid);
+    background-size: cover;
+    background-position: center;
+  }
+  .cover > img.cover-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  /* escurece a base para o texto branco continuar legível sobre qualquer foto */
+  .cover.has-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.18) 40%, rgba(0, 0, 0, 0.62) 100%);
+  }
+  .cover-destaque {
+    background-image:
+      radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, #f0619a 62%, transparent), transparent 62%),
+      radial-gradient(70% 110% at 0% 100%, color-mix(in srgb, #38bdf8 34%, transparent), transparent 60%),
+      linear-gradient(135deg, var(--accent-solid), color-mix(in srgb, var(--accent-solid) 78%, #000));
+  }
+  .cover-aurora {
+    background-image:
+      radial-gradient(80% 120% at 100% 0%, rgba(240, 97, 154, 0.85), transparent 60%),
+      radial-gradient(70% 110% at 0% 100%, rgba(56, 189, 248, 0.5), transparent 60%),
+      linear-gradient(135deg, #5b5ff0, #7c3aed);
+  }
+  .cover-por-do-sol {
+    background-image:
+      radial-gradient(80% 120% at 100% 0%, rgba(255, 196, 86, 0.8), transparent 60%),
+      radial-gradient(70% 110% at 0% 100%, rgba(124, 58, 237, 0.65), transparent 62%),
+      linear-gradient(135deg, #f97316, #e11d74);
+  }
+  .cover-oceano {
+    background-image:
+      radial-gradient(80% 120% at 100% 0%, rgba(45, 212, 191, 0.8), transparent 60%),
+      radial-gradient(70% 110% at 0% 100%, rgba(79, 70, 229, 0.7), transparent 62%),
+      linear-gradient(135deg, #0891b2, #1d4ed8);
+  }
+  .cover-floresta {
+    background-image:
+      radial-gradient(80% 120% at 100% 0%, rgba(190, 242, 100, 0.65), transparent 60%),
+      radial-gradient(70% 110% at 0% 100%, rgba(8, 145, 178, 0.7), transparent 62%),
+      linear-gradient(135deg, #15803d, #0f766e);
+  }
+  .cover-lavanda {
+    background-image:
+      radial-gradient(80% 120% at 100% 0%, rgba(251, 182, 206, 0.9), transparent 60%),
+      radial-gradient(70% 110% at 0% 100%, rgba(129, 140, 248, 0.8), transparent 62%),
+      linear-gradient(135deg, #a78bfa, #c084fc);
+  }
+  .cover-grafite {
+    background-image:
+      radial-gradient(80% 120% at 100% 0%, rgba(148, 163, 184, 0.45), transparent 60%),
+      radial-gradient(70% 110% at 0% 100%, rgba(99, 102, 241, 0.35), transparent 62%),
+      linear-gradient(135deg, #2b2b33, #17171c);
+  }
+  /* Capa de disciplina sem imagem: gradiente na cor da disciplina */
+  .cover-dc {
+    background-color: var(--dc-l);
+    background-image:
+      radial-gradient(90% 130% at 100% 0%, color-mix(in srgb, #fff 34%, transparent), transparent 60%),
+      linear-gradient(135deg, var(--dc-l), color-mix(in srgb, var(--dc-l) 72%, #000));
+  }
+
+  /* Vidro claro para elementos sobre capas */
+  .glass {
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    backdrop-filter: saturate(160%) blur(14px);
+    box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.35);
+  }
+
+  /* Imagens nas anotações */
+  .atlas-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    width: 100%;
+    border-radius: 14px;
+    line-height: 0;
+  }
+  .atlas-image[data-size="p"] {
+    width: 38%;
+    min-width: 140px;
+  }
+  .atlas-image[data-size="m"] {
+    width: 66%;
+    min-width: 200px;
+  }
+  .atlas-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    background: var(--fill);
+  }
+  .atlas-image.is-selected img {
+    box-shadow:
+      0 0 0 3px var(--surface),
+      0 0 0 5px var(--accent);
   }
 }
