@@ -143,7 +143,7 @@ export function AiStudio({
   if (!settings.aiEnabled) {
     return (
       <Card className="px-5 py-4 text-[15px] text-label-2">
-        A IA está desligada. Ligue em <Link to="#/ajustes/ia" className="font-bold text-accent">Ajustes › IA</Link>.
+        A IA está desligada. Ligue em <Link to="#/ajustes/ia" className="font-semibold text-accent">Ajustes › IA</Link>.
       </Card>
     );
   }
@@ -151,7 +151,7 @@ export function AiStudio({
   return (
     <div className="space-y-4">
       <Card className="px-4 py-4">
-        <p className="text-[14px] font-bold text-label-2">Usar como fonte</p>
+        <p className="text-[14px] font-semibold text-label-2">Usar como fonte</p>
         {withContent.length === 0 ? (
           <p className="mt-1 text-[14.5px] text-label-2">Ainda não há aulas com anotações nesta disciplina. Os botões de tema (Aprofundar e Explicar) funcionam mesmo assim.</p>
         ) : (
@@ -165,7 +165,7 @@ export function AiStudio({
                   onClick={() => setSelected((s) => (on ? s.filter((id) => id !== lesson.id) : [...s, lesson.id]))}
                   aria-pressed={on}
                   className={cx(
-                    "pressable h-9 flex-none rounded-full px-3 text-[13.5px] font-bold whitespace-nowrap",
+                    "pressable h-9 flex-none rounded-[8px] px-3 text-[13.5px] font-semibold whitespace-nowrap",
                     on ? "bg-accent-solid text-on-accent" : "bg-fill text-label-2",
                   )}
                 >
@@ -178,7 +178,7 @@ export function AiStudio({
           </div>
         )}
         <label className="mt-3 block">
-          <span className="text-[14px] font-bold text-label-2">Tema (para Aprofundar e Explicar)</span>
+          <span className="text-[14px] font-semibold text-label-2">Tema (para Aprofundar e Explicar)</span>
           <TextInput value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Ex.: posição esquizoparanoide em Melanie Klein" className="mt-1" />
         </label>
       </Card>
@@ -193,7 +193,7 @@ export function AiStudio({
             className="pressable lift card flex flex-col items-start gap-1 px-4 py-3.5 text-left disabled:opacity-50"
           >
             <span className="text-[26px] leading-none">{card.emoji}</span>
-            <span className="mt-1 text-[15.5px] font-bold">{card.title}</span>
+            <span className="mt-1 text-[15.5px] font-semibold">{card.title}</span>
             <span className="text-[12.5px] leading-[17px] text-label-2">{card.hint}</span>
           </button>
         ))}
@@ -203,7 +203,7 @@ export function AiStudio({
           className="pressable lift card flex flex-col items-start gap-1 px-4 py-3.5 text-left"
         >
           <span className="text-[26px] leading-none">{discipline.emoji || "🧑‍🏫"}</span>
-          <span className="mt-1 text-[15.5px] font-bold">Agente de {discipline.name}</span>
+          <span className="mt-1 text-[15.5px] font-semibold">Agente de {discipline.name}</span>
           <span className="text-[12.5px] leading-[17px] text-label-2">Converse e tire dúvidas da matéria</span>
         </button>
       </div>

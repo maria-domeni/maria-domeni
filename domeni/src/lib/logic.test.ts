@@ -600,16 +600,18 @@ describe("ajustes", () => {
   it("aplica estilos prontos e valida o tema", () => {
     const attrs = appearanceAttributes({ ...DEFAULT_SETTINGS, ...THEME_PRESETS.noite.values }).attrs;
     expect(attrs["data-theme"]).toBe("dark");
-    expect(attrs["data-tone"]).toBe("lavanda");
+    expect(attrs["data-tone"]).toBe("neutro");
+    expect(attrs["data-font"]).toBe("sistema");
     const custom = appearanceAttributes({ ...DEFAULT_SETTINGS, accent: "personalizada", customAccent: "#ffcc00" });
     expect(custom.vars["--accent-l"]).toMatch(/^#[0-9a-f]{6}$/);
     expect(normalizeSettings({ theme: "roxo" as never }).theme).toBe("auto");
   });
 
   it("valida personagem e links", () => {
-    const avatar = normalizeAvatar({ name: "", hair: "moicano", skin: "red" });
+    const avatar = normalizeAvatar({ name: "", species: "dragao" as never, color: "red" });
     expect(avatar.name).toBe("Mimi");
-    expect(avatar.hair).toBe("longo");
+    expect(avatar.species).toBe("gato");
+    expect(avatar.color).toBe("#efe4d8");
     expect(cleanUrl("javascript:alert(1)")).toBe("");
     expect(cleanUrl("http://open.spotify.com/x")).toBe("");
     expect(cleanUrl(" https://open.spotify.com/playlist/abc ")).toBe("https://open.spotify.com/playlist/abc");

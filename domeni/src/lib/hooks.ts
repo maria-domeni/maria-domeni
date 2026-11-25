@@ -26,11 +26,10 @@ export function useAppearanceSync(): void {
   const fontBody = settings?.fontBody;
   const fontTitle = settings?.fontTitle;
   const textScale = settings?.textScale;
-  const background = settings?.background;
   useEffect(() => {
-    if (!theme || !tone || !accent || !customAccent || !fontBody || !fontTitle || !textScale || !background) return;
-    applyAppearance({ theme, tone, accent, customAccent, fontBody, fontTitle, textScale, background });
-  }, [theme, tone, accent, customAccent, fontBody, fontTitle, textScale, background]);
+    if (!theme || !tone || !accent || !customAccent || !fontBody || !fontTitle || !textScale) return;
+    applyAppearance({ theme, tone, accent, customAccent, fontBody, fontTitle, textScale });
+  }, [theme, tone, accent, customAccent, fontBody, fontTitle, textScale]);
 }
 
 function subscribeToClock(onChange: () => void) {

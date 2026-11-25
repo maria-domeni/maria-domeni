@@ -42,7 +42,7 @@ export function MaterialView({ output }: { output: AiOutput }) {
       <div className="grid gap-2.5 sm:grid-cols-2">
         {cards.map((c, i) => (
           <div key={i} className="card px-4 py-3">
-            <p className="font-bold">{c.front}</p>
+            <p className="font-semibold">{c.front}</p>
             <p className="mt-1 text-[14.5px] text-label-2">{c.back}</p>
           </div>
         ))}
@@ -107,7 +107,7 @@ export function Game({ data }: { data: GameData }) {
     return (
       <div className="card px-6 py-8 text-center">
         <p className="text-[48px]">{ratio >= 0.8 ? "🏆" : ratio >= 0.5 ? "🌟" : "💪"}</p>
-        <p className="mt-2 font-display text-[30px] font-bold">
+        <p className="mt-2 font-display text-[30px] font-semibold">
           {score} de {data.rounds.length}
         </p>
         <p className="mt-1 text-label-2">{ratio >= 0.8 ? "Arrasou!" : ratio >= 0.5 ? "Muito bem, quase lá!" : "Bora revisar e jogar de novo!"}</p>
@@ -130,7 +130,7 @@ export function Game({ data }: { data: GameData }) {
   const options = round.kind === "vf" && round.options.length === 0 ? ["Verdadeiro", "Falso"] : round.options;
   return (
     <div className="card px-5 py-5">
-      <div className="flex items-center justify-between text-[13px] font-extrabold tracking-[0.04em] text-label-2 uppercase">
+      <div className="flex items-center justify-between text-[13px] font-medium text-label-2">
         <span>
           {round.kind === "vf" ? "Verdadeiro ou falso" : "Quiz"} · {index + 1}/{data.rounds.length}
         </span>
@@ -141,7 +141,7 @@ export function Game({ data }: { data: GameData }) {
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-fill">
         <div className="h-full rounded-full bg-accent transition-[width]" style={{ width: `${(index / data.rounds.length) * 100}%` }} />
       </div>
-      <p className="mt-4 text-[18px] leading-[26px] font-bold">{round.prompt}</p>
+      <p className="mt-4 text-[18px] leading-[26px] font-semibold">{round.prompt}</p>
       <div className={cx("mt-4 grid gap-2", options.length > 2 && "sm:grid-cols-2")}>
         {options.map((option, o) => {
           const show = picked !== null;
@@ -174,7 +174,7 @@ export function Game({ data }: { data: GameData }) {
       </div>
       {picked !== null ? (
         <div className="mt-4">
-          <p className={cx("font-bold", picked === round.answer ? "text-success" : "text-danger")}>
+          <p className={cx("font-semibold", picked === round.answer ? "text-success" : "text-danger")}>
             {picked === round.answer ? "Acertou! 🎉" : "Quase! A certa está em verde."}
           </p>
           {round.explanation ? <p className="mt-1 text-[15px] leading-[22px] text-label-2">{round.explanation}</p> : null}

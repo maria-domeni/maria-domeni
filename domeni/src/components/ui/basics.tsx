@@ -42,7 +42,7 @@ type Variant = "filled" | "tinted" | "gray" | "plain" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const VARIANT: Record<Variant, string> = {
-  filled: "bg-accent-solid text-on-accent shadow-[0_2px_0_color-mix(in_srgb,var(--accent)_55%,#000)]",
+  filled: "bg-accent-solid text-on-accent",
   tinted: "bg-accent-soft text-accent",
   gray: "bg-fill text-label",
   plain: "text-accent",
@@ -50,9 +50,9 @@ const VARIANT: Record<Variant, string> = {
 };
 
 const SIZE: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-[15px] gap-1.5",
-  md: "h-11 px-5 text-[16px] gap-2",
-  lg: "h-[50px] px-6 text-[17px] gap-2",
+  sm: "h-8 px-3 text-[14px] gap-1.5",
+  md: "h-10 px-4 text-[15px] gap-2",
+  lg: "h-12 px-5 text-[16px] gap-2",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -76,7 +76,7 @@ export function Button({
     <button
       type={type}
       className={cx(
-        "pressable inline-flex items-center justify-center rounded-full font-semibold whitespace-nowrap disabled:pointer-events-none disabled:opacity-40",
+        "pressable inline-flex items-center justify-center rounded-[10px] font-semibold whitespace-nowrap disabled:pointer-events-none disabled:opacity-40",
         VARIANT[variant],
         SIZE[size],
         variant === "plain" && "px-2",
@@ -85,7 +85,7 @@ export function Button({
       )}
       {...rest}
     >
-      {Icon ? <Icon size={size === "sm" ? 16 : 18} strokeWidth={2.3} /> : null}
+      {Icon ? <Icon size={size === "sm" ? 15 : 17} strokeWidth={2.2} /> : null}
       {children}
     </button>
   );
@@ -107,21 +107,21 @@ export function IconButton({
   type = "button",
   ...rest
 }: IconButtonProps) {
-  const color = tone === "danger" ? "text-danger" : tone === "neutral" ? "text-label-2" : "text-accent";
+  const color = tone === "danger" ? "text-danger" : tone === "neutral" ? "text-label-2" : "text-label-2";
   return (
     <button
       type={type}
       aria-label={label}
       title={label}
       className={cx(
-        "pressable inline-flex size-11 flex-none items-center justify-center rounded-full disabled:opacity-40",
+        "pressable row-pressable inline-flex size-9 flex-none items-center justify-center rounded-[10px] disabled:opacity-40",
         color,
         filled && "bg-fill",
         className,
       )}
       {...rest}
     >
-      <Icon size={21} strokeWidth={2.1} />
+      <Icon size={19} strokeWidth={2} />
     </button>
   );
 }
@@ -187,13 +187,12 @@ export function Section({
   emoji?: string;
 }) {
   return (
-    <section className={cx("mt-9", className)}>
-      <div className="mb-3 flex min-h-9 items-end justify-between gap-3 px-1">
-        <h2 className="font-display text-[22px] leading-7 font-bold">
-          {emoji ? <span className="mr-1.5 font-sans">{emoji}</span> : null}
-          <span className="marker">{title}</span>
+    <section className={cx("mt-8", className)} data-emoji={emoji ? "" : undefined}>
+      <div className="mb-2.5 flex min-h-8 items-end justify-between gap-3">
+        <h2 className="font-display text-[18px] leading-6 font-semibold">
+          {title}
           {count !== undefined && count > 0 ? (
-            <span className="ml-2 text-[17px] font-semibold text-label-3">{count}</span>
+            <span className="ml-2 text-[15px] font-medium text-label-3">{count}</span>
           ) : null}
         </h2>
         {action}
@@ -228,16 +227,16 @@ export function Row({ to, onClick, leading, title, subtitle, trailing, chevron, 
     <>
       {leading ? <div className="flex-none">{leading}</div> : null}
       <div className="min-w-0 flex-1 py-3">
-        <div className="truncate text-[16.5px] leading-[22px] font-semibold">{title}</div>
+        <div className="truncate text-[15.5px] leading-[21px] font-medium">{title}</div>
         {subtitle ? (
-          <div className="mt-0.5 truncate text-[14px] leading-[19px] text-label-2">{subtitle}</div>
+          <div className="mt-0.5 truncate text-[13.5px] leading-[18px] text-label-2">{subtitle}</div>
         ) : null}
       </div>
       {trailing ? <div className="flex flex-none items-center gap-2">{trailing}</div> : null}
       {chevron ? <ChevronRight size={18} strokeWidth={2.4} className="flex-none text-label-3" /> : null}
     </>
   );
-  const base = cx("flex min-h-[60px] w-full items-center gap-3.5 px-4 text-left", className);
+  const base = cx("flex min-h-[52px] w-full items-center gap-3 px-4 text-left", className);
   if (to) {
     return (
       <Link to={to} className={cx(base, "row-pressable")}>
@@ -280,7 +279,7 @@ export function Chip({
   return (
     <span
       className={cx(
-        "inline-flex h-6 items-center gap-1 rounded-full px-2.5 text-[13px] leading-none font-semibold whitespace-nowrap",
+        "inline-flex h-[22px] items-center gap-1 rounded-[6px] px-2 text-[12.5px] leading-none font-medium whitespace-nowrap",
         TONE[tone],
         className,
       )}
@@ -317,7 +316,7 @@ export function IconBadge({
   return (
     <span
       aria-hidden
-      className={cx("inline-flex flex-none items-center justify-center rounded-[11px]", TONE[tone])}
+      className={cx("inline-flex flex-none items-center justify-center rounded-[9px]", TONE[tone])}
       style={{ width: size, height: size }}
     >
       <Icon size={Math.round(size * 0.52)} strokeWidth={2.2} />
@@ -341,17 +340,17 @@ export function EmptyState({
   return (
     <Card className="flex flex-col items-center px-6 py-10 text-center">
       {emoji ? (
-        <span className="mb-3 text-[44px] leading-none" aria-hidden>
+        <span className="mb-3 text-[34px] leading-none grayscale-[35%]" aria-hidden>
           {emoji}
         </span>
       ) : Icon ? (
-        <span className="mb-4 inline-flex size-14 rotate-[-4deg] items-center justify-center rounded-[18px] bg-accent-soft text-accent shadow-sticker">
-          <Icon size={28} strokeWidth={2} />
+        <span className="mb-3 inline-flex size-12 items-center justify-center rounded-[12px] bg-fill text-label-2">
+          <Icon size={24} strokeWidth={1.8} />
         </span>
       ) : null}
-      <h3 className="font-display text-[21px] leading-7 font-bold">{title}</h3>
+      <h3 className="font-display text-[18px] leading-6 font-semibold">{title}</h3>
       {children ? (
-        <p className="mt-1.5 max-w-[42ch] text-[15px] leading-[21px] text-label-2">{children}</p>
+        <p className="mt-1.5 max-w-[44ch] text-[14.5px] leading-[21px] text-label-2">{children}</p>
       ) : null}
       {action ? <div className="mt-5">{action}</div> : null}
     </Card>
@@ -366,7 +365,7 @@ export function ProgressBar({ ratio, className }: { ratio: number; className?: s
       aria-valuenow={pct}
       aria-valuemin={0}
       aria-valuemax={100}
-      className={cx("h-2 overflow-hidden rounded-full bg-fill", className)}
+      className={cx("h-1.5 overflow-hidden rounded-full bg-fill-2", className)}
     >
       <div
         className="h-full rounded-full bg-[var(--bar,var(--accent))] transition-[width] duration-700 ease-out"

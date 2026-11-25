@@ -80,7 +80,7 @@ export function AestheticSheet({ data }: { data: AestheticData }) {
       <Doodle kind="heart" className="absolute top-5 right-6 size-7 rotate-12" />
       <Doodle kind="star" className="absolute top-16 left-5 size-6 -rotate-12" />
       <header className="text-center">
-        <h2 className="inline font-[family-name:var(--font-pacifico)] text-[34px] leading-[1.35] sm:text-[44px]">
+        <h2 className="inline font-serif text-[32px] leading-[1.2] font-semibold italic tracking-[-0.01em] sm:text-[40px]">
           <span
             style={{
               backgroundImage: "linear-gradient(transparent 62%, #ffc8dc 62%, #ffc8dc 92%, transparent 92%)",
@@ -157,7 +157,7 @@ export function AestheticSheet({ data }: { data: AestheticData }) {
         {data.mnemonic.trick ? (
           <section className="rounded-2xl p-4" style={{ background: "#eadcff55", border: "2px solid #d9c6ff" }}>
             <Label color={4}>🧠 Truque para lembrar</Label>
-            <p className="mt-2 font-[family-name:var(--font-caveat)] text-[26px] leading-tight font-bold text-[#6b46c1]">
+            <p className="mt-2 font-serif text-[21px] leading-snug font-semibold italic text-[#5b3fa0]">
               “{data.mnemonic.trick}”
             </p>
             <p className="mt-1 text-[14.5px] leading-[1.5]">{inline(data.mnemonic.explanation, "mn")}</p>
@@ -230,7 +230,7 @@ export function AestheticSheet({ data }: { data: AestheticData }) {
         ) : null}
       </div>
       <Doodle kind="sparkle" className="absolute right-6 bottom-5 size-6" />
-      <p className="mt-6 text-center font-[family-name:var(--font-caveat)] text-[20px] text-[#b0587f]">feito no Domeni ♡</p>
+      <p className="mt-6 text-center font-serif text-[14px] text-[#b0587f] italic">feito no Domeni</p>
     </article>
   );
 }

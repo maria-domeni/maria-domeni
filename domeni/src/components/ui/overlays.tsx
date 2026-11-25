@@ -119,22 +119,20 @@ export function Sheet({
     >
       {open ? (
         <form onSubmit={handleSubmit} className="flex max-h-[inherit] flex-col">
-          <header className="flex flex-none items-center gap-3 px-5 pt-4 pb-2">
-            <h2 className="min-w-0 flex-1 truncate font-display text-[22px] leading-8 font-bold">
-              <span className="marker">{title}</span>
-            </h2>
+          <header className="flex flex-none items-center gap-3 border-b border-sep px-5 py-3">
+            <h2 className="min-w-0 flex-1 truncate text-[16px] leading-6 font-semibold">{title}</h2>
             <button
               type="button"
               onClick={requestClose}
               aria-label="Fechar"
-              className="pressable inline-flex size-9 flex-none items-center justify-center rounded-full bg-fill text-label-2"
+              className="pressable inline-flex size-8 flex-none items-center justify-center rounded-full bg-fill text-label-2"
             >
-              <X size={18} strokeWidth={2.6} />
+              <X size={16} strokeWidth={2.4} />
             </button>
           </header>
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-3 pb-5">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-4 pb-5">{children}</div>
           {submitLabel ? (
-            <footer className="flex flex-none items-center justify-end gap-2 border-t border-dashed border-sep px-5 pt-3 pb-[calc(14px+env(safe-area-inset-bottom))]">
+            <footer className="flex flex-none items-center justify-end gap-2 border-t border-sep px-5 pt-3 pb-[calc(14px+env(safe-area-inset-bottom))]">
               <Button variant="gray" onClick={requestClose}>
                 Cancelar
               </Button>
@@ -244,7 +242,7 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
         >
           {pending ? (
             <div className="px-5 pt-6 pb-4 text-center">
-              <h2 className="text-[18px] leading-6 font-bold tracking-[-0.015em]">{pending.title}</h2>
+              <h2 className="text-[17px] leading-6 font-semibold tracking-[-0.015em]">{pending.title}</h2>
               {pending.message ? (
                 <p className="mt-1.5 text-[14.5px] leading-5 text-label-2">{pending.message}</p>
               ) : null}
@@ -275,7 +273,7 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               className={cx(
-                "toast-enter pointer-events-auto flex max-w-full items-center gap-3 rounded-full py-2.5 pr-3 pl-5 text-[15px] font-medium shadow-float",
+                "toast-enter pointer-events-auto flex max-w-full items-center gap-3 rounded-[12px] py-2.5 pr-3 pl-4 text-[14.5px] font-medium shadow-float",
                 "bg-label text-bg",
               )}
             >
@@ -283,7 +281,7 @@ export function OverlayProvider({ children }: { children: ReactNode }) {
               {toast.onAction ? (
                 <button
                   type="button"
-                  className="pressable rounded-full bg-white/20 px-3 py-1 text-[14px] font-semibold"
+                  className="pressable rounded-[8px] bg-white/20 px-3 py-1 text-[14px] font-semibold"
                   onClick={() => {
                     toast.onAction?.();
                     setToast(null);

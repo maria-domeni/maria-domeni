@@ -18,10 +18,10 @@ export function Sticker({ value, className, style }: { value: string; className?
     return (
       <span
         className={cx(
-          "inline-block rounded-[0.5em] px-[0.5em] py-[0.15em] font-hand leading-none font-bold whitespace-nowrap text-[#3a2530]",
+          "inline-block rounded-[0.35em] px-[0.5em] py-[0.2em] leading-none font-semibold whitespace-nowrap text-[#2b2b2e]",
           className,
         )}
-        style={{ background: textStickerColor(text), fontSize: "0.55em", ...style }}
+        style={{ background: textStickerColor(text), fontSize: "0.3em", ...style }}
       >
         {text}
       </span>
@@ -35,13 +35,12 @@ export function Sticker({ value, className, style }: { value: string; className?
 }
 
 /**
- * Capa de caderno (semestre ou disciplina): cor, estampa, foto, etiqueta,
- * elástico e adesivos. Tudo escala com a largura da capa.
+ * Capa de caderno (como um caderno de verdade): cor, estampa discreta, foto,
+ * etiqueta, elástico e adesivos. O nome fica embaixo da capa, na tela.
  */
 export function NotebookCover({
   cover,
   title,
-  subtitle,
   className,
   children,
 }: {
@@ -54,30 +53,19 @@ export function NotebookCover({
   const ink = inkFor(cover.color);
   return (
     <div
+      role="img"
+      aria-label={`Capa do caderno ${title}`}
       className={cx("notebook", !cover.imageId && `pattern-${cover.pattern}`, className)}
-      style={{ "--cover": cover.color, "--cover-ink": ink, containerType: "inline-size" } as CSSProperties}
+      style={{ "--cover": cover.color, "--cover-ink": ink } as CSSProperties}
     >
       {cover.imageId ? <StoredImage id={cover.imageId} className="notebook-image" /> : null}
       {cover.elastic ? <div className="notebook-elastic" /> : null}
-      {cover.label ? (
-        <div className="notebook-label">
-          <div className="font-display leading-[1.1] font-bold break-words" style={{ fontSize: "clamp(11px, 9.5cqw, 30px)" }}>
-            {title}
-          </div>
-          {subtitle ? (
-            <div className="mt-0.5 truncate font-semibold opacity-60" style={{ fontSize: "clamp(9px, 6cqw, 16px)" }}>
-              {subtitle}
-            </div>
-          ) : null}
+      {cover.label && !cover.imageId ? (
+        <div className="notebook-label" aria-hidden>
+          <i />
+          <i />
         </div>
-      ) : (
-        <div
-          className="absolute inset-x-[14%] bottom-[10%] font-display leading-tight font-bold break-words"
-          style={{ fontSize: "clamp(12px, 10cqw, 32px)", color: ink, textShadow: cover.imageId ? "0 1px 8px rgba(0,0,0,.45)" : undefined }}
-        >
-          {title}
-        </div>
-      )}
+      ) : null}
       {cover.stickers.map((sticker) => (
         <Sticker
           key={sticker.id}
@@ -94,4 +82,32 @@ export function NotebookCover({
       {children}
     </div>
   );
+}
+
+/** Pasta (para os semestres), no formato das pastas do iPad. */
+export function Folder({ color, className, label }: { color: string; className?: string; label?: string }) {
+  const back = shadeHex(color, -18);
+  return (
+    <svg viewBox="0 0 120 92" className={className} role="img" aria-label={label ?? "Pasta"}>
+      <path d="M8 14 C 8 9 11 6 16 6 L 44 6 C 48 6 50 8 52 11 L 55 15 L 104 15 C 109 15 112 18 112 23 L 112 30 L 8 30 Z" fill={back} />
+      <rect x={8} y={20} width={104} height={66} rx={8} fill={color} />
+      <rect x={8} y={20} width={104} height={66} rx={8} fill="url(#folder-shine)" />
+      <defs>
+        <linearGradient id="folder-shine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.22" />
+          <stop offset="1" stopColor="#000000" stopOpacity="0.04" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+function shadeHex(hex: string, amount: number): string {
+  if (!/^#[0-9a-f]{6}$/i.test(hex)) return hex;
+  const n = parseInt(hex.slice(1), 16);
+  const clamp = (v: number) => Math.max(0, Math.min(255, v));
+  const r = clamp(((n >> 16) & 255) + amount);
+  const g = clamp(((n >> 8) & 255) + amount);
+  const b = clamp((n & 255) + amount);
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
 }

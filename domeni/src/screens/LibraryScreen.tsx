@@ -20,7 +20,7 @@ import { createBook, deleteBook, saveFile, updateBook } from "@/lib/store";
 import { resolveCurrentSemester } from "@/lib/today";
 import { BOOK_KIND_LABEL, BOOK_STATUS_LABEL, type Book, type BookKind, type BookStatus } from "@/lib/types";
 
-const SPINE_COLORS = ["#d9748f", "#8f7cf0", "#5e9ec9", "#6fae86", "#e3a35b", "#b65a7a", "#7d8f9e", "#c98bb9"];
+const SPINE_COLORS = ["#9c5b6e", "#8fa3b8", "#8fa58a", "#c9b293", "#b3a5cc", "#3b4a5c", "#d9a9ad", "#5e2a3a"];
 
 function pickSpineColor(): string {
   return SPINE_COLORS[Math.floor(Math.random() * SPINE_COLORS.length)];
@@ -107,7 +107,7 @@ function Shelf() {
       {importing ? <Card className="mt-3 bg-accent-faint px-4 py-3 text-[14.5px] font-semibold">📚 {importing}</Card> : null}
 
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <label className="flex h-11 min-w-[220px] flex-1 items-center gap-2 rounded-full bg-surface px-4 shadow-card">
+        <label className="flex h-11 min-w-[220px] flex-1 items-center gap-2 rounded-[8px] bg-surface px-4 shadow-card">
           <Search size={17} className="text-label-3" />
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Procurar título, autor ou tag" className="min-w-0 flex-1 bg-transparent outline-none" />
         </label>
@@ -125,20 +125,20 @@ function Shelf() {
 
       {books.length === 0 ? (
         <div className="mt-6">
-          <EmptyState emoji="📚" title="Sua estante está vazia" action={<Button icon={FileUp} onClick={() => fileRef.current?.click()}>Adicionar PDF</Button>}>
+          <EmptyState title="Sua estante está vazia" action={<Button icon={FileUp} onClick={() => fileRef.current?.click()}>Adicionar PDF</Button>}>
             Adicione os PDFs dos textos da faculdade. Eles ficam guardados no aparelho, abrem sem internet e entram na busca.
           </EmptyState>
         </div>
       ) : (
         <>
           {reading.length > 0 && filter === "todos" && !q ? (
-            <Section title="Lendo agora" emoji="📖">
+            <Section title="Lendo agora">
               <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 md:-mx-8 md:px-8">
                 {reading.map((book) => (
                   <button key={book.id} type="button" onClick={() => navigate(`#/biblioteca/${book.id}`)} className="lift card flex w-[290px] flex-none items-center gap-3 p-3 text-left">
                     <BookCover book={book} className="w-[60px] flex-none" />
                     <span className="min-w-0 flex-1">
-                      <span className="line-clamp-2 font-bold">{book.title}</span>
+                      <span className="line-clamp-2 font-semibold">{book.title}</span>
                       <span className="block truncate text-[13px] text-label-2">{book.author}</span>
                       {book.pages > 0 ? <ProgressBar ratio={book.currentPage / book.pages} className="mt-2" /> : null}
                       {book.pages > 0 ? <span className="text-[12px] text-label-3">p. {book.currentPage || 1} de {book.pages}</span> : null}
@@ -168,17 +168,17 @@ function ShelfRows({ books }: { books: Book[] }) {
             {row.map((book) => (
               <button key={book.id} type="button" onClick={() => navigate(`#/biblioteca/${book.id}`)} className="group text-left" aria-label={book.title}>
                 <BookCover book={book} className="lift" />
-                <span className="mt-2 line-clamp-2 block text-[13px] leading-4 font-bold">{book.title}</span>
+                <span className="mt-2 line-clamp-2 block text-[13px] leading-4 font-semibold">{book.title}</span>
               </button>
             ))}
           </div>
           {/* tábua da prateleira */}
           <div
             aria-hidden
-            className="absolute inset-x-0 bottom-[38px] -z-10 h-[16px] rounded-[4px]"
+            className="absolute inset-x-0 bottom-[38px] -z-10 h-[10px] rounded-[3px]"
             style={{
-              background: "linear-gradient(180deg, color-mix(in srgb, #b9875e 70%, var(--accent) 8%), #8a5d3b)",
-              boxShadow: "0 10px 18px -8px rgba(60,30,10,.5)",
+              background: "linear-gradient(180deg, var(--surface-2), color-mix(in srgb, var(--label) 10%, var(--surface-2)))",
+              boxShadow: "0 1px 0 var(--edge), 0 8px 16px -10px rgba(0,0,0,.35)",
             }}
           />
         </div>
@@ -201,11 +201,11 @@ export function BookCover({ book, className }: { book: Book; className?: string 
         <StoredImage id={book.coverImageId} className="absolute inset-0 size-full object-cover" />
       ) : (
         <span className="absolute inset-0 flex flex-col justify-between p-[12%]">
-          <span className="font-display text-[clamp(11px,1.6vw,17px)] leading-tight font-bold">{book.title}</span>
+          <span className="font-display text-[clamp(11px,1.6vw,17px)] leading-tight font-semibold">{book.title}</span>
           <span className="text-[clamp(9px,1.1vw,12px)] font-semibold opacity-80">{book.author}</span>
         </span>
       )}
-      {book.status === "lido" ? <span className="absolute top-1 right-1 rounded-full bg-white/90 px-1.5 text-[11px] font-bold text-[#2e8b57]">lido ✓</span> : null}
+      {book.status === "lido" ? <span className="absolute top-1 right-1 rounded-[8px] bg-white/90 px-1.5 text-[11px] font-semibold text-[#2e8b57]">lido ✓</span> : null}
     </span>
   );
 }
@@ -295,7 +295,7 @@ function BookScreen({ id, startPage }: { id: string; startPage: number | null })
     return (
       <Page title="Livro" back={{ to: "#/biblioteca", label: "Biblioteca" }}>
         <div className="mt-6">
-          <EmptyState emoji="📕" title="Esse livro não está mais na estante" />
+          <EmptyState title="Esse livro não está mais na estante" />
         </div>
       </Page>
     );
@@ -321,7 +321,7 @@ function BookScreen({ id, startPage }: { id: string; startPage: number | null })
             minRows={1}
             value={book.title}
             onChange={(e) => void updateBook(book.id, { title: e.target.value.replace(/\n/g, " ") })}
-            className="font-display !text-[30px] !leading-[38px] font-bold"
+            className="font-display !text-[30px] !leading-[38px] font-semibold"
             aria-label="Título"
           />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -356,7 +356,7 @@ function BookScreen({ id, startPage }: { id: string; startPage: number | null })
                     onClick={() =>
                       void updateBook(book.id, { disciplineIds: on ? book.disciplineIds.filter((x) => x !== d.id) : [...book.disciplineIds, d.id] })
                     }
-                    className={cx("pressable h-9 rounded-full px-3 text-[13.5px] font-bold", on ? "bg-accent-solid text-on-accent" : "bg-fill text-label-2")}
+                    className={cx("pressable h-9 rounded-[8px] px-3 text-[13.5px] font-semibold", on ? "bg-accent-solid text-on-accent" : "bg-fill text-label-2")}
                   >
                     {d.emoji} {d.name}
                   </button>
@@ -376,12 +376,12 @@ function BookScreen({ id, startPage }: { id: string; startPage: number | null })
           </Field>
           {data.hasText ? (
             <div>
-              <label className="flex h-11 items-center gap-2 rounded-full bg-surface px-4 shadow-card">
+              <label className="flex h-11 items-center gap-2 rounded-[8px] bg-surface px-4 shadow-card">
                 <Search size={17} className="text-label-3" />
                 <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Procurar dentro do livro" className="min-w-0 flex-1 bg-transparent outline-none" />
               </label>
               {results && results.length > 0 ? (
-                <Card className="mt-2 max-h-[260px] divide-y divide-dashed divide-sep overflow-y-auto">
+                <Card className="mt-2 max-h-[260px] divide-y divide-sep overflow-y-auto">
                   {results.map((r) => (
                     <button
                       key={r.page}
@@ -392,7 +392,7 @@ function BookScreen({ id, startPage }: { id: string; startPage: number | null })
                       }}
                       className="row-pressable block w-full px-4 py-2.5 text-left"
                     >
-                      <span className="text-[13px] font-bold text-accent">p. {r.page}</span>
+                      <span className="text-[13px] font-semibold text-accent">p. {r.page}</span>
                       <span className="block text-[14px] text-label-2">{r.snippet}</span>
                     </button>
                   ))}
@@ -506,7 +506,7 @@ function PdfPage({ doc, n, width, bookId, total, current }: { doc: PDFDocumentPr
   return (
     <div ref={ref} data-page={n} className="mx-auto overflow-hidden rounded-[10px] bg-white shadow-card" style={{ width, minHeight: visible ? undefined : width * 1.35 }}>
       <canvas ref={canvasRef} className="block" />
-      <p className="bg-surface py-1 text-center text-[12px] font-bold text-label-3">
+      <p className="bg-surface py-1 text-center text-[12px] font-semibold text-label-3">
         {n} / {total}
       </p>
     </div>

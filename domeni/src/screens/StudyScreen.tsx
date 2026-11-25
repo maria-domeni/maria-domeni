@@ -73,10 +73,10 @@ export default function StudyScreen({ disciplineId }: { disciplineId: string | n
           value={mode}
           onChange={setMode}
           tabs={[
-            { value: "cartoes", label: "🃏 Flashcards", badge: due.length || undefined },
-            { value: "questoes", label: "❓ Questões", badge: questions.length || undefined },
-            { value: "memoria", label: "🧩 Jogo da memória" },
-            { value: "revisoes", label: "🔁 Revisões de aula", badge: data.reviews.length || undefined },
+            { value: "cartoes", label: "Flashcards", badge: due.length || undefined },
+            { value: "questoes", label: "Questões", badge: questions.length || undefined },
+            { value: "memoria", label: "Jogo da memória" },
+            { value: "revisoes", label: "Revisões de aula", badge: data.reviews.length || undefined },
           ]}
         />
       </div>
@@ -113,7 +113,7 @@ function CardsMode({ cards, due, today, disciplines }: { cards: Flashcard[]; due
   if (cards.length === 0) {
     return (
       <div className="mt-6">
-        <EmptyState emoji="🃏" title="Nenhum flashcard ainda">
+        <EmptyState title="Nenhum flashcard ainda">
           Crie os seus no botão “Flashcard” ou peça para a IA criar a partir das suas anotações (na disciplina ou na aula, em “Estudar com IA”).
         </EmptyState>
       </div>
@@ -126,7 +126,7 @@ function CardsMode({ cards, due, today, disciplines }: { cards: Flashcard[]; due
       return (
         <Card className="mt-6 px-6 py-8 text-center">
           <p className="text-[48px]">🌟</p>
-          <p className="mt-2 font-display text-[28px] font-bold">Sessão concluída!</p>
+          <p className="mt-2 font-display text-[28px] font-semibold">Sessão concluída!</p>
           <p className="mt-1 text-label-2">{session.length} cartões revisados. Os próximos voltam no dia certo.</p>
           <Button className="mt-5" onClick={() => setSession(null)}>
             Voltar
@@ -142,17 +142,17 @@ function CardsMode({ cards, due, today, disciplines }: { cards: Flashcard[]; due
     };
     return (
       <div className="mx-auto mt-6 max-w-[620px]">
-        <p className="mb-2 text-center text-[13px] font-bold text-label-2">
+        <p className="mb-2 text-center text-[13px] font-semibold text-label-2">
           {index + 1} de {session.length} · {byId.get(card.disciplineId ?? "")?.name ?? "geral"}
         </p>
         <button
           type="button"
           onClick={() => setFlipped((f) => !f)}
-          className={cx("washi card flex min-h-[280px] w-full flex-col items-center justify-center overflow-visible px-8 py-10 text-center", flipped && "flip-in")}
+          className={cx("card flex min-h-[280px] w-full flex-col items-center justify-center overflow-visible px-8 py-10 text-center", flipped && "flip-in")}
           key={`${card.id}-${flipped}`}
         >
-          <p className="text-[12.5px] font-extrabold tracking-[0.06em] text-accent uppercase">{flipped ? "resposta" : "pergunta"}</p>
-          <p className={cx("mt-3 leading-snug font-bold", flipped ? "text-[19px]" : "font-display text-[26px]")}>{flipped ? card.back : card.front}</p>
+          <p className="text-[12.5px] font-medium text-accent">{flipped ? "resposta" : "pergunta"}</p>
+          <p className={cx("mt-3 leading-snug font-semibold", flipped ? "text-[19px]" : "font-display text-[26px]")}>{flipped ? card.back : card.front}</p>
           {!flipped ? <p className="mt-5 text-[13px] text-label-3">toque para virar</p> : null}
         </button>
         {flipped ? (
@@ -163,7 +163,7 @@ function CardsMode({ cards, due, today, disciplines }: { cards: Flashcard[]; due
                 type="button"
                 onClick={() => void answer(a)}
                 className={cx(
-                  "pressable h-12 rounded-2xl text-[15px] font-bold",
+                  "pressable h-12 rounded-2xl text-[15px] font-semibold",
                   a === "errei" ? "bg-danger-soft text-danger" : a === "dificil" ? "bg-yellow-soft text-yellow" : a === "bom" ? "bg-accent-soft text-accent" : "bg-success-soft text-success",
                 )}
               >
@@ -180,7 +180,7 @@ function CardsMode({ cards, due, today, disciplines }: { cards: Flashcard[]; due
     <>
       <Card className="mt-5 flex flex-wrap items-center gap-4 px-5 py-5">
         <div className="flex-1">
-          <p className="font-display text-[28px] font-bold">{due.length > 0 ? `${due.length} para hoje` : "Tudo em dia ✨"}</p>
+          <p className="font-display text-[28px] font-semibold">{due.length > 0 ? `${due.length} para hoje` : "Tudo em dia ✨"}</p>
           <p className="text-[14.5px] text-label-2">{cards.length} flashcards no total</p>
         </div>
         <Button
@@ -205,13 +205,13 @@ function CardsMode({ cards, due, today, disciplines }: { cards: Flashcard[]; due
           Treino livre
         </Button>
       </Card>
-      <Section title="Todos os flashcards" action={<button type="button" onClick={() => setList((v) => !v)} className="text-[15px] font-bold text-accent">{list ? "Esconder" : "Mostrar"}</button>}>
+      <Section title="Todos os flashcards" action={<button type="button" onClick={() => setList((v) => !v)} className="text-[15px] font-semibold text-accent">{list ? "Esconder" : "Mostrar"}</button>}>
         {list ? (
           <div className="grid gap-2.5 sm:grid-cols-2">
             {cards.map((card) => (
               <div key={card.id} className="card flex gap-2 px-4 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold">{card.front}</p>
+                  <p className="font-semibold">{card.front}</p>
                   <p className="text-[14px] text-label-2">{card.back}</p>
                   <p className="mt-1 text-[12px] text-label-3">
                     {card.source === "ia" ? "✨ IA · " : ""}próxima: {card.due}
@@ -234,7 +234,7 @@ function QuestionsMode({ questions }: { questions: Question[] }) {
   if (questions.length === 0) {
     return (
       <div className="mt-6">
-        <EmptyState emoji="❓" title="Nenhuma questão ainda">
+        <EmptyState title="Nenhuma questão ainda">
           Crie questões suas ou peça para a IA gerar a partir das anotações (em “Estudar com IA”).
         </EmptyState>
       </div>
@@ -266,7 +266,7 @@ function QuestionsMode({ questions }: { questions: Question[] }) {
     <>
       <Card className="mt-5 flex flex-wrap items-center gap-4 px-5 py-5">
         <div className="flex-1">
-          <p className="font-display text-[26px] font-bold">{questions.length} questões</p>
+          <p className="font-display text-[26px] font-semibold">{questions.length} questões</p>
           <p className="text-[14.5px] text-label-2">Faça um simulado com 10 sorteadas.</p>
         </div>
         <Button size="lg" disabled={objective.length === 0} onClick={() => setPlaying(shuffle(objective).slice(0, 10))}>
@@ -277,11 +277,11 @@ function QuestionsMode({ questions }: { questions: Question[] }) {
         {questions.map((q) => (
           <div key={q.id} className="card flex gap-2 px-4 py-3">
             <div className="min-w-0 flex-1">
-              <p className="font-bold">{q.stem}</p>
+              <p className="font-semibold">{q.stem}</p>
               {q.options.length > 0 ? (
                 <ol className="mt-1 list-[upper-alpha] pl-5 text-[14px] text-label-2">
                   {q.options.map((o, i) => (
-                    <li key={i} className={i === q.answer ? "font-bold text-success" : undefined}>
+                    <li key={i} className={i === q.answer ? "font-semibold text-success" : undefined}>
                       {o}
                     </li>
                   ))}
@@ -321,7 +321,7 @@ function MemoryGame({ cards }: { cards: Flashcard[] }) {
   if (cards.length < 3) {
     return (
       <div className="mt-6">
-        <EmptyState emoji="🧩" title="Precisa de pelo menos 3 flashcards">
+        <EmptyState title="Precisa de pelo menos 3 flashcards">
           O jogo usa os seus flashcards: junte cada pergunta com a resposta.
         </EmptyState>
       </div>
@@ -346,7 +346,7 @@ function MemoryGame({ cards }: { cards: Flashcard[] }) {
   return (
     <div className="mt-5">
       <div className="mb-3 flex items-center justify-between">
-        <p className="font-bold text-label-2">
+        <p className="font-semibold text-label-2">
           {won ? `🎉 Você completou em ${moves} jogadas!` : `Pares: ${found.length}/${tiles.length / 2} · jogadas: ${moves}`}
         </p>
         <Button
@@ -372,7 +372,7 @@ function MemoryGame({ cards }: { cards: Flashcard[] }) {
               type="button"
               onClick={() => flip(tile.key, tile.pair)}
               className={cx(
-                "pressable flex min-h-[110px] items-center justify-center rounded-2xl p-3 text-center text-[14px] leading-[19px] font-bold transition-colors",
+                "pressable flex min-h-[110px] items-center justify-center rounded-2xl p-3 text-center text-[14px] leading-[19px] font-semibold transition-colors",
                 found.includes(tile.pair) ? "bg-success-soft text-success" : shown ? "card" : "bg-accent-solid text-on-accent",
               )}
             >
@@ -474,7 +474,7 @@ function AddQuestionSheet({ open, onClose, disciplines, defaultDisciplineId }: {
               <button
                 type="button"
                 onClick={() => setAnswer(i)}
-                className={cx("pressable inline-flex size-10 flex-none items-center justify-center rounded-full font-bold", answer === i ? "bg-success text-white" : "bg-fill")}
+                className={cx("pressable inline-flex size-10 flex-none items-center justify-center rounded-full font-semibold", answer === i ? "bg-success text-white" : "bg-fill")}
               >
                 {String.fromCharCode(65 + i)}
               </button>

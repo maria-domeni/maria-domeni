@@ -72,12 +72,12 @@ function Screen({ route }: { route: Route }) {
         <Page title="Página não encontrada">
           <div className="mt-6">
             <EmptyState
-              emoji="🧭"
+             
               title="Esse endereço não existe"
               action={
                 <Link
                   to="#/"
-                  className="pressable inline-flex h-11 items-center rounded-full bg-accent-solid px-5 text-[16px] font-bold text-on-accent"
+                  className="pressable inline-flex h-11 items-center rounded-[8px] bg-accent-solid px-5 text-[16px] font-semibold text-on-accent"
                 >
                   Ir para Hoje
                 </Link>

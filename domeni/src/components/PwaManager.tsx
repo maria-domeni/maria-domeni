@@ -58,7 +58,7 @@ export function PwaManager() {
           reloading.current = true;
           waiting.postMessage({ type: "ATIVAR" });
         }}
-        className="toast-enter pressable pointer-events-auto inline-flex h-11 items-center gap-2 rounded-full bg-accent-solid px-5 text-[15px] font-semibold text-white shadow-float"
+        className="toast-enter pressable pointer-events-auto inline-flex h-11 items-center gap-2 rounded-[8px] bg-accent-solid px-5 text-[15px] font-semibold text-white shadow-float"
       >
         <RefreshCw size={16} strokeWidth={2.6} />
         Nova versão disponível · Atualizar

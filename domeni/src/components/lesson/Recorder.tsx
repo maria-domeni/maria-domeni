@@ -195,7 +195,7 @@ export function Recorder({ lesson }: { lesson: Lesson }) {
           </Button>
         )}
         {recording ? (
-          <span className="inline-flex items-center gap-2 text-[14px] font-bold text-danger">
+          <span className="inline-flex items-center gap-2 text-[14px] font-semibold text-danger">
             <span className="size-2.5 animate-pulse rounded-full bg-danger" /> gravando
           </span>
         ) : null}
@@ -243,7 +243,7 @@ function RecordingRow({ fileId, label, onDelete }: { fileId: string; label: stri
   }, [fileId]);
   return (
     <Card className={cx("flex items-center gap-3 px-4 py-2.5")}>
-      <span className="text-[13.5px] font-bold whitespace-nowrap">{label}</span>
+      <span className="text-[13.5px] font-semibold whitespace-nowrap">{label}</span>
       {url ? <audio controls src={url} className="h-9 min-w-0 flex-1" /> : <span className="flex-1" />}
       <button type="button" aria-label="Apagar gravação" onClick={onDelete} className="pressable inline-flex size-9 items-center justify-center rounded-full text-label-3">
         <Trash2 size={16} />

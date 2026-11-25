@@ -6,6 +6,7 @@ import {
   CalendarDays,
   ChartColumnBig,
   Ellipsis,
+  Headphones,
   HeartHandshake,
   Layers,
   Library,
@@ -16,7 +17,6 @@ import {
   Settings2,
   Smile,
   Sun,
-  Headphones,
 } from "lucide-react";
 import { useState, type ComponentType, type ReactNode } from "react";
 import { Character } from "@/components/avatar/Character";
@@ -37,34 +37,33 @@ interface NavItem {
   to: string;
   label: string;
   icon: IconType;
-  tile: string;
   match: Route["name"][];
 }
 
-const PLANNER_NAV: NavItem[] = [
-  { to: "#/", label: "Hoje", icon: Sun, tile: "#f7b6cb", match: ["hoje"] },
-  { to: "#/agenda", label: "Agenda", icon: CalendarDays, tile: "#b4d3f7", match: ["agenda"] },
-  { to: "#/cadernos", label: "Cadernos", icon: NotebookPen, tile: "#cfbdf3", match: ["cadernos", "semestre", "disciplina", "aula"] },
-  { to: "#/estudar", label: "Estudar", icon: Layers, tile: "#f8d29e", match: ["estudar", "revisoes"] },
-  { to: "#/biblioteca", label: "Biblioteca", icon: Library, tile: "#a9dcc0", match: ["biblioteca"] },
+const MAIN_NAV: NavItem[] = [
+  { to: "#/", label: "Hoje", icon: Sun, match: ["hoje"] },
+  { to: "#/agenda", label: "Agenda", icon: CalendarDays, match: ["agenda"] },
+  { to: "#/cadernos", label: "Cadernos", icon: NotebookPen, match: ["cadernos", "semestre", "disciplina", "aula"] },
+  { to: "#/estudar", label: "Estudar", icon: Layers, match: ["estudar", "revisoes"] },
+  { to: "#/biblioteca", label: "Biblioteca", icon: Library, match: ["biblioteca"] },
 ];
 
 const COLLEGE_NAV: NavItem[] = [
-  { to: "#/desempenho", label: "Notas e faltas", icon: ChartColumnBig, tile: "#f6bfae", match: ["desempenho"] },
-  { to: "#/estagio", label: "Estágio", icon: HeartHandshake, tile: "#bcdcf2", match: ["estagio"] },
-  { to: "#/horas", label: "Horas", icon: Award, tile: "#f3dc8e", match: ["horas"] },
-  { to: "#/revisoes", label: "Revisões", icon: Repeat2, tile: "#ecbfe9", match: [] },
+  { to: "#/desempenho", label: "Notas e faltas", icon: ChartColumnBig, match: ["desempenho"] },
+  { to: "#/estagio", label: "Estágio", icon: HeartHandshake, match: ["estagio"] },
+  { to: "#/horas", label: "Horas", icon: Award, match: ["horas"] },
+  { to: "#/revisoes", label: "Revisões", icon: Repeat2, match: [] },
 ];
 
 const MORE_NAV: NavItem[] = [
-  { to: "#/biblioteca", label: "Biblioteca", icon: Library, tile: "#a9dcc0", match: ["biblioteca"] },
+  { to: "#/biblioteca", label: "Biblioteca", icon: Library, match: ["biblioteca"] },
   ...COLLEGE_NAV,
-  { to: "#/personagem", label: "Personagem", icon: Smile, tile: "#f7b6cb", match: ["personagem"] },
-  { to: "#/busca/", label: "Buscar", icon: Search, tile: "#cfbdf3", match: ["busca"] },
-  { to: "#/ajustes", label: "Ajustes", icon: Settings2, tile: "#d9d4cf", match: ["ajustes"] },
+  { to: "#/personagem", label: "Personagem", icon: Smile, match: ["personagem"] },
+  { to: "#/busca/", label: "Buscar", icon: Search, match: ["busca"] },
+  { to: "#/ajustes", label: "Ajustes", icon: Settings2, match: ["ajustes"] },
 ];
 
-const TAB_NAV: NavItem[] = PLANNER_NAV.filter((i) => i.to !== "#/biblioteca");
+const TAB_NAV: NavItem[] = MAIN_NAV.filter((i) => i.to !== "#/biblioteca");
 
 function useShellData() {
   const today = useToday();
@@ -93,76 +92,42 @@ function useShellData() {
   return { dueCount, sidebar, settings };
 }
 
-/** Marca do Domeni: um caderno com a letra D e uma fita de marcar página. */
-export function Logo({ size = 34 }: { size?: number }) {
+/** Marca do Domeni: um caderno com a letra D. */
+export function Logo({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden className="flex-none">
-      <defs>
-        <linearGradient id="dn-logo" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f6a3c2" />
-          <stop offset="1" stopColor="#b43c6e" />
-        </linearGradient>
-      </defs>
-      <rect x="4" y="4" width="56" height="56" rx="15" fill="url(#dn-logo)" />
-      <rect x="4" y="4" width="13" height="56" rx="6" fill="#000" opacity="0.1" />
-      {[16, 26, 36, 46].map((y) => (
-        <circle key={y} cx="10.5" cy={y} r="2.2" fill="#fff" opacity="0.85" />
-      ))}
+      <rect x="4" y="4" width="56" height="56" rx="14" fill="var(--label)" />
+      <rect x="4" y="4" width="11" height="56" rx="5" fill="var(--bg)" opacity="0.14" />
       <path
         fillRule="evenodd"
-        fill="#fff"
+        fill="var(--bg)"
         d="M23 17h11.5c9.4 0 15.5 6.1 15.5 15s-6.1 15-15.5 15H23V17zm7 6.4v17.2h4.1c5.3 0 8.6-3.3 8.6-8.6s-3.3-8.6-8.6-8.6H30z"
       />
-      <path d="M44 4h8v14l-4-3.2L44 18z" fill="#ffd166" />
+      <path d="M44 4h7v13l-3.5-2.8L44 17z" fill="var(--accent)" />
     </svg>
   );
 }
 
-function NavTile({ item, active }: { item: NavItem; active: boolean }) {
+function SidebarLink({ item, active, badge }: { item: NavItem; active: boolean; badge?: number }) {
   const Icon = item.icon;
-  return (
-    <span
-      aria-hidden
-      className={cx(
-        "inline-flex size-[30px] flex-none items-center justify-center rounded-[10px] text-[#3a2530] transition-transform",
-        active && "rotate-[-6deg] shadow-sticker",
-      )}
-      style={{ background: item.tile }}
-    >
-      <Icon size={17} strokeWidth={2.3} />
-    </span>
-  );
-}
-
-function SidebarLink({
-  item,
-  active,
-  badge,
-}: {
-  item: NavItem;
-  active: boolean;
-  badge?: number;
-}) {
   return (
     <Link
       to={item.to}
       aria-current={active ? "page" : undefined}
       className={cx(
-        "flex h-11 items-center gap-3 rounded-[14px] px-2 text-[15.5px] transition-colors",
-        active ? "bg-surface font-bold shadow-card" : "row-pressable font-semibold text-label-2",
+        "flex h-8 items-center gap-2.5 rounded-[8px] px-2 text-[14.5px] transition-colors",
+        active ? "bg-fill-2 font-semibold text-label" : "row-pressable font-medium text-label-2",
       )}
     >
-      <NavTile item={item} active={active} />
-      <span className={cx("min-w-0 flex-1 truncate", active && "text-label")}>
-        {active ? <span className="marker">{item.label}</span> : item.label}
-      </span>
-      {badge ? (
-        <span className="inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-accent-solid px-1.5 text-[12.5px] font-bold text-on-accent">
-          {badge}
-        </span>
-      ) : null}
+      <Icon size={17} strokeWidth={active ? 2.2 : 1.9} className={active ? "text-label" : "text-label-2"} />
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {badge ? <span className="text-[12.5px] font-semibold text-accent">{badge}</span> : null}
     </Link>
   );
+}
+
+function GroupLabel({ children }: { children: ReactNode }) {
+  return <p className="mt-5 mb-1 px-2 text-[12px] font-semibold text-label-3">{children}</p>;
 }
 
 export function Shell({ route, children }: { route: Route | null; children: ReactNode }) {
@@ -175,34 +140,33 @@ export function Shell({ route, children }: { route: Route | null; children: Reac
   return (
     <>
       <aside className="app-sidebar flex-col" aria-label="Navegação">
-        <div className="flex h-[66px] flex-none items-center gap-2.5 pr-2 pl-4 pt-[env(safe-area-inset-top)]">
+        <div className="flex h-[52px] flex-none items-center gap-2 pr-2 pl-4 pt-[env(safe-area-inset-top)]">
           <Logo />
-          <span className="flex-1 font-display text-[25px] leading-none font-bold">Domeni</span>
+          <span className="flex-1 text-[16px] font-semibold tracking-[-0.01em]">Domeni</span>
           <button
             type="button"
             aria-label="Ocultar barra lateral"
             title="Ocultar barra lateral"
             onClick={() => setSidebarOpen(false)}
-            className="pressable inline-flex size-10 items-center justify-center rounded-full text-label-2"
+            className="row-pressable inline-flex size-8 items-center justify-center rounded-[8px] text-label-2"
           >
-            <PanelLeft size={20} strokeWidth={2.1} />
+            <PanelLeft size={17} strokeWidth={1.9} />
           </button>
         </div>
 
-        <div className="px-3 pb-1">
+        <div className="px-2.5 pb-1">
           <Link
             to="#/busca/"
-            className="pressable flex h-10 items-center gap-2 rounded-full bg-surface px-3.5 text-[14.5px] font-semibold text-label-3 shadow-card"
+            className="row-pressable flex h-8 items-center gap-2.5 rounded-[8px] px-2 text-[14.5px] font-medium text-label-2"
           >
-            <Search size={16} strokeWidth={2.5} />
-            Buscar em tudo…
+            <Search size={17} strokeWidth={1.9} />
+            Buscar
           </Link>
         </div>
 
-        <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pt-2 pb-3">
-          <p className="hand mb-0.5 px-2 text-[19px] text-label-2">planner</p>
-          <div className="flex flex-col gap-0.5">
-            {PLANNER_NAV.map((item) => (
+        <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-2.5 pb-3">
+          <div className="flex flex-col gap-px">
+            {MAIN_NAV.map((item) => (
               <SidebarLink
                 key={item.to}
                 item={item}
@@ -212,17 +176,17 @@ export function Shell({ route, children }: { route: Route | null; children: Reac
             ))}
           </div>
 
-          <p className="hand mt-4 mb-0.5 px-2 text-[19px] text-label-2">faculdade</p>
-          <div className="flex flex-col gap-0.5">
+          <GroupLabel>Faculdade</GroupLabel>
+          <div className="flex flex-col gap-px">
             {COLLEGE_NAV.map((item) => (
               <SidebarLink key={item.to} item={item} active={isActive(item)} />
             ))}
           </div>
 
           {sidebar && sidebar.disciplines.length > 0 ? (
-            <div className="mt-4">
-              <p className="hand mb-1 px-2 text-[19px] text-label-2">{sidebar.semester.number}º semestre</p>
-              <div className="flex flex-col gap-1">
+            <>
+              <GroupLabel>{sidebar.semester.number}º semestre</GroupLabel>
+              <div className="flex flex-col gap-px">
                 {sidebar.disciplines.map((d) => {
                   const active = activeDisciplineId === d.id;
                   return (
@@ -230,78 +194,79 @@ export function Shell({ route, children }: { route: Route | null; children: Reac
                       key={d.id}
                       to={`#/disciplina/${d.id}`}
                       aria-current={active ? "page" : undefined}
-                      {...tint(
-                        d.color,
-                        cx(
-                          "flex h-10 items-center gap-2.5 rounded-r-[14px] rounded-l-[6px] border-l-[5px] border-dc pr-2 pl-2.5 text-[15px] font-semibold transition-colors",
-                          active ? "bg-dc-soft text-label" : "row-pressable text-label-2",
-                        ),
+                      className={cx(
+                        "flex h-8 items-center gap-2.5 rounded-[8px] px-2 text-[14.5px]",
+                        active ? "bg-fill-2 font-semibold text-label" : "row-pressable font-medium text-label-2",
                       )}
                     >
-                      <span className="w-5 text-center text-[16px]">{d.emoji || "📒"}</span>
+                      {d.emoji ? (
+                        <span className="w-[17px] text-center text-[14px]">{d.emoji}</span>
+                      ) : (
+                        <span className="flex w-[17px] justify-center">
+                          <span {...tint(d.color, "size-2 rounded-full bg-dc")} />
+                        </span>
+                      )}
                       <span className="min-w-0 flex-1 truncate">{d.name}</span>
                     </Link>
                   );
                 })}
               </div>
-            </div>
+            </>
           ) : null}
         </nav>
 
-        <div className="flex flex-none items-center gap-1 px-3 pt-2 pb-[calc(12px+env(safe-area-inset-bottom))]">
+        <div className="flex flex-none items-center gap-1 border-t border-sep px-2.5 pt-2 pb-[calc(10px+env(safe-area-inset-bottom))]">
           <Link
             to="#/ajustes"
             aria-current={route?.name === "ajustes" ? "page" : undefined}
             className={cx(
-              "row-pressable flex min-h-[52px] min-w-0 flex-1 items-center gap-2.5 rounded-[14px] px-2 py-1.5",
-              route?.name === "ajustes" && "bg-surface shadow-card",
+              "row-pressable flex min-h-[44px] min-w-0 flex-1 items-center gap-2.5 rounded-[10px] px-2 py-1",
+              route?.name === "ajustes" && "bg-fill-2",
             )}
           >
             {settings.avatarImageId ? (
-              <Avatar imageId={settings.avatarImageId} name={name} size={38} />
+              <Avatar imageId={settings.avatarImageId} name={name} size={30} />
             ) : (
-              <Character config={settings.avatar} size={38} background="color-mix(in srgb, var(--accent) 22%, var(--surface))" />
+              <Character config={settings.avatar} size={30} background="var(--fill-2)" />
             )}
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[15px] leading-5 font-bold">{name || "Seu perfil"}</span>
-              <span className="block truncate text-[12.5px] leading-[17px] text-label-2">
-                {settings.course.trim() || "Ajustes"}
-              </span>
+              <span className="block truncate text-[14px] leading-5 font-semibold">{name || "Seu perfil"}</span>
+              <span className="block truncate text-[12px] leading-4 text-label-2">{settings.course.trim() || "Ajustes"}</span>
             </span>
-            <Settings2 size={18} strokeWidth={2.2} className="flex-none text-label-3" />
           </Link>
           <button
             type="button"
             onClick={() => setMusicOpen(true)}
             aria-label="Abrir música"
             title="Música (Spotify)"
-            className="pressable inline-flex size-11 flex-none items-center justify-center rounded-full bg-surface text-[#1db954] shadow-card"
+            className="row-pressable inline-flex size-9 flex-none items-center justify-center rounded-[10px] text-label-2"
           >
-            <Headphones size={20} strokeWidth={2.3} />
+            <Headphones size={18} strokeWidth={1.9} />
           </button>
         </div>
       </aside>
 
       <main className="app-main">{children}</main>
 
-      <nav className="app-tabbar" aria-label="Navegação">
-        <div className="material-surface mx-auto grid h-(--tab-h) max-w-[520px] grid-cols-5 rounded-[24px] px-1 shadow-float">
+      <nav className="app-tabbar material" aria-label="Navegação">
+        <div className="mx-auto grid h-(--tab-h) max-w-[560px] grid-cols-5">
           {TAB_NAV.map((item) => {
             const active = isActive(item);
+            const Icon = item.icon;
             return (
               <Link
                 key={item.to}
                 to={item.to}
                 aria-current={active ? "page" : undefined}
                 className={cx(
-                  "pressable relative flex flex-col items-center justify-center gap-0.5 text-[11px] font-bold",
-                  active ? "text-label" : "text-label-3",
+                  "relative flex flex-col items-center justify-center gap-0.5 text-[10.5px] font-medium",
+                  active ? "text-accent" : "text-label-3",
                 )}
               >
                 <span className="relative">
-                  {active ? <NavTile item={item} active /> : <item.icon size={23} strokeWidth={2.1} />}
+                  <Icon size={23} strokeWidth={active ? 2.2 : 1.8} />
                   {item.to === "#/estudar" && dueCount ? (
-                    <span className="absolute -top-1 -right-2.5 inline-flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-danger px-1 text-[11px] leading-none font-bold text-white">
+                    <span className="absolute -top-1 -right-2.5 inline-flex h-4 min-w-4 items-center justify-center rounded-[8px] bg-danger px-1 text-[10px] leading-none font-semibold text-white">
                       {dueCount}
                     </span>
                   ) : null}
@@ -313,43 +278,34 @@ export function Shell({ route, children }: { route: Route | null; children: Reac
           <button
             type="button"
             onClick={() => setMoreOpen(true)}
-            className="pressable flex flex-col items-center justify-center gap-0.5 text-[11px] font-bold text-label-3"
+            className="flex flex-col items-center justify-center gap-0.5 text-[10.5px] font-medium text-label-3"
           >
-            <Ellipsis size={23} strokeWidth={2.4} />
+            <Ellipsis size={23} strokeWidth={1.8} />
             Mais
           </button>
         </div>
       </nav>
 
       <Sheet open={moreOpen} onClose={() => setMoreOpen(false)} title="Mais">
-        <div className="grid grid-cols-3 gap-3">
-          {MORE_NAV.map((item) => (
-            <button
-              key={item.to}
-              type="button"
-              onClick={() => {
-                setMoreOpen(false);
-                navigate(item.to);
-              }}
-              className="pressable card flex flex-col items-center gap-2 px-2 py-4 text-[13.5px] font-bold"
-            >
-              <NavTile item={item} active={false} />
-              {item.label}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => {
-              setMoreOpen(false);
-              setMusicOpen(true);
-            }}
-            className="pressable card flex flex-col items-center gap-2 px-2 py-4 text-[13.5px] font-bold"
-          >
-            <span className="inline-flex size-[30px] items-center justify-center rounded-[10px] bg-[#bfe8cd] text-[#14532d]">
-              <Headphones size={17} strokeWidth={2.3} />
-            </span>
-            Música
-          </button>
+        <div className="card divide-y divide-sep overflow-hidden">
+          {[...MORE_NAV, { to: "musica", label: "Música", icon: Headphones, match: [] as Route["name"][] }].map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.to}
+                type="button"
+                onClick={() => {
+                  setMoreOpen(false);
+                  if (item.to === "musica") setMusicOpen(true);
+                  else navigate(item.to);
+                }}
+                className="row-pressable flex h-12 w-full items-center gap-3 px-4 text-left text-[15.5px]"
+              >
+                <Icon size={19} strokeWidth={1.9} className="text-label-2" />
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       </Sheet>
 

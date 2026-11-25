@@ -56,7 +56,7 @@ export async function saveSettings(patch: Partial<Settings>): Promise<Settings> 
 
 /* ---------- Semestres ---------- */
 
-const SEMESTER_COVER_COLORS = ["#f4b6c8", "#c9b6f0", "#a8d5c2", "#f7d08a", "#a9c8ee", "#8e2f55", "#e9e4dc"];
+const SEMESTER_COVER_COLORS = ["#e3b7bd", "#9c5b6e", "#b3a5cc", "#8fa3b8", "#8fa58a", "#c9b293", "#d9a9ad"];
 
 export async function createSemester(input: {
   number: number;
@@ -72,7 +72,7 @@ export async function createSemester(input: {
     end: input.end || undefined,
     cover:
       input.cover ??
-      defaultCover(SEMESTER_COVER_COLORS[(input.number - 1) % SEMESTER_COVER_COLORS.length], "listras"),
+      defaultCover(SEMESTER_COVER_COLORS[(input.number - 1) % SEMESTER_COVER_COLORS.length], "liso"),
     createdAt: stamp,
     updatedAt: stamp,
   };

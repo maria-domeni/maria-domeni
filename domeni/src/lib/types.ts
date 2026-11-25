@@ -36,22 +36,20 @@ export type AccentKey = "rosa" | "cereja" | "lilas" | "indigo" | "azul" | "verde
 
 export type ThemeMode = "auto" | "claro" | "escuro";
 
-/** Tom do papel e das superfícies. */
-export type Tone = "neutro" | "creme" | "rosado" | "lavanda" | "menta" | "cafe";
+/** Tom das superfícies: neutro (Apple), quente (Notion) ou papel. */
+export type Tone = "neutro" | "quente" | "papel";
 
-export type FontKey = "sistema" | "inter" | "nunito" | "lexend" | "lora" | "fraunces" | "patrick";
+/** Fontes no estilo do Notion: padrão do sistema, serifada, mono, ou Inter. */
+export type FontKey = "sistema" | "inter" | "serifa" | "mono";
 
 /** "igual" usa a mesma fonte do restante do app. */
-export type TitleFontKey = FontKey | "caveat" | "pacifico" | "igual";
-
-/** Fundo do app: papel quadriculado, pontilhado, liso ou com brilho da cor. */
-export type BackgroundStyle = "quadriculado" | "pontilhado" | "liso" | "aurora";
+export type TitleFontKey = FontKey | "igual";
 
 export type TextScale = "pequeno" | "padrao" | "grande";
 
 export type PaperStyle = "liso" | "quadriculado" | "pontilhado" | "pautado";
 
-export type ThemePreset = "rose" | "lavanda" | "matcha" | "caderno" | "minimal" | "noite" | "cafe";
+export type ThemePreset = "rose" | "classico" | "notion" | "papel" | "noite";
 
 export type CoverPattern =
   | "liso"
@@ -434,21 +432,19 @@ export interface CalendarEvent {
 }
 
 export type AvatarTone = "carinhosa" | "animada" | "direta" | "engracada" | "calma";
-export type AvatarHair = "curto" | "longo" | "coque" | "cacheado" | "franja" | "rabo" | "careca" | "tranca";
-export type AvatarEyes = "redondos" | "felizes" | "estrela" | "sonolentos";
-export type AvatarMouth = "sorriso" | "aberto" | "gatinho" | "tranquilo";
-export type AvatarAccessory = "nenhum" | "oculos" | "laco" | "fones" | "flor" | "chapeu" | "estrela";
+/** O personagem é um bichinho. */
+export type AvatarSpecies = "gato" | "coelho" | "urso" | "raposa" | "pinguim" | "bolinha";
+export type AvatarEyes = "pontinhos" | "felizes" | "sonolentos" | "brilhantes";
+export type AvatarAccessory = "nenhum" | "laco" | "oculos" | "fones" | "cachecol" | "boina" | "flor";
 
 export interface AvatarConfig {
   name: string;
   tone: AvatarTone;
-  skin: string;
-  hair: AvatarHair;
-  hairColor: string;
+  species: AvatarSpecies;
+  /** Cor do pelo */
+  color: string;
   eyes: AvatarEyes;
-  mouth: AvatarMouth;
   accessory: AvatarAccessory;
-  outfit: string;
   blush: boolean;
   /** Mostrar o personagem no canto da tela */
   visible: boolean;
@@ -484,7 +480,6 @@ export interface Settings {
   fontBody: FontKey;
   fontTitle: TitleFontKey;
   textScale: TextScale;
-  background: BackgroundStyle;
   paper: PaperStyle;
   /** Na folha da aula, só a Apple Pencil escreve; o dedo rola */
   pencilOnly: boolean;
@@ -502,13 +497,10 @@ export interface Settings {
 export const DEFAULT_AVATAR: AvatarConfig = {
   name: "Mimi",
   tone: "carinhosa",
-  skin: "#f2c6a0",
-  hair: "longo",
-  hairColor: "#4a2c22",
-  eyes: "redondos",
-  mouth: "sorriso",
-  accessory: "laco",
-  outfit: "#f4a7c0",
+  species: "gato",
+  color: "#efe4d8",
+  eyes: "pontinhos",
+  accessory: "nenhum",
   blush: true,
   visible: true,
   side: "direita",
@@ -532,14 +524,13 @@ export const DEFAULT_SETTINGS: Settings = {
   requiredExtension: null,
   preset: "rose",
   theme: "auto",
-  tone: "rosado",
+  tone: "neutro",
   accent: "rosa",
-  customAccent: "#d94f86",
-  fontBody: "nunito",
-  fontTitle: "pacifico",
+  customAccent: "#c24d78",
+  fontBody: "sistema",
+  fontTitle: "igual",
   textScale: "padrao",
-  background: "quadriculado",
-  paper: "quadriculado",
+  paper: "liso",
   pencilOnly: true,
   avatar: DEFAULT_AVATAR,
   googleIcsUrl: "",
@@ -620,16 +611,16 @@ export const COLOR_LABEL: Record<ColorKey, string> = {
 
 /** Cores-base de cada chave da paleta (para capas e calendário). */
 export const COLOR_HEX: Record<ColorKey, string> = {
-  vermelho: "#e5484d",
-  laranja: "#f2994a",
-  amarelo: "#f2c94c",
-  verde: "#6fbf8a",
-  turquesa: "#4fb8b0",
-  azul: "#5b9bd5",
-  indigo: "#7b7fe0",
-  rosa: "#f08bb0",
-  lilas: "#b49be6",
-  cereja: "#8e2f55",
+  vermelho: "#d9645c",
+  laranja: "#e0905a",
+  amarelo: "#d9b75a",
+  verde: "#6f9e7c",
+  turquesa: "#5e9e9a",
+  azul: "#6b93c7",
+  indigo: "#7f7fc9",
+  rosa: "#d48aa3",
+  lilas: "#a58fcf",
+  cereja: "#8c4a62",
 };
 
 export const ACCENT_KEYS: AccentKey[] = ["rosa", "cereja", "lilas", "indigo", "azul", "verde", "laranja", "grafite"];
@@ -645,56 +636,32 @@ export const ACCENT_LABEL: Record<AccentKey, string> = {
   grafite: "Grafite",
 };
 
-export const TONES: Tone[] = ["rosado", "creme", "lavanda", "menta", "neutro", "cafe"];
+export const TONES: Tone[] = ["neutro", "quente", "papel"];
 
 export const TONE_LABEL: Record<Tone, string> = {
-  neutro: "Branco",
-  creme: "Creme",
-  rosado: "Rosado",
-  lavanda: "Lavanda",
-  menta: "Menta",
-  cafe: "Café",
+  neutro: "Neutro",
+  quente: "Quente",
+  papel: "Papel",
 };
 
-export const FONT_KEYS: FontKey[] = ["sistema", "nunito", "inter", "lexend", "lora", "fraunces", "patrick"];
+export const FONT_KEYS: FontKey[] = ["sistema", "serifa", "mono", "inter"];
 
-export const TITLE_FONT_KEYS: TitleFontKey[] = [
-  "igual",
-  "pacifico",
-  "caveat",
-  "fraunces",
-  "lora",
-  "nunito",
-  "lexend",
-  "inter",
-  "patrick",
-  "sistema",
-];
+export const TITLE_FONT_KEYS: TitleFontKey[] = ["igual", "sistema", "serifa", "mono", "inter"];
 
 export const FONT_LABEL: Record<TitleFontKey, string> = {
   igual: "Igual ao texto",
-  sistema: "Do aparelho",
+  sistema: "Padrão",
+  serifa: "Serifa",
+  mono: "Mono",
   inter: "Inter",
-  nunito: "Nunito",
-  lexend: "Lexend",
-  lora: "Lora",
-  fraunces: "Fraunces",
-  patrick: "Patrick Hand",
-  caveat: "Caveat",
-  pacifico: "Pacifico",
 };
 
 export const FONT_HINT: Record<TitleFontKey, string> = {
   igual: "Mesma fonte",
-  sistema: "Padrão do aparelho",
-  inter: "Neutra",
-  nunito: "Arredondada",
-  lexend: "Leitura fácil",
-  lora: "Serifada",
-  fraunces: "Editorial",
-  patrick: "Letra de mão",
-  caveat: "Manuscrita",
-  pacifico: "Letreiro",
+  sistema: "A do aparelho (SF Pro no iPad)",
+  serifa: "Elegante, para ler (New York no iPad)",
+  mono: "Para quem gosta de máquina de escrever",
+  inter: "Neutra, igual em todo aparelho",
 };
 
 export const PAPER_LABEL: Record<PaperStyle, string> = {
@@ -702,13 +669,6 @@ export const PAPER_LABEL: Record<PaperStyle, string> = {
   quadriculado: "Quadriculada",
   pontilhado: "Pontilhada",
   pautado: "Pautada",
-};
-
-export const BACKGROUND_LABEL: Record<BackgroundStyle, string> = {
-  quadriculado: "Quadriculado",
-  pontilhado: "Pontilhado",
-  liso: "Liso",
-  aurora: "Brilho",
 };
 
 export const COVER_PATTERNS: CoverPattern[] = [

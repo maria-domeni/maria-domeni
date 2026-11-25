@@ -15,7 +15,7 @@ import { COLOR_KEYS, COLOR_LABEL, WEEKDAY_SHORT } from "@/lib/types";
 import { cx, tint } from "./basics";
 
 const CONTROL =
-  "w-full rounded-[14px] bg-fill px-3.5 text-[16.5px] text-label transition-shadow focus:shadow-[0_0_0_2.5px_var(--accent)]";
+  "w-full rounded-[10px] bg-fill px-3 text-[15.5px] text-label transition-shadow focus:shadow-[0_0_0_2px_var(--accent)]";
 
 export function Field({
   label,
@@ -30,25 +30,25 @@ export function Field({
 }) {
   return (
     <label className={cx("block", className)}>
-      <span className="mb-1.5 block px-0.5 text-[14px] leading-[18px] font-semibold text-label-2">
+      <span className="mb-1.5 block text-[13px] leading-[18px] font-medium text-label-2">
         {label}
       </span>
       {children}
       {hint ? (
-        <span className="mt-1.5 block px-0.5 text-[13px] leading-[17px] text-label-3">{hint}</span>
+        <span className="mt-1.5 block text-[12.5px] leading-[17px] text-label-3">{hint}</span>
       ) : null}
     </label>
   );
 }
 
 export function TextInput({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cx(CONTROL, "h-11", className)} {...rest} />;
+  return <input className={cx(CONTROL, "h-10", className)} {...rest} />;
 }
 
 export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <span className="relative block">
-      <select className={cx(CONTROL, "h-11 appearance-none truncate pr-8", className)} {...rest}>
+      <select className={cx(CONTROL, "h-10 appearance-none truncate pr-8", className)} {...rest}>
         {children}
       </select>
       <ChevronsUpDown
@@ -160,12 +160,12 @@ export function Segmented<T extends string>({
         const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]');
         buttons[options.indexOf(next)]?.focus();
       }}
-      className={cx("relative grid rounded-[11px] bg-fill p-[3px]", className)}
+      className={cx("relative grid rounded-[10px] bg-fill p-[3px]", className)}
       style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
     >
       <span
         aria-hidden
-        className="absolute top-[3px] bottom-[3px] left-[3px] rounded-[9px] bg-(--thumb) shadow-[0_1px_4px_rgba(0,0,0,0.14)] transition-transform duration-300 ease-(--e-out)"
+        className="absolute top-[3px] bottom-[3px] left-[3px] rounded-[8px] bg-(--thumb) shadow-[0_1px_3px_rgba(0,0,0,0.12),0_0_0_0.5px_rgba(0,0,0,0.04)] transition-transform duration-300 ease-(--e-out)"
         style={{
           width: `calc((100% - 6px) / ${options.length})`,
           transform: `translateX(${index * 100}%)`,
@@ -182,7 +182,7 @@ export function Segmented<T extends string>({
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(option.value)}
             className={cx(
-              "relative z-[1] flex h-9 items-center justify-center gap-1.5 rounded-[9px] px-2 text-[15px] transition-colors",
+              "relative z-[1] flex h-8 items-center justify-center gap-1.5 rounded-[8px] px-2 text-[14px] transition-colors",
               selected ? "font-semibold text-label" : "font-medium text-label-2",
             )}
           >
@@ -218,7 +218,7 @@ export function WeekdayPicker({
               onChange(selected ? value.filter((d) => d !== day) : [...value, day])
             }
             className={cx(
-              "pressable h-11 rounded-[13px] text-[15px] font-semibold",
+              "pressable h-10 rounded-[10px] text-[14px] font-semibold",
               selected ? "bg-accent-solid text-on-accent" : "bg-fill text-label-2",
             )}
           >

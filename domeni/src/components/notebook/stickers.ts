@@ -12,7 +12,7 @@ export function isTextSticker(value: string): boolean {
   return value.startsWith("txt:");
 }
 
-export const TEXT_STICKER_COLORS = ["#ffd1e1", "#fff0a0", "#d4f5d0", "#d6e7ff", "#eadcff", "#ffe0c7"];
+export const TEXT_STICKER_COLORS = ["#f7dbe3", "#f6ecc4", "#dcefdc", "#dce8f6", "#e7e0f5", "#f4e2d4"];
 
 export function textStickerColor(text: string): string {
   let hash = 0;

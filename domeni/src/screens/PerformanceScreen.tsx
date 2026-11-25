@@ -37,7 +37,7 @@ export default function PerformanceScreen() {
           Falta configurar {settings.defaultAbsenceLimit === null ? "o limite de faltas" : ""}
           {settings.defaultAbsenceLimit === null && settings.passingGrade === null ? " e " : ""}
           {settings.passingGrade === null ? "a média para passar" : ""} da sua faculdade.{" "}
-          <Link to="#/ajustes/regras" className="font-bold text-accent">
+          <Link to="#/ajustes/regras" className="font-semibold text-accent">
             Configurar agora →
           </Link>
         </Card>
@@ -45,12 +45,12 @@ export default function PerformanceScreen() {
 
       {disciplines.length === 0 ? (
         <div className="mt-6">
-          <EmptyState emoji="📊" title="Sem disciplinas no semestre">
+          <EmptyState title="Sem disciplinas no semestre">
             Cadastre as disciplinas em Cadernos para acompanhar notas e faltas aqui.
           </EmptyState>
         </div>
       ) : (
-        <Section title="Disciplinas" emoji="🎒" className="mt-6">
+        <Section title="Disciplinas" className="mt-6">
           <div className="grid gap-4 md:grid-cols-2">
             {disciplines.map((discipline) => {
               const absences = summarizeAbsences(discipline, data.attendance, settings);
@@ -60,19 +60,19 @@ export default function PerformanceScreen() {
                 <Link key={discipline.id} to={`#/disciplina/${discipline.id}/faltas`} className="lift card block overflow-hidden">
                   <div {...tint(discipline.color, "h-2 bg-dc")} />
                   <div className="px-5 py-4">
-                    <p className="text-[17px] font-bold">
+                    <p className="text-[17px] font-semibold">
                       {discipline.emoji ? `${discipline.emoji} ` : ""}
                       {discipline.name}
                     </p>
                     {discipline.professors.length > 0 ? <p className="text-[13px] text-label-2">{discipline.professors.join(" & ")}</p> : null}
                     <div className="mt-3 grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-[12px] font-extrabold tracking-[0.04em] text-label-3 uppercase">Faltas</p>
+                        <p className="text-[12px] font-medium text-label-3">Faltas</p>
                         {discipline.kind === "estagio" ? (
-                          <p className="font-bold text-label-2">Estágio (não conta)</p>
+                          <p className="font-semibold text-label-2">Estágio (não conta)</p>
                         ) : absences.limit !== null ? (
                           <>
-                            <p className={cx("font-display text-[24px] font-bold", danger && "text-danger")}>
+                            <p className={cx("font-display text-[24px] font-semibold", danger && "text-danger")}>
                               {absences.used}
                               <span className="text-[15px] text-label-3">/{absences.limit}</span>
                             </p>
@@ -82,16 +82,16 @@ export default function PerformanceScreen() {
                             </p>
                           </>
                         ) : (
-                          <p className="font-display text-[24px] font-bold">{absences.used}</p>
+                          <p className="font-display text-[24px] font-semibold">{absences.used}</p>
                         )}
                       </div>
                       <div>
-                        <p className="text-[12px] font-extrabold tracking-[0.04em] text-label-3 uppercase">Média</p>
-                        <p className="font-display text-[24px] font-bold">{formatGrade(grades.current)}</p>
+                        <p className="text-[12px] font-medium text-label-3">Média</p>
+                        <p className="font-display text-[24px] font-semibold">{formatGrade(grades.current)}</p>
                         <p
                           className={cx(
                             "mt-1 text-[12.5px]",
-                            grades.status === "impossivel" ? "font-bold text-danger" : grades.status === "aprovada" ? "font-bold text-success" : "text-label-2",
+                            grades.status === "impossivel" ? "font-semibold text-danger" : grades.status === "aprovada" ? "font-semibold text-success" : "text-label-2",
                           )}
                         >
                           {grades.status === "sem-notas"

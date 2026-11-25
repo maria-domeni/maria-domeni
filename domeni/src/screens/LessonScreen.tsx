@@ -208,7 +208,7 @@ function LessonEditor({
           placeholder="Tema da aula"
           aria-label="Tema da aula"
           autoFocus={initial.title === ""}
-          className="font-display !text-[34px] !leading-[44px] font-bold"
+          className="font-display !text-[34px] !leading-[44px] font-semibold"
         />
       }
     >
@@ -294,13 +294,13 @@ function LessonEditor({
       </Card>
 
       <div className="no-print mt-3 flex flex-wrap gap-2">
-        <button type="button" onClick={() => setSheet("gravar")} className="pressable inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-4 text-[14.5px] font-bold shadow-card">
+        <button type="button" onClick={() => setSheet("gravar")} className="pressable inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-fill px-3.5 text-[14px] font-medium">
           <Mic size={17} strokeWidth={2.4} className="text-danger" /> Gravar e transcrever
         </button>
-        <button type="button" onClick={() => setSheet("ia")} className="pressable inline-flex h-10 items-center gap-1.5 rounded-full bg-accent-solid px-4 text-[14.5px] font-bold text-on-accent shadow-sticker">
+        <button type="button" onClick={() => setSheet("ia")} className="pressable inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-accent-solid px-3.5 text-[14px] font-medium text-on-accent">
           <Sparkles size={17} strokeWidth={2.4} /> Estudar com IA
         </button>
-        <button type="button" onClick={() => window.print()} className="pressable inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-4 text-[14.5px] font-bold shadow-card">
+        <button type="button" onClick={() => window.print()} className="pressable inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-fill px-3.5 text-[14px] font-medium">
           <Printer size={17} strokeWidth={2.4} /> Imprimir / PDF
         </button>
         <button
@@ -311,7 +311,7 @@ function LessonEditor({
             const html = await lessonToHtml(fresh, discipline, await db.pages.get(initial.id));
             await deliverFile(new File([html], `${safeFileName(`${discipline.name} ${fresh.title || "aula"}`)}.html`, { type: "text/html" }));
           }}
-          className="pressable inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-4 text-[14.5px] font-bold shadow-card"
+          className="pressable inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-fill px-3.5 text-[14px] font-medium"
         >
           <Download size={17} strokeWidth={2.4} /> Baixar
         </button>
@@ -332,7 +332,7 @@ function LessonEditor({
             }
             await deliverFile(file);
           }}
-          className="pressable inline-flex h-10 items-center gap-1.5 rounded-full bg-surface px-4 text-[14.5px] font-bold shadow-card"
+          className="pressable inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-fill px-3.5 text-[14px] font-medium"
         >
           <Share2 size={17} strokeWidth={2.4} /> Compartilhar
         </button>
@@ -344,7 +344,7 @@ function LessonEditor({
         onChange={(value) => navigate(`#/aula/${initial.id}/${value}`, { replace: true })}
         tabs={[
           { value: "antes", label: "Antes" },
-          { value: "folha", label: "📝 Folha da aula" },
+          { value: "folha", label: "Folha da aula" },
           { value: "depois", label: "Depois" },
           { value: "revisao", label: "Revisão", badge: hasDueReview ? "•" : undefined },
         ]}
@@ -490,7 +490,7 @@ function LessonEditor({
       </Sheet>
       <Sheet open={sheet === "ia"} onClose={() => setSheet(null)} title="Estudar com IA" wide>
         <AiStudio discipline={discipline} lessons={siblings.map((l) => (l.id === draft.id ? { ...l, ...draft } : l))} currentLesson={draft} />
-        <h3 className="mt-6 mb-2 font-display text-[20px] font-bold">Materiais desta aula</h3>
+        <h3 className="mt-6 mb-2 font-display text-[20px] font-semibold">Materiais desta aula</h3>
         <MaterialsList lessonId={initial.id} />
       </Sheet>
     </Page>
@@ -588,7 +588,7 @@ function ReviewTab({
                 <div className="flex items-start gap-3.5">
                   <span
                     className={cx(
-                      "mt-0.5 inline-flex size-10 flex-none items-center justify-center rounded-full text-[14px] font-bold",
+                      "mt-0.5 inline-flex size-10 flex-none items-center justify-center rounded-full text-[14px] font-semibold",
                       review.doneAt
                         ? "bg-success-soft text-success"
                         : overdue || dueToday
@@ -683,7 +683,7 @@ function ReviewTab({
           ) : null}
           {lesson.mindmap.trim() ? (
             <details className="mt-3">
-              <summary className="pressable inline-flex h-9 cursor-pointer list-none items-center rounded-full bg-fill px-3.5 text-[15px] font-semibold text-label [&::-webkit-details-marker]:hidden">
+              <summary className="pressable inline-flex h-9 cursor-pointer list-none items-center rounded-[8px] bg-fill px-3.5 text-[15px] font-semibold text-label [&::-webkit-details-marker]:hidden">
                 Mostrar o mapa mental original
               </summary>
               <p className="mt-1.5 text-[13.5px] leading-[18px] text-label-3">

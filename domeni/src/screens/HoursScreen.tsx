@@ -50,7 +50,7 @@ export default function HoursScreen() {
       {settings.requiredComplementary === null || settings.requiredExtension === null ? (
         <Card className="mt-4 bg-yellow-soft px-5 py-4 text-[15px]">
           Informe quantas horas a sua faculdade exige em{" "}
-          <Link to="#/ajustes/regras" className="font-bold text-accent">
+          <Link to="#/ajustes/regras" className="font-semibold text-accent">
             Ajustes › Regras da faculdade
           </Link>
           .
@@ -61,10 +61,10 @@ export default function HoursScreen() {
           const done = entries.filter((e) => e.kind === group.kind).reduce((s, e) => s + e.hours, 0);
           return (
             <Card key={group.kind} className="px-5 py-5">
-              <p className="text-[13px] font-extrabold tracking-[0.04em] text-label-2 uppercase">
+              <p className="text-[13px] font-medium text-label-2">
                 {group.emoji} {HOUR_KIND_LABEL[group.kind]}
               </p>
-              <p className="mt-1 font-display text-[36px] leading-none font-bold">
+              <p className="mt-1 font-display text-[36px] leading-none font-semibold">
                 {done.toLocaleString("pt-BR")}
                 <span className="text-[18px] text-label-3"> {group.required ? `/ ${group.required} h` : "h"}</span>
               </p>
@@ -93,23 +93,23 @@ export default function HoursScreen() {
         })}
       </div>
 
-      <Section title="Registros" emoji="🗂️">
+      <Section title="Registros">
         {entries.length === 0 ? (
           <Card className="px-5 py-4 text-[15px] text-label-2">Palestras, cursos, eventos, projetos de extensão… registre aqui com as horas do certificado.</Card>
         ) : (
-          <Card className="divide-y divide-dashed divide-sep">
+          <Card className="divide-y divide-sep">
             {[...entries]
               .sort((a, b) => b.date.localeCompare(a.date))
               .map((entry) => (
                 <div key={entry.id} className="flex items-center gap-3 px-4 py-3">
                   <span className="text-[20px]">{entry.kind === "complementar" ? "🏅" : "🤝"}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-bold">{entry.title}</p>
+                    <p className="truncate font-semibold">{entry.title}</p>
                     <p className="text-[13px] text-label-2">
                       {formatShort(entry.date, today)} · {HOUR_KIND_LABEL[entry.kind]}
                     </p>
                   </div>
-                  <span className="font-bold">{entry.hours.toLocaleString("pt-BR")} h</span>
+                  <span className="font-semibold">{entry.hours.toLocaleString("pt-BR")} h</span>
                   <button type="button" aria-label="Apagar" onClick={() => void deleteHour(entry.id)} className="pressable inline-flex size-9 items-center justify-center rounded-full text-label-3">
                     <Trash2 size={16} />
                   </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { CalendarPlus, Check, Clock, Headphones, MapPin, NotebookPen, Plus, UserRound } from "lucide-react";
+import { CalendarPlus, ChartColumnBig, Check, ChevronRight, Headphones, Layers, Library, MapPin, NotebookPen, Plus, Repeat2, UserRound } from "lucide-react";
 import { useState } from "react";
 import { Character } from "@/components/avatar/Character";
 import { OnboardingSheet } from "@/components/forms/Onboarding";
@@ -19,7 +19,7 @@ import { useNowMs, useNowTime, useSettingsOrDefault, useToday } from "@/lib/hook
 import { navigate } from "@/lib/router";
 import { createLesson, saveAttendance, updateTask } from "@/lib/store";
 import { resolveCurrentSemester } from "@/lib/today";
-import { TASK_TYPE_EMOJI, TASK_TYPE_LABEL, type Discipline, type Task } from "@/lib/types";
+import { TASK_TYPE_LABEL, type Discipline, type Task } from "@/lib/types";
 import { useBrain } from "@/lib/useBrain";
 
 /** Abre (ou cria) a página da aula de uma disciplina numa data. */
@@ -97,19 +97,10 @@ export default function TodayScreen() {
     <Page
       title={`${nowTime < "12:00" ? "Bom dia" : nowTime < "18:00" ? "Boa tarde" : "Boa noite"}${firstName ? `, ${firstName}` : ""}`}
       eyebrow={formatLong(today)}
-      titleSlot={
-        <h1 className="font-display text-[38px] leading-[48px] font-bold">
-          <span className="marker">
-            {nowTime < "12:00" ? "Bom dia" : nowTime < "18:00" ? "Boa tarde" : "Boa noite"}
-            {firstName ? `, ${firstName}` : ""}
-          </span>
-        </h1>
-      }
       subtitle={
         semester ? (
-          <span className="inline-flex flex-wrap items-center gap-2">
-            <span className="font-bold text-label">{semester.number}º semestre</span>
-            {progress ? <span>· semana {progress.week} de {progress.total}</span> : null}
+          <span>
+            {semester.number}º semestre{progress ? ` · semana ${progress.week} de ${progress.total}` : ""}
           </span>
         ) : null
       }
@@ -120,12 +111,12 @@ export default function TodayScreen() {
       }
     >
       {isNew ? (
-        <Card className="washi mt-6 overflow-visible px-6 pt-8 pb-6 text-center">
-          <Character config={settings.avatar} size={110} className="mx-auto" mood="animada" />
-          <h2 className="mt-2 font-display text-[28px] leading-9 font-bold">Bem-vinda ao Domeni</h2>
-          <p className="mx-auto mt-2 max-w-[46ch] text-[16px] leading-6 text-label-2">
-            Seus cadernos, agenda, notas, faltas e biblioteca num lugar só — com {settings.avatar.name} te
-            acompanhando. Vamos montar o seu semestre em 1 minuto?
+        <Card className="mt-6 px-6 pt-8 pb-7 text-center">
+          <Character config={settings.avatar} size={96} className="mx-auto" mood="feliz" />
+          <h2 className="mt-3 font-display text-[24px] leading-8 font-semibold">Bem-vinda ao Domeni</h2>
+          <p className="mx-auto mt-2 max-w-[46ch] text-[15.5px] leading-6 text-label-2">
+            Cadernos, agenda, notas, faltas e biblioteca num lugar só, com {settings.avatar.name} te acompanhando.
+            Vamos montar o seu semestre? Leva um minuto.
           </p>
           <Button className="mt-5" size="lg" onClick={() => setOnboarding(true)}>
             Começar
@@ -134,17 +125,17 @@ export default function TodayScreen() {
       ) : null}
 
       {!isNew ? (
-        <Card className="mt-5 flex items-center gap-4 overflow-visible p-4 pr-5">
-          <Character config={settings.avatar} mood={brain.mood} size={84} className="flex-none" background="color-mix(in srgb, var(--accent) 16%, var(--surface))" />
+        <Card className="mt-5 flex items-center gap-4 p-4 pr-5">
+          <Character config={settings.avatar} mood={brain.mood} size={64} className="flex-none" background="var(--fill)" />
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-extrabold tracking-[0.04em] text-accent uppercase">{settings.avatar.name} diz</p>
-            <p className="mt-0.5 text-[16px] leading-[22px] font-semibold">
+            <p className="text-[12.5px] font-medium text-label-2">{settings.avatar.name}</p>
+            <p className="mt-0.5 text-[15.5px] leading-[22px] font-medium">
               {topAlert
-                ? `${topAlert.emoji} ${speak(settings.avatar.tone, topAlert, settings.profileName)}`
+                ? speak(settings.avatar.tone, topAlert, settings.profileName)
                 : greeting(settings.avatar.tone, settings.profileName, nowTime)}
             </p>
             {topAlert?.href ? (
-              <Link to={topAlert.href} className="mt-1.5 inline-block text-[14px] font-bold text-accent">
+              <Link to={topAlert.href} className="mt-1 inline-block text-[14px] font-semibold text-accent">
                 {topAlert.action ?? "Ver"} →
               </Link>
             ) : null}
@@ -153,8 +144,8 @@ export default function TodayScreen() {
       ) : null}
 
       {countdowns.length > 0 ? (
-        <Section title="Contagem regressiva" emoji="⏳">
-          <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pt-3 pb-2 md:-mx-8 md:px-8">
+        <Section title="Contagem regressiva">
+          <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 md:-mx-8 md:px-8">
             {countdowns.map((task) => (
               <CountdownCard key={task.id} task={task} discipline={disciplineById.get(task.disciplineId ?? "")} nowMs={nowMs} today={today} />
             ))}
@@ -163,31 +154,30 @@ export default function TodayScreen() {
       ) : null}
 
       {disciplines.length > 0 || data.calendar.length > 0 ? (
-        <Section title="Aulas de hoje" emoji="🎒">
+        <Section title="Aulas de hoje">
           {classes.length === 0 && data.calendar.length === 0 ? (
-            <Card className="px-5 py-5 text-[15.5px] text-label-2">Sem aula hoje pela sua grade. Aproveite para revisar! 🌷</Card>
+            <Card className="px-5 py-4 text-[15px] text-label-2">Sem aula hoje pela sua grade.</Card>
           ) : (
-            <div className="space-y-3">
+            <Card className="divide-y divide-sep overflow-hidden">
               {classes.map((occ) => {
                 const record = data.attendance.find((a) => a.disciplineId === occ.discipline.id && a.date === today);
                 const absent = (record?.absences ?? 0) > 0;
                 const over = occ.slot.end !== "" && nowTime > occ.slot.end;
                 const live = occ.slot.start !== "" && nowTime >= occ.slot.start && !over;
                 return (
-                  <Card key={`${occ.discipline.id}-${occ.slot.id}`} className={cx("flex items-stretch", over && "opacity-75")}>
-                    <div {...tint(occ.discipline.color, "w-2 flex-none bg-dc")} />
-                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3.5">
-                      <div className="w-[64px] flex-none">
-                        <p className="text-[19px] leading-6 font-extrabold">{occ.slot.start || "—"}</p>
-                        <p className="text-[13px] text-label-3">{occ.slot.end ? `até ${occ.slot.end}` : ""}</p>
+                  <div key={`${occ.discipline.id}-${occ.slot.id}`} className={cx("flex items-stretch", over && "opacity-60")}>
+                    <div {...tint(occ.discipline.color, "my-3 ml-4 w-[3px] flex-none rounded-full bg-dc")} />
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+                      <div className="w-[56px] flex-none">
+                        <p className="text-[15.5px] leading-5 font-semibold tabular-nums">{occ.slot.start || "—"}</p>
+                        <p className="text-[12.5px] text-label-3 tabular-nums">{occ.slot.end}</p>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[17px] leading-6 font-bold">
-                          {occ.discipline.emoji ? `${occ.discipline.emoji} ` : ""}
+                        <p className="truncate text-[15.5px] leading-6 font-semibold">
                           {occ.discipline.name}
-                          {live ? <span className="ml-2 rounded-full bg-success-soft px-2 py-0.5 align-middle text-[12px] font-bold text-success">agora</span> : null}
+                          {live ? <span className="ml-2 align-middle text-[12px] font-semibold text-success">agora</span> : null}
                         </p>
-                        <p className="flex flex-wrap gap-x-3 text-[13.5px] text-label-2">
+                        <p className="flex flex-wrap gap-x-3 text-[13px] text-label-2">
                           {occ.slot.professor ? (
                             <span className="inline-flex items-center gap-1">
                               <UserRound size={13} strokeWidth={2.4} /> {occ.slot.professor}
@@ -207,11 +197,11 @@ export default function TodayScreen() {
                           onClick={() => void markAbsent(occ, !absent)}
                           aria-pressed={absent}
                           className={cx(
-                            "pressable inline-flex h-10 items-center gap-1.5 rounded-full px-3.5 text-[14px] font-bold",
-                            absent ? "bg-danger text-white" : "bg-fill text-label-2",
+                            "pressable inline-flex h-8 items-center gap-1.5 rounded-[8px] px-3 text-[13.5px] font-semibold",
+                            absent ? "bg-danger-soft text-danger" : "bg-fill text-label-2",
                           )}
                         >
-                          {absent ? <Check size={15} strokeWidth={3} /> : null}
+                          {absent ? <Check size={14} strokeWidth={2.6} /> : null}
                           {absent ? "Faltei" : "Faltei?"}
                         </button>
                         <Button size="sm" icon={NotebookPen} onClick={() => void openLessonOn(occ.discipline, today)}>
@@ -219,58 +209,57 @@ export default function TodayScreen() {
                         </Button>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 );
               })}
               {data.calendar.map((event) => (
-                <Card key={event.id} className="flex items-center gap-3 px-4 py-3">
-                  <span className="text-[20px]">📅</span>
+                <div key={event.id} className="flex items-center gap-4 px-4 py-3">
+                  <div className="my-0.5 w-[3px] self-stretch rounded-full bg-[#6b93c7]" />
+                  <div className="w-[56px] flex-none text-[15.5px] font-semibold tabular-nums">{event.allDay ? "dia" : event.time}</div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-bold">{event.title}</p>
-                    <p className="text-[13px] text-label-2">
-                      {event.allDay ? "Dia todo" : `${event.time}${event.endTime ? `–${event.endTime}` : ""}`} · Google Agenda
-                    </p>
+                    <p className="truncate font-semibold">{event.title}</p>
+                    <p className="text-[13px] text-label-2">Google Agenda</p>
                   </div>
-                </Card>
+                </div>
               ))}
-            </div>
+            </Card>
           )}
         </Section>
       ) : null}
 
       <Section
         title="Para fazer"
-        emoji="✅"
+       
         action={
-          <Link to="#/agenda" className="text-[15px] font-bold text-accent">
-            Agenda →
+          <Link to="#/agenda" className="text-[14px] font-medium text-accent">
+            Ver agenda
           </Link>
         }
       >
-        <Card className="divide-y divide-dashed divide-sep">
+        <Card className="divide-y divide-sep overflow-hidden">
           {data.reviews.length > 0 ? (
-            <Link to="#/revisoes" className="row-pressable flex items-center gap-3 px-4 py-3.5">
-              <span className="text-[20px]">🔁</span>
-              <span className="flex-1 font-semibold">
+            <Link to="#/revisoes" className="row-pressable flex items-center gap-3 px-4 py-3">
+              <Repeat2 size={18} strokeWidth={1.9} className="text-label-2" />
+              <span className="flex-1 font-medium">
                 {data.reviews.length} {data.reviews.length === 1 ? "revisão de aula" : "revisões de aula"} para hoje
               </span>
-              <span className="text-[14px] font-bold text-accent">Revisar →</span>
+              <ChevronRight size={17} className="text-label-3" />
             </Link>
           ) : null}
           {data.cards > 0 ? (
-            <Link to="#/estudar" className="row-pressable flex items-center gap-3 px-4 py-3.5">
-              <span className="text-[20px]">🃏</span>
-              <span className="flex-1 font-semibold">{data.cards} flashcards esperando</span>
-              <span className="text-[14px] font-bold text-accent">Estudar →</span>
+            <Link to="#/estudar" className="row-pressable flex items-center gap-3 px-4 py-3">
+              <Layers size={18} strokeWidth={1.9} className="text-label-2" />
+              <span className="flex-1 font-medium">{data.cards} flashcards para revisar</span>
+              <ChevronRight size={17} className="text-label-3" />
             </Link>
           ) : null}
           {week.map((task) => (
             <TaskLine key={task.id} task={task} today={today} discipline={disciplineById.get(task.disciplineId ?? "")} />
           ))}
           {data.reviews.length === 0 && data.cards === 0 && week.length === 0 ? (
-            <div className="px-4 py-5 text-[15px] text-label-2">
+            <div className="px-4 py-4 text-[15px] text-label-2">
               Nada pendente nos próximos dias.{" "}
-              <button type="button" onClick={() => setTaskOpen(true)} className="font-bold text-accent">
+              <button type="button" onClick={() => setTaskOpen(true)} className="font-medium text-accent">
                 Adicionar prova ou entrega
               </button>
             </div>
@@ -278,31 +267,32 @@ export default function TodayScreen() {
         </Card>
       </Section>
 
-      <Section title="Atalhos" emoji="🎧" className="mb-4">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <Section title="Atalhos" className="mb-4">
+        <Card className="grid grid-cols-2 divide-sep overflow-hidden sm:grid-cols-4 sm:divide-x">
           {[
-            { label: "Tocar música", emoji: "🎧", onClick: () => setMusicOpen(true) },
-            { label: "Estudar flashcards", emoji: "🃏", onClick: () => navigate("#/estudar") },
-            { label: "Biblioteca", emoji: "📚", onClick: () => navigate("#/biblioteca") },
-            { label: "Notas e faltas", emoji: "📊", onClick: () => navigate("#/desempenho") },
+            { label: "Música", icon: Headphones, onClick: () => setMusicOpen(true) },
+            { label: "Flashcards", icon: Layers, onClick: () => navigate("#/estudar") },
+            { label: "Biblioteca", icon: Library, onClick: () => navigate("#/biblioteca") },
+            { label: "Notas e faltas", icon: ChartColumnBig, onClick: () => navigate("#/desempenho") },
           ].map((item) => (
             <button
               key={item.label}
               type="button"
               onClick={item.onClick}
-              className="pressable lift card flex items-center gap-2.5 px-4 py-3.5 text-left text-[14.5px] font-bold"
+              className="row-pressable flex items-center gap-2.5 px-4 py-3 text-left text-[14.5px] font-medium"
             >
-              <span className="text-[22px]">{item.emoji}</span>
+              <item.icon size={18} strokeWidth={1.9} className="text-label-2" />
               {item.label}
             </button>
           ))}
-        </div>
+        </Card>
         {!settings.spotifyUrl ? (
-          <p className="mt-2 flex items-center gap-1.5 px-1 text-[13px] text-label-3">
-            <Headphones size={14} /> Para a música, cole sua playlist do Spotify em{" "}
-            <Link to="#/ajustes/integracoes" className="font-bold text-accent">
+          <p className="mt-2 text-[13px] text-label-3">
+            Para ouvir música aqui, cole o link de uma playlist do Spotify em{" "}
+            <Link to="#/ajustes/integracoes" className="font-medium text-accent">
               Ajustes
             </Link>
+            .
           </p>
         ) : null}
       </Section>
@@ -326,24 +316,24 @@ function CountdownCard({
 }) {
   const left = countdownTo(task.dueDate, task.time, nowMs);
   const days = diffDays(today, task.dueDate);
-  const t = tint(discipline?.color ?? "rosa", "washi card w-[190px] flex-none snap-start overflow-visible px-4 pt-5 pb-4");
+  const t = tint(discipline?.color ?? "rosa", "card w-[180px] flex-none snap-start px-4 py-3.5");
   return (
-    <div className={t.className} style={{ ...t.style, ["--tape" as string]: "var(--dc)" }}>
-      <p className="text-[12.5px] font-extrabold tracking-[0.04em] text-dc uppercase">
-        {TASK_TYPE_EMOJI[task.type]} {TASK_TYPE_LABEL[task.type]}
+    <div className={t.className} style={t.style}>
+      <p className="flex items-center gap-1.5 text-[12.5px] font-medium text-label-2">
+        <span className="size-2 rounded-full bg-dc" />
+        {TASK_TYPE_LABEL[task.type]}
       </p>
-      <p className="mt-1 line-clamp-2 min-h-[44px] text-[16px] leading-[22px] font-bold">{task.title}</p>
-      <p className="mt-2 font-display text-[44px] leading-none font-bold text-dc">
-        {days === 0 ? "hoje" : days}
-        {days > 0 ? <span className="ml-1 font-sans text-[15px] font-bold text-label-2">{days === 1 ? "dia" : "dias"}</span> : null}
+      <p className="mt-1 line-clamp-2 min-h-[42px] text-[15px] leading-[21px] font-semibold">{task.title}</p>
+      <p className="mt-2 text-[32px] leading-none font-semibold tracking-[-0.03em] tabular-nums">
+        {days === 0 ? "Hoje" : days}
+        {days > 0 ? <span className="ml-1 text-[14px] font-medium tracking-normal text-label-2">{days === 1 ? "dia" : "dias"}</span> : null}
       </p>
-      <p className="mt-1.5 flex items-center gap-1 text-[12.5px] text-label-2">
-        <Clock size={12} strokeWidth={2.5} />
+      <p className="mt-1.5 text-[12.5px] text-label-2">
         {formatWeekday(task.dueDate)}, {formatShort(task.dueDate, today)}
         {task.time ? ` · ${task.time}` : ""}
         {days === 0 ? ` · ${left.label}` : ""}
       </p>
-      {discipline ? <p className="mt-0.5 truncate text-[12.5px] font-semibold text-label-3">{discipline.name}</p> : null}
+      {discipline ? <p className="truncate text-[12.5px] text-label-3">{discipline.name}</p> : null}
     </div>
   );
 }
@@ -351,23 +341,24 @@ function CountdownCard({
 export function TaskLine({ task, today, discipline }: { task: Task; today: string; discipline?: Discipline }) {
   const delta = diffDays(today, task.dueDate);
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-3 px-4 py-2.5">
       <button
         type="button"
         aria-label={task.done ? "Marcar como não feito" : "Marcar como feito"}
         onClick={() => void updateTask(task.id, { done: !task.done })}
         className={cx(
-          "pressable inline-flex size-7 flex-none items-center justify-center rounded-[9px] border-2",
-          task.done ? "border-success bg-success text-white" : "border-sep",
+          "pressable inline-flex size-[22px] flex-none items-center justify-center rounded-full border-[1.5px]",
+          task.done ? "border-accent bg-accent-solid text-on-accent" : "border-label-3",
         )}
       >
-        {task.done ? <Check size={16} strokeWidth={3} /> : null}
+        {task.done ? <Check size={13} strokeWidth={3} /> : null}
       </button>
       <div className="min-w-0 flex-1">
-        <p className={cx("truncate font-semibold", task.done && "text-label-3 line-through")}>
-          {TASK_TYPE_EMOJI[task.type]} {task.title}
+        <p className={cx("truncate font-medium", task.done && "text-label-3 line-through")}>
+          {task.title}
+          <span className="ml-1.5 text-[12.5px] font-normal text-label-3">{TASK_TYPE_LABEL[task.type]}</span>
         </p>
-        <p className={cx("text-[13px]", delta < 0 ? "font-bold text-danger" : "text-label-2")}>
+        <p className={cx("text-[13px]", delta < 0 ? "font-semibold text-danger" : "text-label-2")}>
           {formatShort(task.dueDate, today)} · {formatRelative(task.dueDate, today)}
           {task.time ? ` · ${task.time}` : ""}
           {discipline ? ` · ${discipline.name}` : ""}
@@ -376,9 +367,9 @@ export function TaskLine({ task, today, discipline }: { task: Task; today: strin
       <a
         href={`#/agenda`}
         aria-label="Ver na agenda"
-        className="pressable inline-flex size-9 flex-none items-center justify-center rounded-full bg-fill text-label-2"
+        className="row-pressable inline-flex size-8 flex-none items-center justify-center rounded-[8px] text-label-3"
       >
-        <CalendarPlus size={16} strokeWidth={2.4} />
+        <CalendarPlus size={16} strokeWidth={1.9} />
       </a>
     </div>
   );

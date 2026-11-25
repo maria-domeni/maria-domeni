@@ -25,7 +25,7 @@ export function SpotifyDock() {
       <div className={cx("card w-[min(340px,calc(100vw-110px))] overflow-hidden p-2", !open && "sr-only")}>
         <div className="flex items-center gap-2 px-1.5 pb-1.5">
           <Headphones size={17} strokeWidth={2.4} className="text-[#1db954]" />
-          <span className="flex-1 text-[14px] font-bold">Música</span>
+          <span className="flex-1 text-[14px] font-semibold">Música</span>
           <button
             type="button"
             onClick={() => setMusicOpen(false)}
@@ -48,7 +48,7 @@ export function SpotifyDock() {
         ) : (
           <div className="rounded-[14px] bg-fill px-3 py-4 text-[14px] leading-5 text-label-2">
             Cole o link de uma playlist, álbum ou podcast do Spotify em{" "}
-            <Link to="#/ajustes/integracoes" onClick={() => setMusicOpen(false)} className="font-bold text-accent">
+            <Link to="#/ajustes/integracoes" onClick={() => setMusicOpen(false)} className="font-semibold text-accent">
               Ajustes › Integrações
             </Link>
             .
@@ -60,7 +60,7 @@ export function SpotifyDock() {
           <button
             type="button"
             onClick={() => setMusicOpen(true)}
-            className="pressable inline-flex h-11 items-center gap-2 rounded-full bg-surface px-3.5 text-[14px] font-bold shadow-float"
+            className="pressable inline-flex h-11 items-center gap-2 rounded-[8px] bg-surface px-3.5 text-[14px] font-semibold shadow-float"
           >
             <Headphones size={18} strokeWidth={2.4} className="text-[#1db954]" />
             Música

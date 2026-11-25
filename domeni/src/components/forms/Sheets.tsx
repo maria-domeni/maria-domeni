@@ -321,7 +321,7 @@ function DisciplineForm({
           <EmojiPicker value={emoji} onChange={setEmoji} />
         </Field>
 
-        <button type="button" onClick={() => setMore((v) => !v)} className="text-[15px] font-bold text-accent">
+        <button type="button" onClick={() => setMore((v) => !v)} className="text-[15px] font-semibold text-accent">
           {more ? "Menos opções" : "Mais opções (faltas, nota, links)"}
         </button>
         {more ? (
@@ -516,7 +516,7 @@ function TaskForm({
               onClick={() => setType(t)}
               aria-pressed={type === t}
               className={cx(
-                "pressable inline-flex h-9 items-center gap-1 rounded-full px-3 text-[14px] font-bold",
+                "pressable inline-flex h-9 items-center gap-1 rounded-[8px] px-3 text-[14px] font-semibold",
                 type === t ? "bg-accent-solid text-on-accent" : "bg-fill text-label-2",
               )}
             >

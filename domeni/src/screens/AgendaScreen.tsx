@@ -15,7 +15,7 @@ import { addDays, formatLong, formatShort, parseISO } from "@/lib/dates";
 import { useSettingsOrDefault, useToday } from "@/lib/hooks";
 import { replaceCalendar, updateTask } from "@/lib/store";
 import { resolveCurrentSemester } from "@/lib/today";
-import { TASK_TYPE_EMOJI, WEEKDAY_SHORT, type CalendarEvent, type Discipline, type Task } from "@/lib/types";
+import { WEEKDAY_SHORT, type CalendarEvent, type Discipline, type Task } from "@/lib/types";
 
 const SYNC_KEY = "domeni-google-sync";
 
@@ -170,21 +170,21 @@ export default function AgendaScreen() {
     >
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1">
-          <button type="button" onClick={() => move(-1)} aria-label="Anterior" className="pressable inline-flex size-10 items-center justify-center rounded-full bg-surface shadow-card">
+          <button type="button" onClick={() => move(-1)} aria-label="Anterior" className="row-pressable inline-flex size-9 items-center justify-center rounded-[10px]">
             <ChevronLeft size={20} strokeWidth={2.5} />
           </button>
-          <button type="button" onClick={() => move(1)} aria-label="Próximo" className="pressable inline-flex size-10 items-center justify-center rounded-full bg-surface shadow-card">
+          <button type="button" onClick={() => move(1)} aria-label="Próximo" className="row-pressable inline-flex size-9 items-center justify-center rounded-[10px]">
             <ChevronRight size={20} strokeWidth={2.5} />
           </button>
         </div>
-        <h2 className="font-display text-[26px] leading-8 font-bold">{monthTitle(year, month - 1)}</h2>
+        <h2 className="text-[22px] leading-8 font-semibold tracking-[-0.02em]">{monthTitle(year, month - 1)}</h2>
         <button
           type="button"
           onClick={() => {
             setCursor(null);
             setSelected(today);
           }}
-          className="pressable rounded-full bg-accent-soft px-3.5 py-1.5 text-[14px] font-bold text-accent"
+          className="pressable rounded-[8px] bg-fill px-3 py-1.5 text-[14px] font-medium"
         >
           Hoje
         </button>
@@ -202,7 +202,7 @@ export default function AgendaScreen() {
 
       <div className="mt-4 grid gap-5 lg:grid-cols-[1fr_340px]">
         <Card className="overflow-hidden p-2 sm:p-3">
-          <div className="grid grid-cols-7 pb-1 text-center text-[12px] font-extrabold tracking-[0.05em] text-label-3 uppercase">
+          <div className="grid grid-cols-7 pb-1 text-center text-[12px] font-medium text-label-3">
             {[1, 2, 3, 4, 5, 6, 0].map((d) => (
               <span key={d}>{WEEKDAY_SHORT[d]}</span>
             ))}
@@ -221,33 +221,34 @@ export default function AgendaScreen() {
                   className={cx(
                     "flex flex-col items-stretch gap-0.5 rounded-[12px] p-1 text-left transition-colors",
                     view === "mes" ? "min-h-[74px] sm:min-h-[92px]" : "min-h-[220px]",
-                    isSelected ? "bg-accent-faint ring-2 ring-accent" : "row-pressable",
+                    isSelected ? "bg-fill" : "row-pressable",
                     !inMonth && "opacity-40",
                   )}
                 >
                   <span
                     className={cx(
-                      "inline-flex size-7 items-center justify-center self-start rounded-full text-[13.5px] font-bold",
+                      "inline-flex size-7 items-center justify-center self-start rounded-full text-[13.5px] font-semibold",
                       isToday && "bg-accent-solid text-on-accent",
+                      !isToday && isSelected && "text-accent",
                     )}
                   >
                     {Number(date.slice(8, 10))}
                   </span>
                   {items.slice(0, view === "mes" ? 3 : 8).map((item) => {
                     const t = tint(item.color, cx(
-                      "truncate rounded-[6px] px-1 text-[10.5px] leading-[16px] font-bold sm:text-[11.5px]",
-                      item.kind === "tarefa" ? "bg-dc text-white" : item.kind === "aula" ? "bg-dc-soft text-dc" : "bg-[#d6e7ff] text-[#1f4f86]",
+                      "truncate rounded-[4px] px-1 text-[10.5px] leading-[16px] sm:text-[11.5px]",
+                      item.kind === "tarefa" ? "bg-dc-soft font-semibold text-dc" : item.kind === "aula" ? "font-medium text-label-2" : "font-medium text-[#3a6fae]",
                     ));
                     return (
                       <span key={item.key} className={t.className} style={t.style}>
-                        {item.kind === "tarefa" ? TASK_TYPE_EMOJI[item.task!.type] : ""}
+                        
                         {view === "semana" && item.time ? `${item.time} ` : ""}
                         {item.title}
                       </span>
                     );
                   })}
                   {items.length > (view === "mes" ? 3 : 8) ? (
-                    <span className="px-1 text-[10.5px] font-bold text-label-3">+{items.length - (view === "mes" ? 3 : 8)}</span>
+                    <span className="px-1 text-[10.5px] font-semibold text-label-3">+{items.length - (view === "mes" ? 3 : 8)}</span>
                   ) : null}
                 </button>
               );
@@ -257,18 +258,18 @@ export default function AgendaScreen() {
 
         <div>
           <Card className="px-4 py-4">
-            <p className="text-[12.5px] font-extrabold tracking-[0.04em] text-accent uppercase">dia selecionado</p>
-            <h3 className="font-display text-[22px] leading-7 font-bold">{formatLong(day).replace(/^./, (c) => c.toUpperCase())}</h3>
+            <p className="text-[12.5px] font-medium text-accent">dia selecionado</p>
+            <h3 className="font-display text-[22px] leading-7 font-semibold">{formatLong(day).replace(/^./, (c) => c.toUpperCase())}</h3>
             <div className="mt-3 space-y-2">
               {dayItems.length === 0 ? <p className="text-[15px] text-label-2">Nada marcado. Que tal um dia de estudo? 🌷</p> : null}
               {dayItems.map((item) => {
-                const t = tint(item.color, "flex gap-3 rounded-2xl bg-dc-soft px-3 py-2.5");
+                const t = tint(item.color, "flex gap-3 rounded-[10px] bg-fill px-3 py-2.5");
                 return (
                   <div key={item.key} className={t.className} style={t.style}>
-                    <div className="w-12 flex-none text-[13.5px] font-extrabold text-dc">{item.time || "dia"}</div>
+                    <div className="flex w-14 flex-none items-start gap-1.5 text-[13.5px] font-semibold tabular-nums"><span className="mt-1.5 size-2 flex-none rounded-full bg-dc" />{item.time || "dia"}</div>
                     <div className="min-w-0 flex-1">
-                      <p className={cx("font-bold", item.task?.done && "line-through opacity-60")}>
-                        {item.kind === "tarefa" ? `${TASK_TYPE_EMOJI[item.task!.type]} ` : item.kind === "google" ? "📅 " : "🎒 "}
+                      <p className={cx("font-semibold", item.task?.done && "line-through opacity-60")}>
+                        
                         {item.title}
                       </p>
                       {item.detail || item.discipline ? (
@@ -282,11 +283,11 @@ export default function AgendaScreen() {
                           <button
                             type="button"
                             onClick={() => void updateTask(item.task!.id, { done: !item.task!.done })}
-                            className="pressable rounded-full bg-surface px-2.5 py-1 text-[12.5px] font-bold"
+                            className="pressable rounded-[8px] bg-surface px-2.5 py-1 text-[12.5px] font-semibold"
                           >
                             {item.task.done ? "Desmarcar" : "Feito ✓"}
                           </button>
-                          <button type="button" onClick={() => setSheet({ open: true, task: item.task })} className="pressable rounded-full bg-surface px-2.5 py-1 text-[12.5px] font-bold">
+                          <button type="button" onClick={() => setSheet({ open: true, task: item.task })} className="pressable rounded-[8px] bg-surface px-2.5 py-1 text-[12.5px] font-semibold">
                             Editar
                           </button>
                           <a
@@ -298,7 +299,7 @@ export default function AgendaScreen() {
                             })}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="pressable inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[12.5px] font-bold"
+                            className="pressable inline-flex items-center gap-1 rounded-[8px] bg-surface px-2.5 py-1 text-[12.5px] font-semibold"
                           >
                             <CalendarArrowUp size={13} /> Google Agenda
                           </a>
@@ -315,7 +316,7 @@ export default function AgendaScreen() {
           </Card>
 
           <Card className="mt-4 space-y-2 px-4 py-4 text-[14px] leading-5 text-label-2">
-            <p className="font-bold text-label">Google Agenda</p>
+            <p className="font-semibold text-label">Google Agenda</p>
             {settings.googleIcsUrl ? (
               <p>
                 Seus eventos do Google aparecem em azul.{" "}
@@ -324,7 +325,7 @@ export default function AgendaScreen() {
             ) : (
               <p>
                 Para ver os eventos do Google aqui, cole o endereço iCal em{" "}
-                <Link to="#/ajustes/integracoes" className="font-bold text-accent">
+                <Link to="#/ajustes/integracoes" className="font-semibold text-accent">
                   Ajustes › Integrações
                 </Link>
                 .

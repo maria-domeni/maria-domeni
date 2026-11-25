@@ -40,7 +40,7 @@ export function Avatar({
     <span
       aria-hidden
       className={cx(
-        "inline-flex flex-none items-center justify-center overflow-hidden rounded-full bg-accent-soft font-bold text-accent",
+        "inline-flex flex-none items-center justify-center overflow-hidden rounded-full bg-accent-soft font-semibold text-accent",
         className,
       )}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.42) }}
@@ -148,7 +148,7 @@ export function ImageField({
           type="button"
           onClick={picker.pick}
           disabled={picker.busy}
-          className="pressable inline-flex h-9 items-center gap-1.5 rounded-full bg-accent-soft px-3.5 text-[15px] font-semibold text-accent disabled:opacity-40"
+          className="pressable inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-accent-soft px-3.5 text-[15px] font-semibold text-accent disabled:opacity-40"
         >
           <ImagePlus size={16} strokeWidth={2.4} />
           {picker.busy ? "Preparando…" : imageId ? "Trocar" : `Escolher ${label}`}
@@ -157,7 +157,7 @@ export function ImageField({
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="pressable inline-flex h-9 items-center gap-1 rounded-full bg-fill px-3.5 text-[15px] font-semibold text-label"
+            className="pressable inline-flex h-9 items-center gap-1 rounded-[8px] bg-fill px-3.5 text-[15px] font-semibold text-label"
           >
             <X size={15} strokeWidth={2.6} />
             Remover

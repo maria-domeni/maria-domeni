@@ -11,10 +11,8 @@ import {
   type AvatarAccessory,
   type AvatarConfig,
   type AvatarEyes,
-  type AvatarHair,
-  type AvatarMouth,
+  type AvatarSpecies,
   type AvatarTone,
-  type BackgroundStyle,
   type FontKey,
   type PaperStyle,
   type Settings,
@@ -26,55 +24,43 @@ import {
 } from "./types";
 
 const THEMES: ThemeMode[] = ["auto", "claro", "escuro"];
-const BACKGROUNDS: BackgroundStyle[] = ["quadriculado", "pontilhado", "liso", "aurora"];
 const SCALES: TextScale[] = ["pequeno", "padrao", "grande"];
 const PAPERS: PaperStyle[] = ["liso", "quadriculado", "pontilhado", "pautado"];
-export const PRESETS: ThemePreset[] = ["rose", "lavanda", "matcha", "caderno", "minimal", "noite", "cafe"];
+export const PRESETS: ThemePreset[] = ["rose", "classico", "notion", "papel", "noite"];
 const MODELS: AiModel[] = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 
 export const AVATAR_TONES: AvatarTone[] = ["carinhosa", "animada", "direta", "engracada", "calma"];
-export const AVATAR_HAIRS: AvatarHair[] = ["longo", "curto", "coque", "cacheado", "franja", "rabo", "tranca", "careca"];
-export const AVATAR_EYES: AvatarEyes[] = ["redondos", "felizes", "estrela", "sonolentos"];
-export const AVATAR_MOUTHS: AvatarMouth[] = ["sorriso", "aberto", "gatinho", "tranquilo"];
-export const AVATAR_ACCESSORIES: AvatarAccessory[] = ["nenhum", "laco", "oculos", "fones", "flor", "chapeu", "estrela"];
+export const AVATAR_SPECIES: AvatarSpecies[] = ["gato", "coelho", "urso", "raposa", "pinguim", "bolinha"];
+export const AVATAR_EYES: AvatarEyes[] = ["pontinhos", "felizes", "sonolentos", "brilhantes"];
+export const AVATAR_ACCESSORIES: AvatarAccessory[] = ["nenhum", "laco", "oculos", "fones", "cachecol", "boina", "flor"];
 
-type PresetValues = Pick<Settings, "theme" | "tone" | "accent" | "fontBody" | "fontTitle" | "background" | "paper">;
+type PresetValues = Pick<Settings, "theme" | "tone" | "accent" | "fontBody" | "fontTitle" | "paper">;
 
 export const THEME_PRESETS: Record<ThemePreset, { label: string; hint: string; values: PresetValues }> = {
   rose: {
     label: "Rosé",
-    hint: "Rosa, quadriculado e letreiro",
-    values: { theme: "auto", tone: "rosado", accent: "rosa", fontBody: "nunito", fontTitle: "pacifico", background: "quadriculado", paper: "quadriculado" },
+    hint: "Neutro com detalhes em rosa",
+    values: { theme: "auto", tone: "neutro", accent: "rosa", fontBody: "sistema", fontTitle: "igual", paper: "liso" },
   },
-  lavanda: {
-    label: "Lavanda",
-    hint: "Lilás com letra manuscrita",
-    values: { theme: "auto", tone: "lavanda", accent: "lilas", fontBody: "nunito", fontTitle: "caveat", background: "pontilhado", paper: "pontilhado" },
+  classico: {
+    label: "Clássico",
+    hint: "Branco e azul, como o iPad",
+    values: { theme: "auto", tone: "neutro", accent: "azul", fontBody: "sistema", fontTitle: "igual", paper: "liso" },
   },
-  matcha: {
-    label: "Matcha",
-    hint: "Verde calmo e editorial",
-    values: { theme: "auto", tone: "menta", accent: "verde", fontBody: "lexend", fontTitle: "fraunces", background: "pontilhado", paper: "pautado" },
+  notion: {
+    label: "Notion",
+    hint: "Tons quentes e preto",
+    values: { theme: "auto", tone: "quente", accent: "grafite", fontBody: "sistema", fontTitle: "igual", paper: "liso" },
   },
-  caderno: {
-    label: "Caderno",
-    hint: "Papel creme e tinta azul",
-    values: { theme: "auto", tone: "creme", accent: "indigo", fontBody: "lora", fontTitle: "caveat", background: "liso", paper: "pautado" },
-  },
-  minimal: {
-    label: "Minimal",
-    hint: "Branco, preto e nada mais",
-    values: { theme: "auto", tone: "neutro", accent: "grafite", fontBody: "inter", fontTitle: "igual", background: "liso", paper: "liso" },
+  papel: {
+    label: "Papel",
+    hint: "Creme com títulos em serifa",
+    values: { theme: "auto", tone: "papel", accent: "cereja", fontBody: "sistema", fontTitle: "serifa", paper: "pautado" },
   },
   noite: {
     label: "Noite",
-    hint: "Escuro com brilho rosa",
-    values: { theme: "escuro", tone: "lavanda", accent: "rosa", fontBody: "nunito", fontTitle: "pacifico", background: "aurora", paper: "quadriculado" },
-  },
-  cafe: {
-    label: "Café",
-    hint: "Tons quentes de livraria",
-    values: { theme: "auto", tone: "cafe", accent: "laranja", fontBody: "lora", fontTitle: "fraunces", background: "pontilhado", paper: "pautado" },
+    hint: "Escuro e discreto",
+    values: { theme: "escuro", tone: "neutro", accent: "lilas", fontBody: "sistema", fontTitle: "igual", paper: "liso" },
   },
 };
 
@@ -112,13 +98,10 @@ export function normalizeAvatar(value: unknown): AvatarConfig {
   return {
     name: text(r.name, DEFAULT_AVATAR.name).slice(0, 24) || DEFAULT_AVATAR.name,
     tone: pick(r.tone, AVATAR_TONES, DEFAULT_AVATAR.tone),
-    skin: hexOr(r.skin, DEFAULT_AVATAR.skin),
-    hair: pick(r.hair, AVATAR_HAIRS, DEFAULT_AVATAR.hair),
-    hairColor: hexOr(r.hairColor, DEFAULT_AVATAR.hairColor),
+    species: pick(r.species, AVATAR_SPECIES, DEFAULT_AVATAR.species),
+    color: hexOr(r.color, DEFAULT_AVATAR.color),
     eyes: pick(r.eyes, AVATAR_EYES, DEFAULT_AVATAR.eyes),
-    mouth: pick(r.mouth, AVATAR_MOUTHS, DEFAULT_AVATAR.mouth),
     accessory: pick(r.accessory, AVATAR_ACCESSORIES, DEFAULT_AVATAR.accessory),
-    outfit: hexOr(r.outfit, DEFAULT_AVATAR.outfit),
     blush: r.blush !== false,
     visible: r.visible !== false,
     side: r.side === "esquerda" ? "esquerda" : "direita",
@@ -167,7 +150,6 @@ export function normalizeSettings(raw: Partial<Settings> | undefined | null): Se
     fontBody: pick<FontKey>(r.fontBody, FONT_KEYS, d.fontBody),
     fontTitle: pick<TitleFontKey>(r.fontTitle, TITLE_FONT_KEYS, d.fontTitle),
     textScale: pick(r.textScale, SCALES, d.textScale),
-    background: pick(r.background, BACKGROUNDS, d.background),
     paper: pick(r.paper, PAPERS, d.paper),
     pencilOnly: r.pencilOnly !== false,
     avatar: normalizeAvatar(r.avatar),
@@ -182,10 +164,7 @@ export function normalizeSettings(raw: Partial<Settings> | undefined | null): Se
 export const APPEARANCE_STORAGE_KEY = "domeni-aparencia";
 export const SIDEBAR_STORAGE_KEY = "domeni-barra";
 
-type Appearance = Pick<
-  Settings,
-  "theme" | "tone" | "accent" | "customAccent" | "fontBody" | "fontTitle" | "textScale" | "background"
->;
+type Appearance = Pick<Settings, "theme" | "tone" | "accent" | "customAccent" | "fontBody" | "fontTitle" | "textScale">;
 
 /** Atributos e variáveis que o tema põe no elemento <html>. */
 export function appearanceAttributes(settings: Appearance): {
@@ -200,7 +179,6 @@ export function appearanceAttributes(settings: Appearance): {
       "data-accent": settings.accent,
       "data-font": settings.fontBody,
       "data-font-title": settings.fontTitle,
-      "data-bg": settings.background,
       "data-scale": settings.textScale,
     },
     vars: {

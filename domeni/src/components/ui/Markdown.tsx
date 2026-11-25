@@ -128,7 +128,7 @@ export function Markdown({ text, compact, className }: { text: string; compact?:
             const size =
               block.level === 1 ? "text-[1.5em]" : block.level === 2 ? "text-[1.28em]" : "text-[1.1em]";
             return (
-              <p key={key} className={cx("font-display leading-tight font-bold", size, !compact && "pt-2")}>
+              <p key={key} className={cx("font-display leading-tight font-semibold", size, !compact && "pt-2")}>
                 {block.level <= 2 ? <span className="marker">{inline(block.text, key)}</span> : inline(block.text, key)}
               </p>
             );
@@ -145,7 +145,7 @@ export function Markdown({ text, compact, className }: { text: string; compact?:
             );
           case "ol":
             return (
-              <ol key={key} className="list-decimal space-y-1 pl-5 marker:font-bold marker:text-accent">
+              <ol key={key} className="list-decimal space-y-1 pl-5 marker:font-semibold marker:text-accent">
                 {block.items.map((item, j) => (
                   <li key={j}>{inline(item, `${key}-${j}`)}</li>
                 ))}
@@ -158,14 +158,14 @@ export function Markdown({ text, compact, className }: { text: string; compact?:
               </blockquote>
             );
           case "hr":
-            return <hr key={key} className="border-0 border-t-2 border-dashed border-sep" />;
+            return <hr key={key} className="border-0 border-t-2 border-sep" />;
           case "table":
             return (
               <div key={key} className="overflow-x-auto">
                 <table className="w-full border-collapse text-[0.92em]">
                   <tbody>
                     {block.rows.map((row, r) => (
-                      <tr key={r} className={r === 0 ? "bg-accent-faint font-bold" : "border-t border-sep"}>
+                      <tr key={r} className={r === 0 ? "bg-accent-faint font-semibold" : "border-t border-sep"}>
                         {row.map((cell, c) => (
                           <td key={c} className="px-2 py-1.5 align-top">
                             <Fragment>{inline(cell, `${key}-${r}-${c}`)}</Fragment>

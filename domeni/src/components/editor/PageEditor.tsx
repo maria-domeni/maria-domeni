@@ -91,7 +91,7 @@ function InlineImageView({ node, selected, updateAttributes, deleteNode, editor 
               key={s}
               type="button"
               onClick={() => updateAttributes({ size: s })}
-              className={cx("inline-flex size-8 items-center justify-center rounded-full text-[13px] font-bold", size === s ? "bg-accent-solid text-on-accent" : "")}
+              className={cx("inline-flex size-8 items-center justify-center rounded-full text-[13px] font-semibold", size === s ? "bg-accent-solid text-on-accent" : "")}
             >
               {s.toUpperCase()}
             </button>
@@ -494,7 +494,7 @@ export function PageEditor({
       aria-pressed={mode === value}
       title={label}
       className={cx(
-        "pressable inline-flex h-10 flex-none items-center gap-1.5 rounded-full px-3 text-[14px] font-bold",
+        "pressable inline-flex h-10 flex-none items-center gap-1.5 rounded-[8px] px-3 text-[14px] font-semibold",
         mode === value ? "bg-accent-solid text-on-accent" : "text-label-2",
       )}
     >
@@ -540,7 +540,7 @@ export function PageEditor({
           <ToolButton label="Post-it" icon={StickyNote} onClick={addPostit} />
         </div>
         {mode === "texto" ? (
-          <div className="no-scrollbar mt-1 flex items-center gap-0.5 overflow-x-auto border-t border-dashed border-sep pt-1">
+          <div className="no-scrollbar mt-1 flex items-center gap-0.5 overflow-x-auto border-t border-sep pt-1">
             {tool("b", "Negrito", Bold, () => chain()?.toggleBold().run(), state?.bold)}
             {tool("i", "Itálico", Italic, () => chain()?.toggleItalic().run(), state?.italic)}
             {tool("u", "Sublinhado", Underline, () => chain()?.toggleUnderline().run(), state?.underline)}
@@ -551,7 +551,7 @@ export function PageEditor({
               value={state?.fontSize ?? ""}
               onMouseDown={(e) => e.stopPropagation()}
               onChange={(e) => (e.target.value ? chain()?.setFontSize(e.target.value).run() : chain()?.unsetFontSize().run())}
-              className="h-9 flex-none rounded-[10px] bg-fill px-2 text-[13.5px] font-bold"
+              className="h-9 flex-none rounded-[10px] bg-fill px-2 text-[13.5px] font-semibold"
             >
               <option value="">Tamanho</option>
               {FONT_SIZES.map((s) => (
@@ -604,7 +604,7 @@ export function PageEditor({
           </div>
         ) : null}
         {mode === "caneta" || mode === "marca" ? (
-          <div className="no-scrollbar mt-1 flex items-center gap-1.5 overflow-x-auto border-t border-dashed border-sep px-1 pt-1.5">
+          <div className="no-scrollbar mt-1 flex items-center gap-1.5 overflow-x-auto border-t border-sep px-1 pt-1.5">
             {(mode === "caneta" ? PEN_COLORS : MARKER_COLORS).map((color) => {
               const active = mode === "caneta" ? penColor === color : markerColor === color;
               return (
@@ -641,7 +641,7 @@ export function PageEditor({
           </div>
         ) : null}
         {panel === "adesivos" ? (
-          <div className="mt-1 border-t border-dashed border-sep px-1 pt-2 pb-1">
+          <div className="mt-1 border-t border-sep px-1 pt-2 pb-1">
             <div className="grid grid-cols-10 gap-1">
               {EMOJI_STICKERS.map((emoji) => (
                 <button
@@ -714,7 +714,7 @@ export function PageEditor({
                     }}
                   >
                     {item.kind === "imagem" ? (
-                      <StoredImage id={item.imageId} className="block w-full rounded-[10px] shadow-sticker" />
+                      <StoredImage id={item.imageId} className="block w-full rounded-[10px] shadow-card" />
                     ) : item.kind === "adesivo" ? (
                       <span className="notebook-sticker relative block text-center" style={{ fontSize: item.w * 0.8, transform: "none", lineHeight: 1 }}>
                         <Sticker value={item.value ?? "⭐"} />

@@ -19,14 +19,14 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf3f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1317" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#191919" },
   ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={fontVariables} data-bg="quadriculado" data-tone="rosado" data-accent="rosa" data-font="nunito" data-font-title="pacifico" suppressHydrationWarning>
+    <html lang="pt-BR" className={fontVariables} data-tone="neutro" data-accent="rosa" data-font="sistema" data-font-title="igual" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: APPEARANCE_BOOT_SCRIPT }} />
       </head>

@@ -38,7 +38,7 @@ export default function SearchScreen({ initial }: { initial: string }) {
 
   return (
     <Page title="Buscar" subtitle="Procure uma palavra-chave em todas as suas aulas, livros e materiais.">
-      <label className="mt-3 flex h-14 items-center gap-3 rounded-full bg-surface px-5 shadow-card">
+      <label className="mt-3 flex h-14 items-center gap-3 rounded-[8px] bg-surface px-5 shadow-card">
         <Search size={20} className="text-label-3" />
         <input
           autoFocus
@@ -57,8 +57,8 @@ export default function SearchScreen({ initial }: { initial: string }) {
         ) : (
           shown.map((hit) => (
             <Link key={`${hit.kind}-${hit.id}`} to={hit.href} className="lift card block px-4 py-3">
-              <p className="text-[12.5px] font-extrabold tracking-[0.04em] text-accent uppercase">{KIND_LABEL[hit.kind]}</p>
-              <p className="font-bold">{hit.title}</p>
+              <p className="text-[12.5px] font-medium text-accent">{KIND_LABEL[hit.kind]}</p>
+              <p className="font-semibold">{hit.title}</p>
               <p className="text-[13px] text-label-2">{hit.subtitle}</p>
               {hit.snippet ? <p className="mt-1 text-[14px] leading-5 text-label-2">{hit.snippet}</p> : null}
             </Link>

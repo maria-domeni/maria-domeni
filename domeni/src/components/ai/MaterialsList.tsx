@@ -55,7 +55,7 @@ export function MaterialsList({ disciplineId, lessonId }: { disciplineId?: strin
             <button type="button" onClick={() => setOpen(output)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
               <span className="text-[24px]">{ACTION_EMOJI[output.action]}</span>
               <span className="min-w-0">
-                <span className="block truncate font-bold">{output.title}</span>
+                <span className="block truncate font-semibold">{output.title}</span>
                 <span className="block text-[13px] text-label-2">{formatShort(output.createdAt.slice(0, 10))}</span>
               </span>
             </button>

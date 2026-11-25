@@ -22,7 +22,6 @@ import {
   ACCENT_KEYS,
   ACCENT_LABEL,
   AI_MODEL_LABEL,
-  BACKGROUND_LABEL,
   FONT_HINT,
   FONT_KEYS,
   FONT_LABEL,
@@ -32,7 +31,6 @@ import {
   TONE_LABEL,
   type AccentKey,
   type AiModel,
-  type BackgroundStyle,
   type PaperStyle,
   type Settings,
   type TextScale,
@@ -40,32 +38,26 @@ import {
 } from "@/lib/types";
 
 const ACCENT_SWATCH: Record<AccentKey, string> = {
-  rosa: "#d14d82",
-  cereja: "#8e2f55",
-  lilas: "#8a5cd1",
-  indigo: "#4f5bd5",
-  azul: "#2a78c2",
-  verde: "#2e8b57",
-  laranja: "#c25a16",
-  grafite: "#2d2d33",
+  rosa: "#c24d78",
+  cereja: "#8c3a5c",
+  lilas: "#7d56c2",
+  indigo: "#4b54c9",
+  azul: "#0a66d8",
+  verde: "#24804a",
+  laranja: "#b9560e",
+  grafite: "#1d1d1f",
 };
 const TONE_SWATCH: Record<string, string> = {
   neutro: "#ffffff",
-  creme: "#f8f3e9",
-  rosado: "#fbf3f5",
-  lavanda: "#f5f2fb",
-  menta: "#f1f7f3",
-  cafe: "#f4ece2",
+  quente: "#f7f7f5",
+  papel: "#f3f1ea",
 };
 
-function Group({ id, title, emoji, children, hint }: { id: string; title: string; emoji: string; children: ReactNode; hint?: string }) {
+function Group({ id, title, children, hint }: { id: string; title: string; children: ReactNode; hint?: string }) {
   return (
-    <section id={`ajuste-${id}`} className="mt-9 scroll-mt-24">
-      <h2 className="mb-1 px-1 font-display text-[23px] font-bold">
-        <span className="mr-1.5 font-sans">{emoji}</span>
-        <span className="marker">{title}</span>
-      </h2>
-      {hint ? <p className="mb-3 px-1 text-[14.5px] leading-5 text-label-2">{hint}</p> : <div className="mb-3" />}
+    <section id={`ajuste-${id}`} className="mt-8 scroll-mt-24">
+      <h2 className="mb-1 text-[17px] font-semibold">{title}</h2>
+      {hint ? <p className="mb-3 text-[14px] leading-5 text-label-2">{hint}</p> : <div className="mb-3" />}
       <Card className="space-y-5 px-4 py-5 sm:px-5">{children}</Card>
     </section>
   );
@@ -147,7 +139,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
 
   return (
     <Page title="Ajustes" subtitle="Deixe o Domeni do seu jeito. Tudo fica salvo no seu aparelho.">
-      <Group id="perfil" title="Perfil" emoji="🙋‍♀️">
+      <Group id="perfil" title="Perfil">
         <ImageField imageId={settings.avatarImageId} onChange={(avatarImageId) => save({ avatarImageId })} maxEdge={512} label="foto" shape="round" />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Nome">
@@ -163,12 +155,12 @@ export default function SettingsScreen({ section }: { section: string | null }) 
             <TextInput type="number" inputMode="numeric" defaultValue={settings.totalSemesters} onBlur={(e) => save({ totalSemesters: Number(e.target.value) || 10 })} />
           </Field>
         </div>
-        <Link to="#/personagem" className="pressable inline-flex h-10 items-center rounded-full bg-accent-soft px-4 text-[15px] font-bold text-accent">
+        <Link to="#/personagem" className="pressable inline-flex h-9 items-center rounded-[10px] bg-fill px-3.5 text-[14.5px] font-medium">
           Editar personagem ({settings.avatar.name}) →
         </Link>
       </Group>
 
-      <Group id="aparencia" title="Aparência" emoji="🎨" hint="Escolha um estilo pronto e ajuste cada detalhe como quiser.">
+      <Group id="aparencia" title="Aparência" hint="Escolha um estilo pronto e ajuste cada detalhe como quiser.">
         <PresetPicker
           value={settings.preset}
           onChange={(preset) => save({ preset, ...THEME_PRESETS[preset].values })}
@@ -184,23 +176,23 @@ export default function SettingsScreen({ section }: { section: string | null }) 
           ]}
         />
         <div>
-          <p className="mb-2 text-[14px] font-semibold text-label-2">Tom do papel</p>
+          <p className="mb-2 text-[13px] font-medium text-label-2">Tom</p>
           <div className="flex flex-wrap gap-2">
             {TONES.map((tone) => (
               <button
                 key={tone}
                 type="button"
                 onClick={() => custom({ tone })}
-                className={cx("pressable flex items-center gap-2 rounded-full py-1.5 pr-3.5 pl-1.5 text-[14px] font-bold", settings.tone === tone ? "bg-accent-soft ring-2 ring-accent" : "bg-fill")}
+                className={cx("pressable flex items-center gap-2 rounded-[10px] py-1.5 pr-3 pl-1.5 text-[14px] font-medium", settings.tone === tone ? "ring-2 ring-accent" : "bg-fill")}
               >
-                <span className="size-7 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,.15)]" style={{ background: TONE_SWATCH[tone] }} />
+                <span className="size-6 rounded-[6px] shadow-[inset_0_0_0_1px_rgba(0,0,0,.15)]" style={{ background: TONE_SWATCH[tone] }} />
                 {TONE_LABEL[tone]}
               </button>
             ))}
           </div>
         </div>
         <div>
-          <p className="mb-2 text-[14px] font-semibold text-label-2">Cor de destaque</p>
+          <p className="mb-2 text-[13px] font-medium text-label-2">Cor de destaque</p>
           <div className="flex flex-wrap gap-2.5">
             {ACCENT_KEYS.map((accent) => (
               <button
@@ -209,7 +201,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
                 aria-label={ACCENT_LABEL[accent]}
                 title={ACCENT_LABEL[accent]}
                 onClick={() => custom({ accent })}
-                className={cx("pressable size-10 rounded-full", settings.accent === accent && "ring-[3px] ring-accent ring-offset-2 ring-offset-surface")}
+                className={cx("pressable size-9 rounded-full", settings.accent === accent && "ring-2 ring-accent ring-offset-2 ring-offset-surface")}
                 style={{ background: ACCENT_SWATCH[accent] }}
               />
             ))}
@@ -240,16 +232,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
               ))}
             </Select>
           </Field>
-          <Field label="Fundo do app">
-            <Select value={settings.background} onChange={(e) => custom({ background: e.target.value as BackgroundStyle })}>
-              {(Object.keys(BACKGROUND_LABEL) as BackgroundStyle[]).map((b) => (
-                <option key={b} value={b}>
-                  {BACKGROUND_LABEL[b]}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Folha padrão das aulas">
+          <Field label="Folha das anotações" hint="Quadriculado, pautado ou pontilhado aparecem só nas aulas">
             <Select value={settings.paper} onChange={(e) => custom({ paper: e.target.value as PaperStyle })}>
               {(Object.keys(PAPER_LABEL) as PaperStyle[]).map((p) => (
                 <option key={p} value={p}>
@@ -269,7 +252,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
             { value: "grande", label: "Grande" },
           ]}
         />
-        <label className="flex items-center justify-between gap-3 text-[15.5px] font-semibold">
+        <label className="flex items-center justify-between gap-3 text-[15px] font-medium">
           <span>
             Na folha, só a Apple Pencil escreve
             <span className="block text-[13px] font-normal text-label-2">O dedo rola a página; desligue para escrever com o dedo.</span>
@@ -281,7 +264,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
       <Group
         id="regras"
         title="Regras da faculdade"
-        emoji="📏"
+       
         hint="Use as regras da sua faculdade. O Domeni só faz as contas — cada disciplina também pode ter a sua regra."
       >
         <div className="grid gap-4 sm:grid-cols-2">
@@ -300,7 +283,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
         </Field>
       </Group>
 
-      <Group id="integracoes" title="Integrações" emoji="🔗">
+      <Group id="integracoes" title="Integrações">
         <Field
           label="Google Agenda (endereço secreto no formato iCal)"
           hint="No computador: Google Agenda › Configurações › sua agenda › “Endereço secreto no formato iCal”. Fica só no seu aparelho."
@@ -350,22 +333,22 @@ export default function SettingsScreen({ section }: { section: string | null }) 
         </div>
       </Group>
 
-      <Group id="ia" title="IA" emoji="✨" hint="A IA só roda quando você toca num botão. Nada é feito em segundo plano.">
-        <label className="flex items-center justify-between gap-3 text-[15.5px] font-semibold">
+      <Group id="ia" title="IA" hint="A IA só roda quando você toca num botão. Nada é feito em segundo plano.">
+        <label className="flex items-center justify-between gap-3 text-[15px] font-medium">
           IA ligada
           <Switch checked={settings.aiEnabled} onChange={(aiEnabled) => save({ aiEnabled })} label="IA ligada" />
         </label>
         <div>
-          <p className="mb-2 text-[14px] font-semibold text-label-2">Modelo</p>
+          <p className="mb-2 text-[13px] font-medium text-label-2">Modelo</p>
           <div className="grid gap-2 sm:grid-cols-3">
             {(Object.keys(AI_MODEL_LABEL) as AiModel[]).map((model) => (
               <button
                 key={model}
                 type="button"
                 onClick={() => save({ aiModel: model })}
-                className={cx("pressable rounded-2xl px-4 py-3 text-left", settings.aiModel === model ? "bg-accent-soft ring-2 ring-accent" : "bg-fill")}
+                className={cx("pressable rounded-[10px] px-4 py-3 text-left", settings.aiModel === model ? "ring-2 ring-accent" : "bg-fill")}
               >
-                <span className="block font-bold">{AI_MODEL_LABEL[model].name}</span>
+                <span className="block font-semibold">{AI_MODEL_LABEL[model].name}</span>
                 <span className="block text-[13px] text-label-2">{AI_MODEL_LABEL[model].hint}</span>
               </button>
             ))}
@@ -374,20 +357,20 @@ export default function SettingsScreen({ section }: { section: string | null }) 
         <Field label="Código de acesso da IA" hint="O mesmo código colocado no servidor (DOMENI_ACCESS_CODE). Protege seus créditos.">
           <TextInput type="password" defaultValue={settings.aiAccessCode} onBlur={(e) => save({ aiAccessCode: e.target.value.trim() })} autoComplete="off" />
         </Field>
-        <div className="rounded-2xl bg-fill px-4 py-3 text-[14px] leading-5">
+        <div className="rounded-[10px] bg-fill px-4 py-3 text-[14px] leading-5">
           <p>
             <b>Gasto estimado este mês:</b> US$ {(cost?.usd ?? 0).toFixed(2)} em {cost?.calls ?? 0} pedidos.
           </p>
           <p className="mt-1 text-label-2">
             A IA usa a API da Anthropic, cobrada à parte do Claude Pro (pré-pago, no console da Anthropic). Dá para pôr um limite de gasto lá.
           </p>
-          <a href="https://console.anthropic.com/settings/limits" target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 font-bold text-accent">
+          <a href="https://console.anthropic.com/settings/limits" target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 font-semibold text-accent">
             Limites no console <ExternalLink size={13} />
           </a>
         </div>
       </Group>
 
-      <Group id="dados" title="Seus dados" emoji="💾" hint="Tudo fica no seu aparelho. Faça backup de vez em quando (inclui fotos, PDFs e gravações).">
+      <Group id="dados" title="Seus dados" hint="Tudo fica no seu aparelho. Faça backup de vez em quando (inclui fotos, PDFs e gravações).">
         <p className="text-[14.5px] text-label-2">
           {lastBackup ? `Último backup: ${formatShort(lastBackup, today)}.` : "Você ainda não fez backup."} {counts ? `${counts.images} imagens e ${counts.files} arquivos guardados.` : ""}
         </p>
@@ -425,7 +408,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
         </div>
       </Group>
 
-      <Group id="instalar" title="Instalar no iPad e no celular" emoji="📲">
+      <Group id="instalar" title="Instalar no iPad e no celular">
         <ol className="list-decimal space-y-1.5 pl-5 text-[15px] leading-[22px]">
           <li>Abra o Domeni no Safari.</li>
           <li>Toque em Compartilhar (quadrado com a seta para cima).</li>

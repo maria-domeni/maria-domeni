@@ -10,21 +10,19 @@ import { optionalNumber, PRESETS, THEME_PRESETS } from "@/lib/settings";
 import { createSemester, saveSettings } from "@/lib/store";
 import { DEFAULT_AVATAR, type ThemePreset } from "@/lib/types";
 
-const PRESET_SWATCH: Record<ThemePreset, [string, string]> = {
-  rose: ["#fbf3f5", "#d14d82"],
-  lavanda: ["#f5f2fb", "#8a5cd1"],
-  matcha: ["#f1f7f3", "#2e8b57"],
-  caderno: ["#f8f3e9", "#4f5bd5"],
-  minimal: ["#ffffff", "#2d2d33"],
-  noite: ["#1a1317", "#ff8fbd"],
-  cafe: ["#f4ece2", "#c25a16"],
+const PRESET_SWATCH: Record<ThemePreset, [string, string, string]> = {
+  rose: ["#ffffff", "#c24d78", "#1d1d1f"],
+  classico: ["#ffffff", "#0a66d8", "#1d1d1f"],
+  notion: ["#ffffff", "#37352f", "#37352f"],
+  papel: ["#fbfaf6", "#8c3a5c", "#2f2b25"],
+  noite: ["#191919", "#bfa4f5", "#f2f2f3"],
 };
 
 export function PresetPicker({ value, onChange }: { value: string; onChange: (preset: ThemePreset) => void }) {
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-5">
       {PRESETS.map((preset) => {
-        const [paper, ink] = PRESET_SWATCH[preset];
+        const [paper, ink, text] = PRESET_SWATCH[preset];
         const selected = value === preset;
         return (
           <button
@@ -33,22 +31,17 @@ export function PresetPicker({ value, onChange }: { value: string; onChange: (pr
             onClick={() => onChange(preset)}
             aria-pressed={selected}
             className={cx(
-              "pressable overflow-hidden rounded-2xl text-left",
-              selected ? "ring-[3px] ring-accent" : "ring-1 ring-sep",
+              "pressable overflow-hidden rounded-[12px] text-left",
+              selected ? "ring-2 ring-accent" : "ring-1 ring-sep",
             )}
           >
-            <span
-              className="block h-16"
-              style={{
-                background: paper,
-                backgroundImage: `linear-gradient(${ink}22 1px, transparent 1px), linear-gradient(90deg, ${ink}22 1px, transparent 1px)`,
-                backgroundSize: "12px 12px",
-              }}
-            >
-              <span className="m-2.5 inline-block h-5 w-12 rounded-full" style={{ background: ink }} />
+            <span className="flex h-16 flex-col justify-center gap-1.5 px-3" style={{ background: paper }}>
+              <span className="block h-2 w-16 rounded-full" style={{ background: text, opacity: 0.85 }} />
+              <span className="block h-1.5 w-24 rounded-full" style={{ background: text, opacity: 0.25 }} />
+              <span className="block h-4 w-10 rounded-[5px]" style={{ background: ink }} />
             </span>
-            <span className="block bg-surface px-3 py-2">
-              <span className="block text-[14.5px] font-bold">{THEME_PRESETS[preset].label}</span>
+            <span className="block border-t border-sep bg-surface px-3 py-2">
+              <span className="block text-[14px] font-semibold">{THEME_PRESETS[preset].label}</span>
               <span className="block truncate text-[12px] text-label-2">{THEME_PRESETS[preset].hint}</span>
             </span>
           </button>
@@ -66,11 +59,11 @@ export function OnboardingSheet({ open, onClose }: { open: boolean; onClose: () 
 function OnboardingForm({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
-  const [course, setCourse] = useState("Psicologia");
+  const [course, setCourse] = useState("");
   const [institution, setInstitution] = useState("");
   const [total, setTotal] = useState("10");
   const [preset, setPreset] = useState<ThemePreset>("rose");
-  const [absenceLimit, setAbsenceLimit] = useState("40");
+  const [absenceLimit, setAbsenceLimit] = useState("");
   const [classesPerDay, setClassesPerDay] = useState("4");
   const [passing, setPassing] = useState("");
   const [gradeMax, setGradeMax] = useState("10");
@@ -113,20 +106,20 @@ function OnboardingForm({ open, onClose }: { open: boolean; onClose: () => void 
     <Sheet open={open} onClose={onClose} title={steps[step]}>
       <div className="mb-5 flex gap-1.5">
         {steps.map((s, i) => (
-          <span key={s} className={cx("h-1.5 flex-1 rounded-full", i <= step ? "bg-accent" : "bg-fill")} />
+          <span key={s} className={cx("h-1 flex-1 rounded-full", i <= step ? "bg-accent" : "bg-fill-2")} />
         ))}
       </div>
 
       {step === 0 ? (
         <div className="space-y-4">
           <div className="flex justify-center">
-            <Character config={DEFAULT_AVATAR} size={96} mood="animada" />
+            <Character config={DEFAULT_AVATAR} size={84} mood="feliz" />
           </div>
           <Field label="Como quer ser chamada?">
             <TextInput value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome" autoFocus />
           </Field>
           <Field label="Curso">
-            <TextInput value={course} onChange={(e) => setCourse(e.target.value)} />
+            <TextInput value={course} onChange={(e) => setCourse(e.target.value)} placeholder="Ex.: Psicologia" />
           </Field>
           <div className="grid grid-cols-[1fr_120px] gap-3">
             <Field label="Faculdade">
@@ -154,7 +147,7 @@ function OnboardingForm({ open, onClose }: { open: boolean; onClose: () => void 
           </p>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Faltas permitidas por disciplina" hint="Em aulas. Estágios não contam.">
-              <TextInput inputMode="numeric" value={absenceLimit} onChange={(e) => setAbsenceLimit(e.target.value.replace(/\D/g, ""))} />
+              <TextInput inputMode="numeric" value={absenceLimit} onChange={(e) => setAbsenceLimit(e.target.value.replace(/\D/g, ""))} placeholder="Ex.: 40" />
             </Field>
             <Field label="Aulas em cada dia de aula">
               <TextInput inputMode="numeric" value={classesPerDay} onChange={(e) => setClassesPerDay(e.target.value.replace(/\D/g, ""))} />

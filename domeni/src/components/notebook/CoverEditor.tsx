@@ -11,10 +11,11 @@ import { COVER_PATTERNS, COVER_PATTERN_LABEL, type CoverSticker, type NotebookCo
 import { NotebookCover, Sticker } from "./NotebookCover";
 import { EMOJI_STICKERS, TEXT_STICKERS } from "./stickers";
 
+/** Cores de capa discretas, como as de cadernos de capa dura. */
 export const COVER_COLORS = [
-  "#f4b6c8", "#f08bb0", "#8e2f55", "#5c1f3a", "#c9b6f0", "#9d86e0",
-  "#a9c8ee", "#2f4f7a", "#a8d5c2", "#5e8c6a", "#f7d08a", "#e9967a",
-  "#e9e4dc", "#c8b6a6", "#2b2b30", "#f5f5f2",
+  "#eadbd8", "#d9a9ad", "#9c5b6e", "#5e2a3a", "#e4dcef", "#b3a5cc",
+  "#d7e1ea", "#8fa3b8", "#3b4a5c", "#dce3d5", "#8fa58a", "#3f4e45",
+  "#ece4d6", "#c9b293", "#f4f2ed", "#2b2b2e",
 ];
 
 function randomIn(min: number, max: number): number {
@@ -27,7 +28,6 @@ export function CoverEditor({
   onClose,
   value,
   title,
-  subtitle,
   onSave,
 }: {
   open: boolean;
@@ -52,7 +52,7 @@ export function CoverEditor({
       value,
       x: randomIn(0.25, 0.75),
       y: randomIn(0.55, 0.85),
-      size: value.startsWith("txt:") ? 0.32 : 0.2,
+      size: value.startsWith("txt:") ? 0.22 : 0.2,
       rotation: Math.round(randomIn(-15, 15)),
     };
     setCover((c) => ({ ...c, stickers: [...c.stickers, sticker].slice(-24) }));
@@ -94,7 +94,7 @@ export function CoverEditor({
               drag.current = null;
             }}
           >
-            <NotebookCover cover={{ ...cover, stickers: [] }} title={title} subtitle={subtitle} />
+            <NotebookCover cover={{ ...cover, stickers: [] }} title={title} />
             {cover.stickers.map((sticker) => (
               <button
                 key={sticker.id}
@@ -122,7 +122,7 @@ export function CoverEditor({
           </div>
           {current ? (
             <div className="mt-4 rounded-2xl bg-fill p-3">
-              <p className="text-[13px] font-bold text-label-2">Adesivo selecionado</p>
+              <p className="text-[13px] font-semibold text-label-2">Adesivo selecionado</p>
               <label className="mt-2 flex items-center gap-3 text-[14px] font-semibold">
                 Tamanho
                 <input
@@ -139,7 +139,7 @@ export function CoverEditor({
                 <button
                   type="button"
                   onClick={() => updateSticker(current.id, { rotation: ((current.rotation + 20 + 180) % 360) - 180 })}
-                  className="pressable inline-flex h-9 items-center gap-1.5 rounded-full bg-surface px-3 text-[14px] font-bold"
+                  className="pressable inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-surface px-3 text-[14px] font-semibold"
                 >
                   <RotateCw size={15} strokeWidth={2.4} /> Girar
                 </button>
@@ -149,7 +149,7 @@ export function CoverEditor({
                     setCover((c) => ({ ...c, stickers: c.stickers.filter((s) => s.id !== current.id) }));
                     setSelected(null);
                   }}
-                  className="pressable inline-flex h-9 items-center gap-1.5 rounded-full bg-danger-soft px-3 text-[14px] font-bold text-danger"
+                  className="pressable inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-danger-soft px-3 text-[14px] font-semibold text-danger"
                 >
                   <Trash2 size={15} strokeWidth={2.4} /> Tirar
                 </button>
@@ -162,7 +162,7 @@ export function CoverEditor({
 
         <div className="space-y-5">
           <div>
-            <p className="mb-2 text-[14px] font-bold text-label-2">Cor</p>
+            <p className="mb-2 text-[13px] font-medium text-label-2">Cor</p>
             <div className="flex flex-wrap gap-2">
               {COVER_COLORS.map((color) => (
                 <button
@@ -173,7 +173,7 @@ export function CoverEditor({
                   onClick={() => patch({ color })}
                   className={cx(
                     "pressable size-9 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)]",
-                    cover.color === color && "ring-[3px] ring-accent ring-offset-2 ring-offset-surface",
+                    cover.color === color && "ring-2 ring-accent ring-offset-2 ring-offset-surface",
                   )}
                   style={{ background: color }}
                 />
@@ -188,7 +188,7 @@ export function CoverEditor({
           </div>
 
           <div>
-            <p className="mb-2 text-[14px] font-bold text-label-2">Estampa</p>
+            <p className="mb-2 text-[13px] font-medium text-label-2">Estampa</p>
             <div className="grid grid-cols-4 gap-2">
               {COVER_PATTERNS.map((pattern) => (
                 <button
@@ -197,8 +197,8 @@ export function CoverEditor({
                   onClick={() => patch({ pattern, imageId: null })}
                   aria-pressed={cover.pattern === pattern && !cover.imageId}
                   className={cx(
-                    "pressable overflow-hidden rounded-xl text-[12px] font-bold",
-                    cover.pattern === pattern && !cover.imageId ? "ring-[3px] ring-accent" : "ring-1 ring-sep",
+                    "pressable overflow-hidden rounded-[10px] text-[12px] font-medium",
+                    cover.pattern === pattern && !cover.imageId ? "ring-2 ring-accent" : "ring-1 ring-sep",
                   )}
                 >
                   <span className={cx("block h-11", `pattern-${pattern}`)} style={{ backgroundColor: cover.color }} />
@@ -209,7 +209,7 @@ export function CoverEditor({
           </div>
 
           <div>
-            <p className="mb-2 text-[14px] font-bold text-label-2">Foto na capa</p>
+            <p className="mb-2 text-[13px] font-medium text-label-2">Foto na capa</p>
             <ImageField
               imageId={cover.imageId}
               onChange={(imageId) => patch({ imageId })}
@@ -219,18 +219,18 @@ export function CoverEditor({
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center justify-between gap-3 rounded-2xl bg-fill px-3.5 py-2.5 text-[15px] font-semibold">
-              Etiqueta com o nome
+            <label className="flex items-center justify-between gap-3 rounded-[10px] bg-fill px-3.5 py-2.5 text-[15px] font-medium">
+              Etiqueta
               <Switch checked={cover.label} onChange={(label) => patch({ label })} label="Etiqueta com o nome" />
             </label>
-            <label className="flex items-center justify-between gap-3 rounded-2xl bg-fill px-3.5 py-2.5 text-[15px] font-semibold">
+            <label className="flex items-center justify-between gap-3 rounded-[10px] bg-fill px-3.5 py-2.5 text-[15px] font-medium">
               Elástico
               <Switch checked={cover.elastic} onChange={(elastic) => patch({ elastic })} label="Elástico" />
             </label>
           </div>
 
-          <div>
-            <p className="mb-2 text-[14px] font-bold text-label-2">Adesivos</p>
+          <details className="group">
+            <summary className="mb-2 cursor-pointer list-none text-[14px] font-semibold text-label-2">Adesivos (opcional) ›</summary>
             <div className="grid grid-cols-8 gap-1.5 sm:grid-cols-10">
               {EMOJI_STICKERS.map((emoji) => (
                 <button
@@ -256,7 +256,7 @@ export function CoverEditor({
                 </button>
               ))}
             </div>
-          </div>
+          </details>
         </div>
       </div>
     </Sheet>

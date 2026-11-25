@@ -70,7 +70,7 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
     return (
       <Page title="Disciplina" back={{ to: "#/cadernos", label: "Cadernos" }}>
         <div className="mt-6">
-          <EmptyState emoji="🫥" title="Essa disciplina não existe mais" />
+          <EmptyState title="Essa disciplina não existe mais" />
         </div>
       </Page>
     );
@@ -87,19 +87,19 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
       wide
       titleSlot={
         <div className="flex items-end gap-4 pt-1">
-          <button type="button" onClick={() => setCoverOpen(true)} className="lift w-[86px] flex-none sm:w-[104px]" aria-label="Personalizar capa">
-            <NotebookCover cover={{ ...discipline.cover, label: false, stickers: discipline.cover.stickers }} title="" />
+          <button type="button" onClick={() => setCoverOpen(true)} className="lift w-[64px] flex-none sm:w-[76px]" aria-label="Personalizar capa">
+            <NotebookCover cover={discipline.cover} title={discipline.name} />
           </button>
-          <div className="min-w-0 flex-1 pb-1">
-            <p {...tint(discipline.color, "text-[13px] font-extrabold tracking-[0.04em] text-dc uppercase")}>
+          <div className="min-w-0 flex-1 pb-0.5">
+            <p className="text-[13px] font-medium text-label-2">
               {discipline.kind === "estagio" ? "Estágio" : "Disciplina"}
-              {discipline.professors.length > 0 ? ` · ${discipline.professors.join(" & ")}` : ""}
+              {discipline.professors.length > 0 ? ` · ${discipline.professors.join(" e ")}` : ""}
             </p>
-            <h1 className="font-display text-[32px] leading-[40px] font-bold break-words">
+            <h1 className="font-display text-[30px] leading-[38px] font-semibold break-words">
               {discipline.emoji ? <span className="mr-2 font-sans">{discipline.emoji}</span> : null}
-              <span className="marker">{discipline.name}</span>
+              {discipline.name}
             </h1>
-            <p className="mt-0.5 text-[14.5px] text-label-2">{scheduleText(discipline, WEEKDAY_SHORT) || "Sem horário cadastrado"}</p>
+            <p className="mt-0.5 text-[14px] text-label-2">{scheduleText(discipline, WEEKDAY_SHORT) || "Sem horário cadastrado"}</p>
           </div>
         </div>
       }
@@ -127,10 +127,10 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
         value={current}
         onChange={go}
         tabs={[
-          { value: "aulas", label: "📓 Aulas", badge: lessons.length || undefined },
-          { value: "faltas", label: "🗓️ Faltas" },
-          { value: "notas", label: "🎯 Notas" },
-          { value: "materiais", label: "✨ Estudar com IA" },
+          { value: "aulas", label: "Aulas", badge: lessons.length || undefined },
+          { value: "faltas", label: "Faltas" },
+          { value: "notas", label: "Notas" },
+          { value: "materiais", label: "Estudar com IA" },
         ]}
       />
 
@@ -164,7 +164,7 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
             {tasks.length === 0 ? (
               <Card className="px-5 py-4 text-[15px] text-label-2">Provas e entregas desta disciplina aparecem aqui, na agenda e na contagem regressiva.</Card>
             ) : (
-              <Card className="divide-y divide-dashed divide-sep">
+              <Card className="divide-y divide-sep">
                 {[...tasks]
                   .sort((a, b) => Number(a.done) - Number(b.done) || a.dueDate.localeCompare(b.dueDate))
                   .map((task) => (
@@ -180,12 +180,12 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
               <Card className="space-y-3 px-5 py-4">
                 <div className="flex flex-wrap gap-2">
                   {safeUrl(discipline.notebookLmUrl) ? (
-                    <a href={safeUrl(discipline.notebookLmUrl) as string} target="_blank" rel="noopener noreferrer" className="pressable inline-flex h-9 items-center gap-1.5 rounded-full bg-accent-soft px-3.5 text-[14px] font-bold text-accent">
+                    <a href={safeUrl(discipline.notebookLmUrl) as string} target="_blank" rel="noopener noreferrer" className="pressable inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-accent-soft px-3.5 text-[14px] font-semibold text-accent">
                       NotebookLM <ExternalLink size={14} />
                     </a>
                   ) : null}
                   {safeUrl(discipline.theaUrl) ? (
-                    <a href={safeUrl(discipline.theaUrl) as string} target="_blank" rel="noopener noreferrer" className="pressable inline-flex h-9 items-center gap-1.5 rounded-full bg-accent-soft px-3.5 text-[14px] font-bold text-accent">
+                    <a href={safeUrl(discipline.theaUrl) as string} target="_blank" rel="noopener noreferrer" className="pressable inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-accent-soft px-3.5 text-[14px] font-semibold text-accent">
                       Thea <ExternalLink size={14} />
                     </a>
                   ) : null}
@@ -205,10 +205,10 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
 
       {current === "materiais" ? (
         <>
-          <Section title="Estudar com IA" emoji="✨" className="mt-5">
+          <Section title="Estudar com IA" className="mt-5">
             <AiStudio discipline={discipline} lessons={lessons} />
           </Section>
-          <Section title="Materiais guardados" emoji="🗂️">
+          <Section title="Materiais guardados">
             <MaterialsList disciplineId={discipline.id} />
           </Section>
         </>
@@ -229,7 +229,6 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
           onClose={() => setCoverOpen(false)}
           value={discipline.cover}
           title={`${discipline.emoji ? `${discipline.emoji} ` : ""}${discipline.name}`}
-          subtitle={discipline.professors.join(" & ") || undefined}
           onSave={(cover) => updateDiscipline(discipline.id, { cover })}
         />
       ) : null}
@@ -243,10 +242,10 @@ function Stat({ label, value, tone, onClick }: { label: string; value: string; t
       type="button"
       onClick={onClick}
       disabled={!onClick}
-      className={cx("card pressable px-4 py-3 text-left", tone === "red" && "bg-danger-soft", tone === "yellow" && "bg-yellow-soft")}
+      className="card pressable px-4 py-3 text-left"
     >
-      <p className="text-[12.5px] font-extrabold tracking-[0.04em] text-label-2 uppercase">{label}</p>
-      <p className={cx("font-display text-[26px] leading-8 font-bold", tone === "red" && "text-danger")}>{value}</p>
+      <p className="text-[12.5px] font-medium text-label-2">{label}</p>
+      <p className={cx("text-[22px] leading-7 font-semibold tracking-[-0.02em] tabular-nums", tone === "red" && "text-danger", tone === "yellow" && "text-warning")}>{value}</p>
     </button>
   );
 }
@@ -298,12 +297,12 @@ function LessonList({
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       {sorted.map((lesson) => (
-        <Link key={lesson.id} to={`#/aula/${lesson.id}`} className="lift card flex items-center gap-3 px-4 py-3.5">
-          <span {...tint(discipline.color, "inline-flex size-11 flex-none items-center justify-center rounded-[12px] bg-dc-soft font-display text-[19px] font-bold text-dc")}>
+        <Link key={lesson.id} to={`#/aula/${lesson.id}`} className="card row-pressable flex items-center gap-3 px-3.5 py-3">
+          <span {...tint(discipline.color, "inline-flex size-10 flex-none items-center justify-center rounded-[10px] bg-dc-soft text-[15px] font-semibold text-dc tabular-nums")}>
             {lesson.number ?? "•"}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[16px] font-bold">{lesson.title || "Aula sem título"}</span>
+            <span className="block truncate text-[15px] font-semibold">{lesson.title || "Aula sem título"}</span>
             <span className="block truncate text-[13px] text-label-2">
               {lesson.date ? `${formatWeekday(lesson.date)}, ${formatShort(lesson.date, today)}` : "Sem data"} · {LESSON_TYPE_LABEL[lesson.type]}
               {lesson.notes ? " · com anotações" : ""}
@@ -362,7 +361,7 @@ function AttendanceTab({
   if (discipline.kind === "estagio") {
     return (
       <Card className="mt-5 px-5 py-5 text-[15px] leading-[22px] text-label-2">
-        Estágios não entram na conta de faltas. Registre suas horas de estágio na tela <Link to="#/estagio" className="font-bold text-accent">Estágio</Link>.
+        Estágios não entram na conta de faltas. Registre suas horas de estágio na tela <Link to="#/estagio" className="font-semibold text-accent">Estágio</Link>.
       </Card>
     );
   }
@@ -373,13 +372,13 @@ function AttendanceTab({
         {limit === null ? (
           <p className="text-[15px] leading-[22px]">
             Você já faltou <b>{summary.used}</b> aulas. Para eu calcular quanto ainda pode faltar, defina o limite em{" "}
-            <Link to="#/ajustes/regras" className="font-bold text-accent">Ajustes › Regras da faculdade</Link>.
+            <Link to="#/ajustes/regras" className="font-semibold text-accent">Ajustes › Regras da faculdade</Link>.
           </p>
         ) : (
           <div className="flex flex-wrap items-center gap-5">
             <Ring ratio={summary.ratio} danger={summary.level === "risco" || summary.level === "estourou"} label={`${summary.used}/${limit}`} />
             <div className="min-w-0 flex-1">
-              <p className="font-display text-[22px] leading-7 font-bold">
+              <p className="font-display text-[22px] leading-7 font-semibold">
                 {summary.level === "estourou"
                   ? "Passou do limite 😟"
                   : `Ainda pode faltar ${summary.remaining} ${summary.remaining === 1 ? "aula" : "aulas"}`}
@@ -395,18 +394,18 @@ function AttendanceTab({
         )}
       </Card>
 
-      <Section title="Dias de aula" emoji="🗓️">
+      <Section title="Dias de aula">
         {days.length === 0 ? (
           <Card className="px-5 py-4 text-[15px] text-label-2">Cadastre os horários da disciplina para os dias aparecerem aqui.</Card>
         ) : (
-          <Card className="divide-y divide-dashed divide-sep">
+          <Card className="divide-y divide-sep">
             {days.map((day) => {
               const record = recordByDate.get(day.date);
               const value = record?.absences ?? 0;
               return (
                 <div key={day.date} className="flex items-center gap-3 px-4 py-2.5">
                   <div className="w-[92px] flex-none">
-                    <p className="font-bold">{formatShort(day.date, today)}</p>
+                    <p className="font-semibold">{formatShort(day.date, today)}</p>
                     <p className="text-[12.5px] text-label-3 capitalize">{formatWeekday(day.date)}</p>
                   </div>
                   <p className="min-w-0 flex-1 truncate text-[13.5px] text-label-2">{day.professor || `${day.classes} aulas`}</p>
@@ -420,7 +419,7 @@ function AttendanceTab({
                     >
                       <Minus size={16} strokeWidth={2.6} />
                     </button>
-                    <span className={cx("w-[74px] text-center text-[14px] font-bold", value > 0 ? "text-danger" : "text-success")}>
+                    <span className={cx("w-[74px] text-center text-[14px] font-semibold", value > 0 ? "text-danger" : "text-success")}>
                       {value === 0 ? "presente" : value === day.classes ? `faltei ${value}` : `${value} falta${value > 1 ? "s" : ""}`}
                     </span>
                     <button
@@ -435,7 +434,7 @@ function AttendanceTab({
                     <button
                       type="button"
                       onClick={() => void setAbsences(day, value === day.classes ? 0 : day.classes)}
-                      className={cx("pressable ml-1 h-9 rounded-full px-3 text-[13px] font-bold", value === day.classes ? "bg-danger text-white" : "bg-danger-soft text-danger")}
+                      className={cx("pressable ml-1 h-9 rounded-[8px] px-3 text-[13px] font-semibold", value === day.classes ? "bg-danger text-white" : "bg-danger-soft text-danger")}
                     >
                       Dia todo
                     </button>
@@ -507,8 +506,8 @@ function GradesTab({ discipline, grades, settings }: { discipline: Discipline; g
     <>
       <Card className="mt-5 flex flex-wrap items-center gap-5 px-5 py-5">
         <div>
-          <p className="text-[12.5px] font-extrabold tracking-[0.04em] text-label-2 uppercase">Média atual</p>
-          <p className="font-display text-[44px] leading-none font-bold">{formatGrade(summary.current)}</p>
+          <p className="text-[12.5px] font-medium text-label-2">Média atual</p>
+          <p className="font-display text-[44px] leading-none font-semibold">{formatGrade(summary.current)}</p>
           {summary.passing !== null ? <p className="mt-1 text-[13.5px] text-label-2">para passar: {formatGrade(summary.passing)}</p> : null}
         </div>
         <p
@@ -523,7 +522,7 @@ function GradesTab({ discipline, grades, settings }: { discipline: Discipline; g
 
       <Section
         title="Avaliações"
-        emoji="📝"
+       
         action={
           <Button
             size="sm"
@@ -537,8 +536,8 @@ function GradesTab({ discipline, grades, settings }: { discipline: Discipline; g
         {sorted.length === 0 ? (
           <Card className="px-5 py-4 text-[15px] text-label-2">Ex.: P1 (peso 4), P2 (peso 4), Trabalho (peso 2). Use os pesos da sua faculdade.</Card>
         ) : (
-          <Card className="divide-y divide-dashed divide-sep">
-            <div className="hidden grid-cols-[1fr_80px_90px_130px_40px] gap-2 px-4 py-2 text-[12px] font-extrabold tracking-[0.04em] text-label-3 uppercase sm:grid">
+          <Card className="divide-y divide-sep">
+            <div className="hidden grid-cols-[1fr_80px_90px_130px_40px] gap-2 px-4 py-2 text-[12px] font-medium text-label-3 sm:grid">
               <span>Avaliação</span>
               <span>Peso</span>
               <span>Nota</span>

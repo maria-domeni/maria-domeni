@@ -1,7 +1,7 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { Palette, Pencil, Plus } from "lucide-react";
+import { MoreHorizontal, Pencil, Plus } from "lucide-react";
 import { useState } from "react";
 import { DisciplineSheet, SemesterSheet } from "@/components/forms/Sheets";
 import { CoverEditor } from "@/components/notebook/CoverEditor";
@@ -39,7 +39,7 @@ export default function SemesterScreen({ id }: { id: string }) {
     return (
       <Page title="Semestre" back={{ to: "#/cadernos", label: "Cadernos" }}>
         <div className="mt-6">
-          <EmptyState emoji="🫥" title="Esse semestre não existe mais" />
+          <EmptyState title="Esse semestre não existe mais" />
         </div>
       </Page>
     );
@@ -60,8 +60,8 @@ export default function SemesterScreen({ id }: { id: string }) {
       actions={
         <>
           <IconButton icon={Pencil} label="Editar semestre" onClick={() => setEditing(true)} filled />
-          <Button size="sm" icon={Plus} onClick={() => setAdding(true)}>
-            Disciplina
+          <Button size="sm" variant="gray" icon={Plus} onClick={() => setAdding(true)}>
+            Caderno
           </Button>
         </>
       }
@@ -71,7 +71,7 @@ export default function SemesterScreen({ id }: { id: string }) {
         <button
           type="button"
           onClick={() => void saveSettings({ currentSemesterId: semester.id })}
-          className="mt-3 rounded-full bg-accent-soft px-3.5 py-1.5 text-[14px] font-bold text-accent"
+          className="mt-3 text-[14px] font-medium text-accent"
         >
           Usar como semestre atual
         </button>
@@ -79,27 +79,23 @@ export default function SemesterScreen({ id }: { id: string }) {
 
       {data.disciplines.length === 0 ? (
         <div className="mt-6">
-          <EmptyState emoji="🎒" title="Cadastre suas disciplinas" action={<Button onClick={() => setAdding(true)}>Nova disciplina</Button>}>
+          <EmptyState title="Cadastre suas disciplinas" action={<Button onClick={() => setAdding(true)}>Nova disciplina</Button>}>
             Com professores e horários, o Domeni monta a sua agenda, conta faltas e te avisa das aulas.
           </EmptyState>
         </div>
       ) : (
-        <div className="mt-7 grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
           {data.disciplines.map((discipline) => {
             const absences = summarizeAbsences(discipline, data.attendance, settings);
             const lessonCount = data.lessons.filter((l) => l.disciplineId === discipline.id).length;
             return (
               <div key={discipline.id}>
                 <Link to={`#/disciplina/${discipline.id}`} className="lift block">
-                  <NotebookCover
-                    cover={discipline.cover}
-                    title={`${discipline.emoji ? `${discipline.emoji} ` : ""}${discipline.name}`}
-                    subtitle={discipline.professors.join(" & ") || undefined}
-                  />
+                  <NotebookCover cover={discipline.cover} title={discipline.name} />
                 </Link>
-                <div className="mt-2.5 flex items-start gap-1.5 px-0.5">
+                <div className="mt-2 flex items-start gap-0.5">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[15.5px] font-bold">{discipline.name}</p>
+                    <p className="truncate text-[14.5px] font-semibold">{discipline.name}</p>
                     <p className="truncate text-[12.5px] text-label-2">
                       {scheduleText(discipline, WEEKDAY_SHORT) || "Sem horário"} · {lessonCount} {lessonCount === 1 ? "aula" : "aulas"}
                     </p>
@@ -107,7 +103,7 @@ export default function SemesterScreen({ id }: { id: string }) {
                       <p
                         className={
                           absences.level === "risco" || absences.level === "estourou"
-                            ? "text-[12.5px] font-bold text-danger"
+                            ? "text-[12.5px] font-semibold text-danger"
                             : "text-[12.5px] text-label-3"
                         }
                       >
@@ -121,9 +117,9 @@ export default function SemesterScreen({ id }: { id: string }) {
                     type="button"
                     onClick={() => setCover(discipline)}
                     aria-label="Personalizar capa"
-                    className="pressable inline-flex size-9 flex-none items-center justify-center rounded-full bg-surface text-label-2 shadow-card"
+                    className="row-pressable -mt-0.5 inline-flex size-7 flex-none items-center justify-center rounded-[8px] text-label-3"
                   >
-                    <Palette size={16} strokeWidth={2.4} />
+                    <MoreHorizontal size={16} />
                   </button>
                 </div>
               </div>
@@ -132,10 +128,10 @@ export default function SemesterScreen({ id }: { id: string }) {
           <button
             type="button"
             onClick={() => setAdding(true)}
-            className="pressable flex aspect-[3/4] flex-col items-center justify-center gap-2 rounded-[6px_16px_16px_6px] border-2 border-dashed border-sep text-[15px] font-bold text-label-2"
+            className="row-pressable flex aspect-[3/4] flex-col items-center justify-center gap-1.5 rounded-[4px_10px_10px_4px] border border-dashed border-label-3/40 text-[14px] font-medium text-label-2"
           >
-            <Plus size={26} strokeWidth={2.4} />
-            Nova disciplina
+            <Plus size={22} strokeWidth={1.8} />
+            Novo caderno
           </button>
         </div>
       )}
@@ -153,8 +149,7 @@ export default function SemesterScreen({ id }: { id: string }) {
           open
           onClose={() => setCover(null)}
           value={cover.cover}
-          title={`${cover.emoji ? `${cover.emoji} ` : ""}${cover.name}`}
-          subtitle={cover.professors.join(" & ") || undefined}
+          title={cover.name}
           onSave={(next) => updateDiscipline(cover.id, { cover: next })}
         />
       ) : null}

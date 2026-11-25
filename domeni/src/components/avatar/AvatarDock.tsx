@@ -118,14 +118,13 @@ export function AvatarDock() {
             if (bubble.href) navigate(bubble.href);
           }}
           className={cx(
-            "bubble-in card relative max-w-[min(300px,calc(100vw-110px))] px-4 py-3 text-left text-[14.5px] leading-[20px] font-medium",
-            left ? "rounded-bl-md" : "rounded-br-md",
+            "bubble-in relative max-w-[min(300px,calc(100vw-110px))] rounded-[14px] bg-surface px-3.5 py-2.5 text-left text-[14px] leading-[20px] shadow-float",
           )}
         >
           <span className="mr-1">{bubble.emoji}</span>
           {speak(avatar.tone, bubble, settings.profileName)}
           {bubble.action ? (
-            <span className="mt-1.5 flex items-center gap-1 text-[13px] font-bold text-accent">
+            <span className="mt-1 flex items-center gap-1 text-[13px] font-semibold text-accent">
               {bubble.action} <ArrowUpRight size={14} strokeWidth={2.6} />
             </span>
           ) : null}
@@ -142,16 +141,10 @@ export function AvatarDock() {
         className="pressable relative rounded-full"
       >
         <span className={cx("block", !open && "bob")}>
-          <Character
-            config={avatar}
-            mood={mood}
-            size={66}
-            background="color-mix(in srgb, var(--accent) 22%, var(--surface))"
-            className="rounded-full shadow-float ring-[3px] ring-surface"
-          />
+          <Character config={avatar} mood={mood} size={56} background="var(--surface)" className="rounded-full shadow-float" />
         </span>
         {!open && important.length > 0 ? (
-          <span className="absolute -top-0.5 -right-0.5 inline-flex min-w-6 items-center justify-center rounded-full bg-danger px-1.5 text-[12.5px] leading-6 font-bold text-white ring-2 ring-surface">
+          <span className="absolute -top-0.5 -right-0.5 inline-flex min-w-5 items-center justify-center rounded-[8px] bg-danger px-1 text-[11px] leading-5 font-semibold text-white ring-2 ring-bg">
             {important.length}
           </span>
         ) : null}
@@ -182,28 +175,29 @@ function Panel({
       role="dialog"
       aria-label={avatar.name}
       className={cx(
-        "bubble-in card flex max-h-[min(640px,calc(100dvh-180px))] w-[min(400px,calc(100vw-24px))] flex-col",
+        "bubble-in flex max-h-[min(640px,calc(100dvh-180px))] w-[min(400px,calc(100vw-24px))] flex-col rounded-[16px] bg-surface shadow-float",
         left ? "origin-bottom-left" : "origin-bottom-right",
       )}
     >
-      <header className="flex items-center gap-3 border-b border-dashed border-sep px-4 pt-3.5 pb-3">
+      <header className="flex items-center gap-3 border-b border-sep px-4 pt-3 pb-2.5">
+        <Character config={avatar} size={36} background="var(--fill)" />
         <div className="min-w-0 flex-1">
-          <h2 className="font-display text-[21px] leading-7 font-bold">{avatar.name}</h2>
+          <h2 className="text-[15.5px] leading-5 font-semibold">{avatar.name}</h2>
           <p className="truncate text-[13.5px] text-label-2">{intro}</p>
         </div>
-        <Link to="#/personagem" onClick={onClose} className="pressable rounded-full bg-fill px-3 py-1.5 text-[13px] font-bold text-label-2">
+        <Link to="#/personagem" onClick={onClose} className="row-pressable rounded-[8px] px-2.5 py-1.5 text-[13px] font-medium text-label-2">
           Editar
         </Link>
         <button
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="pressable inline-flex size-9 items-center justify-center rounded-full bg-fill text-label-2"
+          className="pressable inline-flex size-8 items-center justify-center rounded-full bg-fill text-label-2"
         >
-          <X size={18} strokeWidth={2.6} />
+          <X size={16} strokeWidth={2.4} />
         </button>
       </header>
-      <div className="flex gap-1.5 px-4 pt-3">
+      <div className="mx-4 mt-3 flex w-fit gap-0.5 rounded-[10px] bg-fill p-[3px]">
         {(
           [
             ["avisos", "Avisos", Bell],
@@ -216,8 +210,8 @@ function Panel({
             onClick={() => setTab(key)}
             aria-pressed={tab === key}
             className={cx(
-              "pressable inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[14.5px] font-bold",
-              tab === key ? "bg-accent-solid text-on-accent" : "bg-fill text-label-2",
+              "inline-flex h-8 items-center gap-1.5 rounded-[8px] px-3 text-[13.5px]",
+              tab === key ? "bg-(--thumb) font-semibold text-label shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "font-medium text-label-2",
             )}
           >
             <Icon size={16} strokeWidth={2.4} />
@@ -253,15 +247,15 @@ function AlertList({ alerts, onNavigate }: { alerts: Alert[]; onNavigate: () => 
               navigate(alert.href);
             }}
             className={cx(
-              "row-pressable flex w-full items-start gap-3 rounded-2xl px-3 py-2.5 text-left",
-              alert.level === "urgente" ? "bg-danger-soft" : alert.level === "importante" ? "bg-accent-faint" : "bg-fill/60",
+              "row-pressable flex w-full items-start gap-3 rounded-[10px] px-3 py-2.5 text-left",
+              alert.level === "urgente" ? "bg-danger-soft" : "bg-fill",
             )}
           >
             <span className="text-[20px] leading-6">{alert.emoji}</span>
             <span className="min-w-0 flex-1 text-[14.5px] leading-[20px]">
               {speak(settings.avatar.tone, alert, settings.profileName)}
               {alert.action ? (
-                <span className="mt-1 block text-[13px] font-bold text-accent">{alert.action} →</span>
+                <span className="mt-1 block text-[13px] font-semibold text-accent">{alert.action} →</span>
               ) : null}
             </span>
           </button>
@@ -331,7 +325,7 @@ function Ask({ onNavigate }: { onNavigate: () => void }) {
     <>
       <ul ref={listRef} className="min-h-[160px] flex-1 space-y-2.5 overflow-y-auto px-4 pt-3 pb-2">
         {turns.length === 0 ? (
-          <li className="rounded-2xl bg-accent-faint px-3.5 py-3 text-[14.5px] leading-[20px]">
+          <li className="rounded-[10px] bg-fill px-3.5 py-3 text-[14px] leading-[20px] text-label-2">
             Pergunte qualquer coisa, sem sair desta tela. Ex.: <em>“tenho algum livro que fala de posição esquizoparanoide?”</em>{" "}
             Eu procuro nas suas anotações de todos os semestres e na biblioteca — de graça e sem internet.
           </li>
@@ -340,8 +334,8 @@ function Ask({ onNavigate }: { onNavigate: () => void }) {
           <li key={i} className={cx("flex", turn.role === "voce" ? "justify-end" : "justify-start")}>
             <div
               className={cx(
-                "max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-[20px]",
-                turn.role === "voce" ? "rounded-br-md bg-accent-solid text-on-accent" : "rounded-bl-md bg-fill",
+                "max-w-[88%] rounded-[14px] px-3.5 py-2.5 text-[14px] leading-[20px]",
+                turn.role === "voce" ? "bg-accent-solid text-on-accent" : "bg-fill",
               )}
             >
               {turn.ai ? (
@@ -360,9 +354,9 @@ function Ask({ onNavigate }: { onNavigate: () => void }) {
                       <Link
                         to={hit.href}
                         onClick={onNavigate}
-                        className="row-pressable block rounded-xl bg-surface px-2.5 py-2"
+                        className="row-pressable block rounded-[10px] bg-surface px-2.5 py-2 shadow-card"
                       >
-                        <span className="block truncate text-[14px] font-bold">
+                        <span className="block truncate text-[13.5px] font-semibold">
                           {HIT_EMOJI[hit.kind]} {hit.title}
                         </span>
                         <span className="block truncate text-[12.5px] text-label-2">{hit.subtitle}</span>
@@ -383,28 +377,28 @@ function Ask({ onNavigate }: { onNavigate: () => void }) {
           <button
             type="button"
             onClick={() => void askWithAi(lastQuestion, lastHits)}
-            className="pressable inline-flex h-9 items-center gap-1.5 rounded-full bg-accent-soft px-3.5 text-[13.5px] font-bold text-accent"
+            className="pressable inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-accent-soft px-3 text-[13px] font-semibold text-accent"
           >
             <Sparkles size={15} strokeWidth={2.4} />
             Perguntar com IA (usa créditos)
           </button>
         </div>
       ) : null}
-      <form onSubmit={search} className="flex items-center gap-2 border-t border-dashed border-sep px-3 py-3">
-        <label className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-full bg-fill px-3.5">
+      <form onSubmit={search} className="flex items-center gap-2 border-t border-sep px-3 py-3">
+        <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-[10px] bg-fill px-3">
           <Search size={17} strokeWidth={2.4} className="flex-none text-label-3" />
           <input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder={`Pergunte para ${avatar.name}…`}
-            className="min-w-0 flex-1 bg-transparent text-[15.5px] outline-none"
+            className="min-w-0 flex-1 bg-transparent text-[15px] outline-none"
             enterKeyHint="search"
           />
         </label>
         <button
           type="submit"
           aria-label="Procurar"
-          className="pressable inline-flex size-11 flex-none items-center justify-center rounded-full bg-accent-solid text-on-accent"
+          className="pressable inline-flex size-10 flex-none items-center justify-center rounded-[10px] bg-accent-solid text-on-accent"
         >
           <BookOpen size={19} strokeWidth={2.4} />
         </button>

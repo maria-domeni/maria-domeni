@@ -69,7 +69,7 @@ function InternshipList() {
       </div>
       {data.internships.length === 0 ? (
         <div className="mt-6">
-          <EmptyState emoji="🩺" title="Cadastre o seu estágio" action={<Button onClick={() => setCreating(true)}>Novo estágio</Button>}>
+          <EmptyState title="Cadastre o seu estágio" action={<Button onClick={() => setCreating(true)}>Novo estágio</Button>}>
             Ex.: Estágio Básico em Psicologia Social. Você registra as idas a campo, soma as horas e gera o relatório.
           </EmptyState>
         </div>
@@ -79,9 +79,9 @@ function InternshipList() {
             const hours = data.notes.filter((n) => n.internshipId === internship.id).reduce((s, n) => s + n.hours, 0);
             return (
               <Link key={internship.id} to={`#/estagio/${internship.id}`} className="lift card block px-5 py-4">
-                <p className="text-[17px] font-bold">🩺 {internship.name}</p>
+                <p className="text-[17px] font-semibold">🩺 {internship.name}</p>
                 <p className="text-[13.5px] text-label-2">{internship.place || "Local a definir"}</p>
-                <p className="mt-2 text-[14px] font-bold">
+                <p className="mt-2 text-[14px] font-semibold">
                   {hours.toLocaleString("pt-BR")} h{internship.requiredHours ? ` de ${internship.requiredHours} h` : ""}
                 </p>
                 {internship.requiredHours ? <ProgressBar ratio={hours / internship.requiredHours} className="mt-1.5" /> : null}
@@ -134,7 +134,7 @@ function InternshipDetail({ id }: { id: string }) {
     return (
       <Page title="Estágio" back={{ to: "#/estagio", label: "Estágio" }}>
         <div className="mt-6">
-          <EmptyState emoji="🫥" title="Esse estágio não existe mais" />
+          <EmptyState title="Esse estágio não existe mais" />
         </div>
       </Page>
     );
@@ -169,9 +169,9 @@ function InternshipDetail({ id }: { id: string }) {
         value={tab}
         onChange={setTab}
         tabs={[
-          { value: "diario", label: "📓 Diário de campo", badge: data.notes.length || undefined },
-          { value: "relatorios", label: "📄 Relatórios", badge: data.reports.length || undefined },
-          { value: "dados", label: "⚙️ Dados" },
+          { value: "diario", label: "Diário de campo", badge: data.notes.length || undefined },
+          { value: "relatorios", label: "Relatórios", badge: data.reports.length || undefined },
+          { value: "dados", label: "Dados" },
         ]}
       />
 
@@ -204,7 +204,7 @@ function InternshipDetail({ id }: { id: string }) {
             {data.notes.map((note) => (
               <Card key={note.id} className="px-4 py-3">
                 <div className="flex items-center gap-2">
-                  <p className="flex-1 text-[14px] font-bold text-accent">
+                  <p className="flex-1 text-[14px] font-semibold text-accent">
                     {formatShort(note.date, today)} · {note.hours.toLocaleString("pt-BR")} h
                   </p>
                   <button type="button" aria-label="Apagar registro" onClick={() => void deleteFieldNote(note.id)} className="pressable inline-flex size-8 items-center justify-center rounded-full text-label-3">
@@ -220,8 +220,8 @@ function InternshipDetail({ id }: { id: string }) {
 
       {tab === "relatorios" ? (
         <>
-          <Card className="washi mt-6 overflow-visible px-5 pt-6 pb-5">
-            <p className="font-display text-[22px] font-bold">Agente de relatório de estágio</p>
+          <Card className="mt-6 overflow-visible px-5 pt-6 pb-5">
+            <p className="font-display text-[22px] font-semibold">Agente de relatório de estágio</p>
             <p className="mt-1 text-[15px] leading-[22px] text-label-2">
               Já treinado no formato do seu relatório (I – Identificação, II – Descrição da demanda, III – Procedimento,
               IV – Análise, V – Conclusão, Referências e Anexos), com linguagem acadêmica e cuidado ético. Ele usa o seu
@@ -231,14 +231,14 @@ function InternshipDetail({ id }: { id: string }) {
               Escrever relatório com o agente
             </Button>
           </Card>
-          <Section title="Relatórios" emoji="📄">
+          <Section title="Relatórios">
             {data.reports.length === 0 ? (
               <Card className="px-5 py-4 text-[15px] text-label-2">Os relatórios gerados e os que você escrever ficam aqui.</Card>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
                 {data.reports.map((report) => (
                   <button key={report.id} type="button" onClick={() => setOpenReport(report)} className="lift card px-4 py-3 text-left">
-                    <p className="font-bold">📄 {report.title}</p>
+                    <p className="font-semibold">📄 {report.title}</p>
                     <p className="text-[13px] text-label-2">atualizado em {formatShort(report.updatedAt.slice(0, 10), today)}</p>
                   </button>
                 ))}
