@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable, type Table } from "dexie";
+import { SYNC_TABLES, installTracking } from "./cloud/track";
 import type {
   AiLogEntry,
   AiOutput,
@@ -30,6 +31,32 @@ export interface SettingsRow {
   value: Partial<Settings>;
 }
 
+const V1: Record<string, string> = {
+  semesters: "id, number",
+  disciplines: "id, semesterId, status",
+  lessons: "id, disciplineId, date",
+  pages: "lessonId",
+  recordings: "id, lessonId",
+  reviews: "id, lessonId, dueDate",
+  tasks: "id, disciplineId, dueDate",
+  attendance: "id, disciplineId, date",
+  grades: "id, disciplineId",
+  books: "id, status",
+  bookTexts: "bookId",
+  cards: "id, disciplineId, lessonId, due",
+  questions: "id, disciplineId, lessonId",
+  hours: "id, kind, date",
+  internships: "id",
+  fieldNotes: "id, internshipId, date",
+  reports: "id, internshipId",
+  aiOutputs: "id, disciplineId, lessonId, action",
+  aiLog: "id, at",
+  calendar: "id, date",
+  images: "id",
+  files: "id",
+  settings: "key",
+};
+
 export class DomeniDB extends Dexie {
   semesters!: EntityTable<Semester, "id">;
   disciplines!: EntityTable<Discipline, "id">;
@@ -57,31 +84,12 @@ export class DomeniDB extends Dexie {
 
   constructor(name = "domeni") {
     super(name);
-    this.version(1).stores({
-      semesters: "id, number",
-      disciplines: "id, semesterId, status",
-      lessons: "id, disciplineId, date",
-      pages: "lessonId",
-      recordings: "id, lessonId",
-      reviews: "id, lessonId, dueDate",
-      tasks: "id, disciplineId, dueDate",
-      attendance: "id, disciplineId, date",
-      grades: "id, disciplineId",
-      books: "id, status",
-      bookTexts: "bookId",
-      cards: "id, disciplineId, lessonId, due",
-      questions: "id, disciplineId, lessonId",
-      hours: "id, kind, date",
-      internships: "id",
-      fieldNotes: "id, internshipId, date",
-      reports: "id, internshipId",
-      aiOutputs: "id, disciplineId, lessonId, action",
-      aiLog: "id, at",
-      calendar: "id, date",
-      images: "id",
-      files: "id",
-      settings: "key",
-    });
+    this.version(1).stores(V1);
+    // v2: índice "_d" marca o que ainda não foi para a nuvem.
+    this.version(2).stores(
+      Object.fromEntries(SYNC_TABLES.map((name) => [name, `${V1[name]}, _d`])),
+    );
+    installTracking(this);
   }
 }
 

@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const isProduction = process.env.NODE_ENV === "production";
+const native = process.env.NEXT_PUBLIC_NATIVE === "1";
+
+// Supabase (contas e sincronização) é o único serviço externo que o navegador chama.
+const supabase = (() => {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
+    return [url.origin, `wss://${url.host}`];
+  } catch {
+    return [];
+  }
+})();
 
 // Tudo o que o app carrega vem do próprio endereço (o tocador do Spotify é a
 // única página de fora, dentro de um quadro). Estilos e scripts em linha são
@@ -12,7 +23,7 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   "media-src 'self' blob:",
-  "connect-src 'self' blob: data:",
+  ["connect-src 'self' blob: data:", ...supabase].join(" "),
   "worker-src 'self' blob:",
   "frame-src https://open.spotify.com",
   "manifest-src 'self'",

@@ -10,6 +10,7 @@ import { CustomColorSwatch, Field, Segmented, Select, Switch, TextInput } from "
 import { ImageField } from "@/components/ui/media";
 import { useConfirm, useToast } from "@/components/ui/overlays";
 import { monthCost } from "@/lib/ai";
+import { useAccount } from "@/lib/cloud/account";
 import { backupSummary, BackupError, deliverBackup, eraseEverything, exportBackup, lastBackupDate, parseBackup, restoreBackup } from "@/lib/backup";
 import { isGoogleIcsUrl } from "@/lib/calendar";
 import { db } from "@/lib/db";
@@ -106,6 +107,9 @@ export default function SettingsScreen({ section }: { section: string | null }) 
   const save = (patch: Partial<Settings>) => void saveSettings(patch);
   const custom = (patch: Partial<Settings>) => save({ ...patch, preset: "personalizado" });
   const counts = useLiveQuery(async () => ({ images: await db.images.count(), files: await db.files.count() }), []);
+  const account = useAccount();
+  // modelo, código de acesso e gasto: só para a dona (ou sem contas configuradas)
+  const ownerMode = account.status === "off" || (account.status === "signed-in" && !!account.info?.owner);
 
   useEffect(() => {
     void monthCost().then(setCost);
@@ -139,6 +143,26 @@ export default function SettingsScreen({ section }: { section: string | null }) 
 
   return (
     <Page title="Ajustes" subtitle="Deixe o Domeni do seu jeito. Tudo fica salvo no seu aparelho.">
+      {account.status !== "off" ? (
+        <Link to="#/conta" className="card row-pressable mt-6 flex items-center gap-3 px-4 py-3.5">
+          <span className="flex size-9 flex-none items-center justify-center rounded-full bg-fill text-[15px] font-semibold uppercase">
+            {account.status === "signed-in" ? account.user.email.slice(0, 1) : "?"}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[15.5px] font-semibold">
+              {account.status === "signed-in" ? account.user.email : "Entrar ou criar conta"}
+            </span>
+            <span className="block text-[13px] text-label-2">
+              {account.status === "signed-in"
+                ? account.info?.plan === "plus"
+                  ? "Plus · sincronização e IA"
+                  : "Grátis · conheça o Plus"
+                : "Grátis. Para usar a IA e sincronizar aparelhos."}
+            </span>
+          </span>
+          <span className="text-[13px] font-medium text-accent">Conta</span>
+        </Link>
+      ) : null}
       <Group id="perfil" title="Perfil">
         <ImageField imageId={settings.avatarImageId} onChange={(avatarImageId) => save({ avatarImageId })} maxEdge={512} label="foto" shape="round" />
         <div className="grid gap-4 sm:grid-cols-2">
@@ -338,6 +362,8 @@ export default function SettingsScreen({ section }: { section: string | null }) 
           IA ligada
           <Switch checked={settings.aiEnabled} onChange={(aiEnabled) => save({ aiEnabled })} label="IA ligada" />
         </label>
+        {ownerMode ? (
+          <>
         <div>
           <p className="mb-2 text-[13px] font-medium text-label-2">Modelo</p>
           <div className="grid gap-2 sm:grid-cols-3">
@@ -368,6 +394,23 @@ export default function SettingsScreen({ section }: { section: string | null }) 
             Limites no console <ExternalLink size={13} />
           </a>
         </div>
+          </>
+        ) : (
+          <div className="rounded-[10px] bg-fill px-4 py-3 text-[14px] leading-5">
+            {account.status === "signed-in" && account.info ? (
+              <p>
+                <b>Este mês:</b> {account.info.usage.acao}
+                {account.info.limits.acao >= 0 ? ` de ${account.info.limits.acao}` : ""} ações de IA
+                {account.info.limits.pesquisa > 0 ? ` e ${account.info.usage.pesquisa} de ${account.info.limits.pesquisa} pesquisas` : ""}.
+              </p>
+            ) : (
+              <p>Entre na sua conta para usar a IA.</p>
+            )}
+            <Link to="#/conta" className="mt-1 inline-flex font-semibold text-accent">
+              Ver conta e plano
+            </Link>
+          </div>
+        )}
       </Group>
 
       <Group id="dados" title="Seus dados" hint="Tudo fica no seu aparelho. Faça backup de vez em quando (inclui fotos, PDFs e gravações).">

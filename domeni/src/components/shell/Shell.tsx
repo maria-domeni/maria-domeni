@@ -17,10 +17,12 @@ import {
   Settings2,
   Smile,
   Sun,
+  UserRound,
 } from "lucide-react";
 import { useState, type ComponentType, type ReactNode } from "react";
 import { Character } from "@/components/avatar/Character";
 import { Link, cx, tint } from "@/components/ui/basics";
+import { useAccount } from "@/lib/cloud/account";
 import { Avatar } from "@/components/ui/media";
 import { Sheet } from "@/components/ui/overlays";
 import { db } from "@/lib/db";
@@ -29,6 +31,7 @@ import { navigate, type Route } from "@/lib/router";
 import { setSidebarOpen } from "@/lib/sidebar";
 import { resolveCurrentSemester } from "@/lib/today";
 import { setMusicOpen } from "./music";
+import { Logo } from "./Logo";
 import { SpotifyDock } from "./SpotifyDock";
 
 type IconType = ComponentType<{ size?: number | string; strokeWidth?: number; className?: string }>;
@@ -58,7 +61,8 @@ const COLLEGE_NAV: NavItem[] = [
 const MORE_NAV: NavItem[] = [
   { to: "#/biblioteca", label: "Biblioteca", icon: Library, match: ["biblioteca"] },
   ...COLLEGE_NAV,
-  { to: "#/personagem", label: "Personagem", icon: Smile, match: ["personagem"] },
+  { to: "#/personagem", label: "Bichinho", icon: Smile, match: ["personagem"] },
+  { to: "#/conta", label: "Conta e assinatura", icon: UserRound, match: ["conta"] },
   { to: "#/busca/", label: "Buscar", icon: Search, match: ["busca"] },
   { to: "#/ajustes", label: "Ajustes", icon: Settings2, match: ["ajustes"] },
 ];
@@ -92,21 +96,7 @@ function useShellData() {
   return { dueCount, sidebar, settings };
 }
 
-/** Marca do Domeni: um caderno com a letra D. */
-export function Logo({ size = 26 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden className="flex-none">
-      <rect x="4" y="4" width="56" height="56" rx="14" fill="var(--label)" />
-      <rect x="4" y="4" width="11" height="56" rx="5" fill="var(--bg)" opacity="0.14" />
-      <path
-        fillRule="evenodd"
-        fill="var(--bg)"
-        d="M23 17h11.5c9.4 0 15.5 6.1 15.5 15s-6.1 15-15.5 15H23V17zm7 6.4v17.2h4.1c5.3 0 8.6-3.3 8.6-8.6s-3.3-8.6-8.6-8.6H30z"
-      />
-      <path d="M44 4h7v13l-3.5-2.8L44 17z" fill="var(--accent)" />
-    </svg>
-  );
-}
+export { Logo };
 
 function SidebarLink({ item, active, badge }: { item: NavItem; active: boolean; badge?: number }) {
   const Icon = item.icon;
@@ -132,6 +122,8 @@ function GroupLabel({ children }: { children: ReactNode }) {
 
 export function Shell({ route, children }: { route: Route | null; children: ReactNode }) {
   const { dueCount, sidebar, settings } = useShellData();
+  const account = useAccount();
+  const planLabel = account.status === "signed-in" ? (account.info?.plan === "plus" ? "Plus" : "Grátis") : null;
   const [moreOpen, setMoreOpen] = useState(false);
   const isActive = (item: NavItem) => !!route && item.match.includes(route.name);
   const activeDisciplineId = route?.name === "disciplina" ? route.id : null;
@@ -231,7 +223,9 @@ export function Shell({ route, children }: { route: Route | null; children: Reac
             )}
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[14px] leading-5 font-semibold">{name || "Seu perfil"}</span>
-              <span className="block truncate text-[12px] leading-4 text-label-2">{settings.course.trim() || "Ajustes"}</span>
+              <span className="block truncate text-[12px] leading-4 text-label-2">
+                {[planLabel, settings.course.trim()].filter(Boolean).join(" · ") || "Ajustes"}
+              </span>
             </span>
           </Link>
           <button

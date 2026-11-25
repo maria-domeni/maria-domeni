@@ -10,7 +10,7 @@ const PRECACHE = __PRECACHE__;
 
 const CACHE_PREFIX = "atlas-";
 const CACHE = CACHE_PREFIX + VERSION;
-const SHELL = "/";
+const SHELL = "/app";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

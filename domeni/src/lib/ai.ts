@@ -3,33 +3,62 @@
 import { db } from "./db";
 import { normalizeSettings } from "./settings";
 import { logAiUse } from "./store";
-import type { AiAction, AiModel } from "./types";
+import { estimateCost } from "./aiPricing";
+import { getAccount, refreshAccount } from "./cloud/account";
+import { accessToken } from "./cloud/client";
+import { apiUrl, cloudEnabled } from "./cloud/config";
+import { openPlus } from "./cloud/paywall";
+import { navigate } from "./router";
+import type { AiAction } from "./types";
 
 /**
  * IA sob demanda. Nada aqui roda sozinho: cada chamada parte de um botão que
  * a pessoa tocou. A chave da Anthropic fica só no servidor.
  */
 
-/** Preço por milhão de tokens (entrada, saída), em dólares. */
-export const MODEL_PRICE: Record<AiModel, [number, number]> = {
-  "claude-opus-5-5": [4, 20],
-  "claude-sonnet-5-5": [2, 10],
-  "claude-haiku-5-5": [0.1, 0.5],
-};
-const WEB_SEARCH_PRICE = 10 / 1000;
-
-export function estimateCost(model: string, input: number, output: number, searches = 0): number {
-  const [pIn, pOut] = MODEL_PRICE[model as AiModel] ?? MODEL_PRICE["claude-opus-5-5"];
-  return (input * pIn + output * pOut) / 1_000_000 + searches * WEB_SEARCH_PRICE;
-}
+export { MODEL_PRICE, estimateCost } from "./aiPricing";
 
 export class AiError extends Error {
   constructor(
     message: string,
-    readonly code: "desligada" | "sem-codigo" | "codigo" | "sem-chave" | "rede" | "limite" | "recusa" | "erro",
+    readonly code:
+      | "desligada"
+      | "sem-codigo"
+      | "codigo"
+      | "sem-chave"
+      | "rede"
+      | "limite"
+      | "recusa"
+      | "erro"
+      | "sem-conta"
+      | "sem-sessao"
+      | "cota"
+      | "sem-cota"
+      | "pausada",
+    /** true quando o app já mostrou algo (ex.: a folha do Plus) */
+    readonly handled = false,
   ) {
     super(message);
   }
+}
+
+/** Mostra o erro da IA do jeito certo: oferta do Plus, botão de entrar ou aviso simples. */
+export function showAiError(
+  error: unknown,
+  toast: (message: string, options?: { actionLabel?: string; onAction?: () => void }) => void,
+  fallback = "A IA não conseguiu terminar. Tente de novo.",
+): void {
+  if (error instanceof AiError) {
+    if (error.handled) return;
+    if (error.code === "sem-conta" || error.code === "sem-sessao") {
+      toast(error.message, { actionLabel: "Entrar", onAction: () => navigate("#/conta") });
+      return;
+    }
+    toast(error.message);
+    return;
+  }
+  if ((error as DOMException)?.name === "AbortError") return;
+  toast(fallback);
 }
 
 export interface AiResult {
@@ -58,14 +87,20 @@ export async function askAi(
   if (!settings.aiEnabled) {
     throw new AiError("A IA está desligada nos Ajustes.", "desligada");
   }
-  if (!settings.aiAccessCode) {
-    throw new AiError("Coloque o código de acesso da IA em Ajustes > IA.", "sem-codigo");
+  const token = await accessToken();
+  if (!token && !settings.aiAccessCode) {
+    throw cloudEnabled
+      ? new AiError("Entre na sua conta (é grátis) para usar a IA.", "sem-conta")
+      : new AiError("Coloque o código de acesso da IA em Ajustes > IA.", "sem-codigo");
   }
   let response: Response;
   try {
-    response = await fetch("/api/ia", {
+    response = await fetch(apiUrl("/api/ia"), {
       method: "POST",
-      headers: { "content-type": "application/json", "x-domeni-code": settings.aiAccessCode },
+      headers: {
+        "content-type": "application/json",
+        ...(token ? { authorization: `Bearer ${token}` } : { "x-domeni-code": settings.aiAccessCode }),
+      },
       body: JSON.stringify({ action, model: settings.aiModel, input }),
       signal: options.signal,
     });
@@ -82,6 +117,16 @@ export async function askAi(
       if (body.code) code = body.code;
     } catch {
       // resposta sem corpo
+    }
+    if (code === "cota" || code === "sem-cota") {
+      const plus = (() => {
+        const a = getAccount();
+        return a.status === "signed-in" && a.info?.plan === "plus";
+      })();
+      if (!plus) {
+        openPlus(message);
+        throw new AiError(message, code, true);
+      }
     }
     throw new AiError(message, code);
   }
@@ -123,6 +168,7 @@ export async function askAi(
     }
   }
   if (!result) throw new AiError("A resposta da IA chegou incompleta. Tente de novo.", "erro");
+  if (getAccount().status === "signed-in") void refreshAccount();
   return result;
 }
 

@@ -29,6 +29,7 @@ export type Route =
   | { name: "personagem" }
   | { name: "busca"; q: string }
   | { name: "ajustes"; section: string | null }
+  | { name: "conta"; section: string | null }
   | { name: "desconhecida" };
 
 export function parseHash(hash: string): Route {
@@ -66,6 +67,8 @@ export function parseHash(hash: string): Route {
       return { name: "busca", q: id ?? "" };
     case "ajustes":
       return { name: "ajustes", section: id || null };
+    case "conta":
+      return { name: "conta", section: id || null };
     case "disciplina": {
       if (!id) return { name: "cadernos" };
       const tab = DISCIPLINE_TABS.includes(extra as DisciplineTab) ? (extra as DisciplineTab) : null;

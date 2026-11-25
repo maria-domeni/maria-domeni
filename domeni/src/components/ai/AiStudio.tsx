@@ -6,7 +6,8 @@ import { Markdown } from "@/components/ui/Markdown";
 import { Button, Card, cx } from "@/components/ui/basics";
 import { TextInput } from "@/components/ui/fields";
 import { Sheet, useToast } from "@/components/ui/overlays";
-import { AiError, askAi } from "@/lib/ai";
+import { AiError, askAi, showAiError } from "@/lib/ai";
+import { ActionIcon } from "./actionIcons";
 import { formatShort } from "@/lib/dates";
 import { useSettingsOrDefault, useToday } from "@/lib/hooks";
 import { Link } from "@/components/ui/basics";
@@ -133,7 +134,7 @@ export function AiStudio({
       setResult(output);
     } catch (error) {
       if ((error as DOMException)?.name === "AbortError") toast("Cancelado");
-      else toast(error instanceof AiError ? error.message : "A IA não conseguiu terminar. Tente de novo.");
+      else showAiError(error, toast);
     } finally {
       setRunning(null);
       abort.current = null;
@@ -192,8 +193,8 @@ export function AiStudio({
             onClick={() => void run(card)}
             className="pressable lift card flex flex-col items-start gap-1 px-4 py-3.5 text-left disabled:opacity-50"
           >
-            <span className="text-[26px] leading-none">{card.emoji}</span>
-            <span className="mt-1 text-[15.5px] font-semibold">{card.title}</span>
+            <ActionIcon action={card.action} />
+            <span className="mt-2 text-[15.5px] font-semibold">{card.title}</span>
             <span className="text-[12.5px] leading-[17px] text-label-2">{card.hint}</span>
           </button>
         ))}
@@ -202,8 +203,8 @@ export function AiStudio({
           onClick={() => setChat(true)}
           className="pressable lift card flex flex-col items-start gap-1 px-4 py-3.5 text-left"
         >
-          <span className="text-[26px] leading-none">{discipline.emoji || "🧑‍🏫"}</span>
-          <span className="mt-1 text-[15.5px] font-semibold">Agente de {discipline.name}</span>
+          <ActionIcon action="conversa" />
+          <span className="mt-2 text-[15.5px] font-semibold">Agente de {discipline.name}</span>
           <span className="text-[12.5px] leading-[17px] text-label-2">Converse e tire dúvidas da matéria</span>
         </button>
       </div>
@@ -213,7 +214,7 @@ export function AiStudio({
 
       <Sheet open={running !== null} onClose={() => abort.current?.abort()} title="Gerando…" wide>
         <div className="flex items-center gap-3 rounded-2xl bg-accent-faint px-4 py-3">
-          <span className="wiggle text-[26px]">{ACTIONS.find((a) => a.action === running)?.emoji ?? "✨"}</span>
+          <ActionIcon action={running} className="animate-pulse bg-surface" />
           <p className="flex-1 text-[15px] font-semibold">
             {running === "aprofundar" ? "Pesquisando e escrevendo (pode levar alguns minutos)…" : "A IA está preparando o material…"}
           </p>

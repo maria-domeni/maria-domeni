@@ -11,6 +11,10 @@ import { EmptyState, Link } from "@/components/ui/basics";
 import { OverlayProvider } from "@/components/ui/overlays";
 import { useAppearanceSync } from "@/lib/hooks";
 import { screenKey, takeScrollTarget, useRoute, type Route } from "@/lib/router";
+import { PlusSheet } from "@/components/account/PlusSheet";
+import { startAccount } from "@/lib/cloud/account";
+import { startSync } from "@/lib/cloud/sync";
+import AccountScreen from "@/screens/AccountScreen";
 import AgendaScreen from "@/screens/AgendaScreen";
 import CharacterScreen from "@/screens/CharacterScreen";
 import DisciplineScreen from "@/screens/DisciplineScreen";
@@ -67,6 +71,8 @@ function Screen({ route }: { route: Route }) {
       return <SearchScreen initial={route.q} />;
     case "ajustes":
       return <SettingsScreen section={route.section} />;
+    case "conta":
+      return <AccountScreen section={route.section} />;
     default:
       return (
         <Page title="Página não encontrada">
@@ -118,6 +124,9 @@ export function DomeniApp() {
   useEffect(() => {
     // Pede ao navegador para não limpar os dados do app sob pressão de espaço.
     void navigator.storage?.persist?.().catch(() => undefined);
+    // contas e sincronização (só se a nuvem estiver configurada)
+    void startAccount();
+    startSync();
   }, []);
 
   return (
@@ -126,6 +135,7 @@ export function DomeniApp() {
       <AvatarDock />
       <Reminders />
       <PwaManager />
+      <PlusSheet />
     </OverlayProvider>
   );
 }

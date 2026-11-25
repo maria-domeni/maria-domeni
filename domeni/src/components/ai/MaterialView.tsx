@@ -1,5 +1,7 @@
 "use client";
 
+import { modelLabel } from "./actionIcons";
+
 import { Printer, RotateCcw, Share2 } from "lucide-react";
 import { useState } from "react";
 import { Markdown } from "@/components/ui/Markdown";
@@ -86,7 +88,7 @@ export function MaterialView({ output }: { output: AiOutput }) {
       </div>
       <div className="print-area">{body}</div>
       <p className="no-print mt-4 text-[12.5px] text-label-3">
-        Gerado por IA a seu pedido ({output.model.replace("claude-", "").replace(/-/g, " ")}). Confira com o material da aula.
+        Gerado por IA a seu pedido ({modelLabel(output.model)}). Confira com o material da aula.
       </p>
     </div>
   );

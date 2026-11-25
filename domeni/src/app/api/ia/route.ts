@@ -1,5 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { timingSafeEqual } from "node:crypto";
+import { estimateCost } from "@/lib/aiPricing";
+import { isActive, isOwner, limitsFor } from "@/server/plans";
+import { supabaseAdmin, userFromRequest } from "@/server/supabase";
 import {
   BASE_RULES,
   REPORT_AGENT,
@@ -12,9 +15,9 @@ import {
 } from "@/server/prompts";
 
 /**
- * IA do Domeni. Só responde a pedidos com o código de acesso certo, e cada
- * pedido vem de um botão que a pessoa tocou. A chave da Anthropic fica só
- * aqui no servidor (variável ANTHROPIC_API_KEY).
+ * IA do Domeni. Responde a quem está logado (com cota mensal do plano) ou a
+ * quem tem o código de acesso da dona. Cada pedido vem de um botão que a
+ * pessoa tocou. A chave da Anthropic fica só aqui (ANTHROPIC_API_KEY).
  */
 
 export const maxDuration = 300;
@@ -33,6 +36,9 @@ const ACTIONS = new Set([
   "organizar-transcricao",
 ]);
 const MAX_BODY = 600_000;
+/** Para quem assina: cerca de 90 mil tokens, abaixo da faixa cara do Haiku. */
+const MAX_BODY_PLAN = 320_000;
+const DEFAULT_PLAN_MODEL = "claude-haiku-5-5";
 
 type Effort = "low" | "medium" | "high";
 const EFFORT: Record<string, Effort> = {
@@ -50,12 +56,21 @@ const EFFORT: Record<string, Effort> = {
 
 /* ---------- limite de pedidos (por instância) ---------- */
 const hits = new Map<string, number[]>();
-function rateLimited(ip: string): boolean {
+function rateLimited(key: string, max = 40): boolean {
   const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < 10 * 60_000);
+  const recent = (hits.get(key) ?? []).filter((t) => now - t < 10 * 60_000);
   recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > 40;
+  hits.set(key, recent);
+  return recent.length > max;
+}
+
+type Caller =
+  | { kind: "codigo" }
+  | { kind: "conta"; userId: string; owner: boolean; plan: "gratis" | "plus" };
+
+function planModel(search: boolean): string {
+  const wanted = (search ? process.env.AI_MODEL_SEARCH : process.env.AI_MODEL) ?? DEFAULT_PLAN_MODEL;
+  return MODELS.has(wanted) ? wanted : DEFAULT_PLAN_MODEL;
 }
 
 function sameCode(given: string, expected: string): boolean {
@@ -194,18 +209,34 @@ Diferencie claramente o que veio das fontes dela e o que é complemento. Nas ref
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const expected = process.env.DOMENI_ACCESS_CODE;
-  if (!expected) return fail(503, "sem-chave", "A IA ainda não foi configurada no servidor (falta o código de acesso).");
   if (!process.env.ANTHROPIC_API_KEY) return fail(503, "sem-chave", "A IA ainda não foi configurada no servidor (falta a chave da Anthropic).");
 
-  const given = request.headers.get("x-domeni-code") ?? "";
-  if (!given || !sameCode(given, expected)) return fail(401, "codigo", "Código de acesso da IA incorreto. Confira em Ajustes › IA.");
-
   const ip = (request.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
-  if (rateLimited(ip)) return fail(429, "limite", "Muitos pedidos seguidos. Espere alguns minutos.");
+  if (rateLimited(`ip:${ip}`)) return fail(429, "limite", "Muitos pedidos seguidos. Espere alguns minutos.");
+
+  /* ---------- quem está pedindo ---------- */
+  let caller: Caller;
+  const sb = supabaseAdmin();
+  if ((request.headers.get("authorization") ?? "").toLowerCase().startsWith("bearer ")) {
+    if (!sb) return fail(503, "sem-chave", "As contas ainda não foram configuradas no servidor.");
+    const user = await userFromRequest(request);
+    if (!user) return fail(401, "sem-sessao", "Sua sessão expirou. Entre na conta de novo.");
+    const owner = isOwner(user.email);
+    const { data: rows } = await sb.from("entitlements").select("status,period_end").eq("user_id", user.id);
+    const plus = owner || (rows ?? []).some((r) => isActive(r as { status: never; period_end: string | null }));
+    caller = { kind: "conta", userId: user.id, owner, plan: plus ? "plus" : "gratis" };
+    if (rateLimited(`user:${user.id}`, owner ? 200 : 20)) return fail(429, "limite", "Muitos pedidos seguidos. Espere alguns minutos.");
+  } else {
+    const expected = process.env.DOMENI_ACCESS_CODE;
+    const given = request.headers.get("x-domeni-code") ?? "";
+    if (!expected || !given) return fail(401, "sem-conta", "Entre na sua conta (é grátis) para usar a IA.");
+    if (!sameCode(given, expected)) return fail(401, "codigo", "Código de acesso da IA incorreto. Confira em Ajustes › IA.");
+    caller = { kind: "codigo" };
+  }
+  const unlimited = caller.kind === "codigo" || caller.owner;
 
   const raw = await request.text();
-  if (raw.length > MAX_BODY) return fail(413, "erro", "O conteúdo enviado é grande demais. Escolha menos aulas.");
+  if (raw.length > (unlimited ? MAX_BODY : MAX_BODY_PLAN)) return fail(413, "erro", "O conteúdo enviado é grande demais. Escolha menos aulas.");
   let body: Body;
   try {
     body = JSON.parse(raw) as Body;
@@ -213,10 +244,53 @@ export async function POST(request: Request): Promise<Response> {
     return fail(400, "erro", "Pedido inválido.");
   }
   if (!ACTIONS.has(body.action)) return fail(400, "erro", "Ação desconhecida.");
-  const model = MODELS.has(body.model) ? body.model : "claude-opus-5-5";
+  const search = body.action === "aprofundar";
+  const model = unlimited ? (MODELS.has(body.model) ? body.model : "claude-opus-5-5") : planModel(search);
   const input = body.input && typeof body.input === "object" ? body.input : {};
   const { system, user, web } = buildPrompt(body.action, input);
   const schema = isJsonAction(body.action) ? SCHEMAS[body.action] : null;
+
+  /* ---------- cota do mês e teto de gasto ---------- */
+  let reservation: number | null = null;
+  if (caller.kind === "conta" && sb) {
+    const budget = Number(process.env.AI_MONTHLY_BUDGET_USD);
+    if (!caller.owner && Number.isFinite(budget) && budget > 0) {
+      const { data: spent } = await sb.rpc("month_ai_cost");
+      if (Number(spent) >= budget) return fail(503, "pausada", "A IA está pausada até o começo do próximo mês. Seus dados e o resto do app seguem normais.");
+    }
+    const kind = search ? "pesquisa" : "acao";
+    const limit = limitsFor(caller.plan, caller.owner)[kind];
+    if (limit === 0) {
+      return fail(402, "sem-cota", search
+        ? "A pesquisa a fundo com fontes faz parte do Plus."
+        : "A IA faz parte do Plus. Assine para continuar.");
+    }
+    const { data: id, error } = await sb.rpc("reserve_ai", { uid: caller.userId, p_action: body.action, p_kind: kind, p_limit: limit });
+    if (error) return fail(503, "erro", "Não consegui conferir sua cota agora. Tente de novo.");
+    if (id === null) {
+      return fail(429, "cota", caller.plan === "plus"
+        ? `Você usou ${search ? "as pesquisas" : "as ações de IA"} deste mês (${limit}). A cota renova no dia 1º.`
+        : `Você usou as ${limit} ações grátis deste mês. Assine o Plus para ter mais.`);
+    }
+    reservation = Number(id);
+  }
+  const release = async () => {
+    if (reservation !== null && sb) await sb.from("ai_usage").delete().eq("id", reservation);
+    reservation = null;
+  };
+  const record = async (servedModel: string, inputTokens: number, outputTokens: number, searches: number) => {
+    if (reservation === null || !sb) return;
+    await sb
+      .from("ai_usage")
+      .update({
+        model: servedModel,
+        input_tokens: inputTokens,
+        output_tokens: outputTokens,
+        cost_usd: Number(estimateCost(servedModel, inputTokens, outputTokens, searches).toFixed(5)),
+      })
+      .eq("id", reservation);
+  };
+  const fallbacks = model === "claude-haiku-5-5" ? {} : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const };
 
   const client = new Anthropic();
   const encoder = new TextEncoder();
@@ -250,8 +324,7 @@ export async function POST(request: Request): Promise<Response> {
                 effort: EFFORT[body.action] ?? "medium",
                 ...(schema ? { format: { type: "json_schema", schema } } : {}),
               },
-              betas: ["server-side-fallback-2026-07-01"],
-              fallbacks: "default",
+              ...fallbacks,
             },
             { signal: request.signal },
           );
@@ -274,6 +347,7 @@ export async function POST(request: Request): Promise<Response> {
             }
           }
           if (message.stop_reason === "refusal") {
+            await release();
             send({ type: "error", code: "recusa", message: "A IA preferiu não responder a este pedido. Tente reformular." });
             controller.close();
             return;
@@ -293,16 +367,28 @@ export async function POST(request: Request): Promise<Response> {
           try {
             json = JSON.parse(finalText);
           } catch {
+            await release();
             send({ type: "error", code: "erro", message: "A IA devolveu um formato inesperado. Tente de novo." });
             controller.close();
             return;
           }
         }
+        await record(servedModel, inputTokens, outputTokens, searches);
         send({ type: "done", model: servedModel, json, usage: { input: inputTokens, output: outputTokens, searches } });
       } catch (error) {
+        if (error instanceof Anthropic.APIUserAbortError || (error as Error)?.name === "AbortError" || request.signal.aborted) {
+          // a pessoa cancelou: o que já foi gerado conta na cota
+          controller.close();
+          return;
+        }
+        await release().catch(() => undefined);
         let message = "A IA não conseguiu terminar. Tente de novo.";
         let code = "erro";
-        if (error instanceof Anthropic.AuthenticationError) {
+        if (!unlimited && (error instanceof Anthropic.AuthenticationError || (error instanceof Anthropic.BadRequestError && /credit|balance/i.test(error.message)))) {
+          console.error("ia: configuração do servidor", error);
+          message = "A IA está indisponível agora. Já fomos avisados; tente mais tarde.";
+          code = "pausada";
+        } else if (error instanceof Anthropic.AuthenticationError) {
           message = "A chave da Anthropic no servidor é inválida.";
           code = "sem-chave";
         } else if (error instanceof Anthropic.RateLimitError) {
@@ -314,9 +400,6 @@ export async function POST(request: Request): Promise<Response> {
             : "O pedido não foi aceito pela IA. Tente com menos conteúdo.";
         } else if (error instanceof Anthropic.APIError) {
           message = `A IA está indisponível agora (erro ${error.status ?? "?"}). Tente daqui a pouco.`;
-        } else if ((error as Error)?.name === "AbortError") {
-          controller.close();
-          return;
         }
         send({ type: "error", code, message });
       }

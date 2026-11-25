@@ -8,21 +8,9 @@ import { Sheet, useConfirm } from "@/components/ui/overlays";
 import { db } from "@/lib/db";
 import { formatShort } from "@/lib/dates";
 import { deleteAiOutput } from "@/lib/store";
-import type { AiAction, AiOutput } from "@/lib/types";
+import type { AiOutput } from "@/lib/types";
+import { ActionIcon } from "./actionIcons";
 import { MaterialView } from "./MaterialView";
-
-export const ACTION_EMOJI: Record<AiAction, string> = {
-  resumo: "📝",
-  "resumo-aesthetic": "🎀",
-  flashcards: "🃏",
-  questoes: "❓",
-  jogo: "🎮",
-  aprofundar: "🔎",
-  explicar: "💡",
-  conversa: "💬",
-  relatorio: "🩺",
-  "organizar-transcricao": "🧹",
-};
 
 export function MaterialSheet({ output, onClose }: { output: AiOutput | null; onClose: () => void }) {
   return (
@@ -53,7 +41,7 @@ export function MaterialsList({ disciplineId, lessonId }: { disciplineId?: strin
         {outputs.map((output) => (
           <div key={output.id} className="card lift flex items-center gap-3 px-4 py-3">
             <button type="button" onClick={() => setOpen(output)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
-              <span className="text-[24px]">{ACTION_EMOJI[output.action]}</span>
+              <ActionIcon action={output.action} />
               <span className="min-w-0">
                 <span className="block truncate font-semibold">{output.title}</span>
                 <span className="block text-[13px] text-label-2">{formatShort(output.createdAt.slice(0, 10))}</span>

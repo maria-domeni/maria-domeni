@@ -8,7 +8,7 @@ import { Page, ScreenSkeleton, Tabs } from "@/components/shell/Page";
 import { Button, Card, EmptyState, IconButton, Link, ProgressBar, Section } from "@/components/ui/basics";
 import { Field, TextArea, TextInput } from "@/components/ui/fields";
 import { Sheet, useConfirm, useToast } from "@/components/ui/overlays";
-import { AiError, askAi } from "@/lib/ai";
+import { askAi, showAiError } from "@/lib/ai";
 import { deliverFile } from "@/lib/backup";
 import { db } from "@/lib/db";
 import { formatShort, todayISO } from "@/lib/dates";
@@ -331,7 +331,7 @@ function ReportAgent({ open, onClose, internship, onDone }: { open: boolean; onC
       onClose();
       onDone(report);
     } catch (error) {
-      toast(error instanceof AiError ? error.message : "O agente não conseguiu terminar.");
+      showAiError(error, toast, "O agente não conseguiu terminar.");
     } finally {
       setBusy(false);
     }
