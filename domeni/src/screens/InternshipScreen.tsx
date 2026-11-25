@@ -57,7 +57,7 @@ function InternshipList() {
   return (
     <Page
       title="Estágio"
-      subtitle="Diário de campo, horas e relatórios — com um agente especialista em relatório."
+      subtitle="Diário de campo, horas e relatórios, com um agente especialista em relatório."
       actions={
         <Button size="sm" icon={Plus} onClick={() => setCreating(true)}>
           Estágio
@@ -225,7 +225,7 @@ function InternshipDetail({ id }: { id: string }) {
             <p className="mt-1 text-[15px] leading-[22px] text-label-2">
               Já treinado no formato do seu relatório (I – Identificação, II – Descrição da demanda, III – Procedimento,
               IV – Análise, V – Conclusão, Referências e Anexos), com linguagem acadêmica e cuidado ético. Ele usa o seu
-              diário de campo, a transcrição e as referências que você indicar — sem inventar dados nem citações.
+              diário de campo, a transcrição e as referências que você indicar, sem inventar dados nem citações.
             </p>
             <Button className="mt-4" icon={Sparkles} onClick={() => setAgent(true)}>
               Escrever relatório com o agente

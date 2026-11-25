@@ -242,7 +242,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
             <Select value={settings.fontBody} onChange={(e) => custom({ fontBody: e.target.value as Settings["fontBody"] })}>
               {FONT_KEYS.map((f) => (
                 <option key={f} value={f}>
-                  {FONT_LABEL[f]} — {FONT_HINT[f]}
+                  {FONT_LABEL[f]}: {FONT_HINT[f]}
                 </option>
               ))}
             </Select>
@@ -251,7 +251,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
             <Select value={settings.fontTitle} onChange={(e) => custom({ fontTitle: e.target.value as Settings["fontTitle"] })}>
               {TITLE_FONT_KEYS.map((f) => (
                 <option key={f} value={f}>
-                  {FONT_LABEL[f]} — {FONT_HINT[f]}
+                  {FONT_LABEL[f]}: {FONT_HINT[f]}
                 </option>
               ))}
             </Select>
@@ -289,7 +289,7 @@ export default function SettingsScreen({ section }: { section: string | null }) 
         id="regras"
         title="Regras da faculdade"
        
-        hint="Use as regras da sua faculdade. O Domeni só faz as contas — cada disciplina também pode ter a sua regra."
+        hint="Use as regras da sua faculdade. O Domeni só faz as contas, e cada disciplina também pode ter a sua regra."
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <NumberSetting key={`Faltas permitidas por disciplina (aulas)-${String(settings.defaultAbsenceLimit)}`} label="Faltas permitidas por disciplina (aulas)" hint="Estágios não contam" value={settings.defaultAbsenceLimit} onSave={(v) => save({ defaultAbsenceLimit: v })} placeholder="ex.: 40" />

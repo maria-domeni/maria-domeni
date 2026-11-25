@@ -44,7 +44,7 @@ function clock(seconds: number): string {
 
 /**
  * Grava a aula (áudio fica no aparelho) e transcreve ao vivo com o
- * reconhecimento de voz do próprio navegador — de graça, sem IA.
+ * reconhecimento de voz do próprio navegador: de graça, sem IA.
  */
 export function Recorder({ lesson }: { lesson: Lesson }) {
   const toast = useToast();

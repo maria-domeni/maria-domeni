@@ -12,7 +12,8 @@ export function PwaManager() {
   const reloading = useRef(false);
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+    // no app das lojas os arquivos já vêm dentro do app: não precisa de service worker
+    if (process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_NATIVE === "1" || !("serviceWorker" in navigator)) return;
     let cancelled = false;
 
     const onControllerChange = () => {

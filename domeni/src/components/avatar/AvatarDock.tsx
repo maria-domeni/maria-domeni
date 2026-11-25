@@ -327,7 +327,7 @@ function Ask({ onNavigate }: { onNavigate: () => void }) {
         {turns.length === 0 ? (
           <li className="rounded-[10px] bg-fill px-3.5 py-3 text-[14px] leading-[20px] text-label-2">
             Pergunte qualquer coisa, sem sair desta tela. Ex.: <em>“tenho algum livro que fala de posição esquizoparanoide?”</em>{" "}
-            Eu procuro nas suas anotações de todos os semestres e na biblioteca — de graça e sem internet.
+            Eu procuro nas suas anotações de todos os semestres e na biblioteca, de graça e sem internet.
           </li>
         ) : null}
         {turns.map((turn, i) => (

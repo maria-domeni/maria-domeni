@@ -1,5 +1,7 @@
 "use client";
 
+import { apiUrl } from "@/lib/cloud/config";
+
 import { useLiveQuery } from "dexie-react-hooks";
 import { CalendarArrowUp, ChevronLeft, ChevronRight, Download, Plus, RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -102,7 +104,7 @@ export default function AgendaScreen() {
     }
     setSyncing(true);
     try {
-      const response = await fetch("/api/agenda", {
+      const response = await fetch(apiUrl("/api/agenda"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ url: settings.googleIcsUrl }),

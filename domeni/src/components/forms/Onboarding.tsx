@@ -142,7 +142,7 @@ function OnboardingForm({ open, onClose }: { open: boolean; onClose: () => void 
       {step === 2 ? (
         <div className="space-y-4">
           <p className="text-[15px] leading-[21px] text-label-2">
-            Use as regras da <b>sua</b> faculdade. O Domeni só faz as contas — nada aqui é inventado. Dá para mudar
+            Use as regras da <b>sua</b> faculdade. O Domeni só faz as contas: nada aqui é inventado. Dá para mudar
             depois, e cada disciplina pode ter a sua regra.
           </p>
           <div className="grid grid-cols-2 gap-3">

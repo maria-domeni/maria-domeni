@@ -169,7 +169,7 @@ export default function TodayScreen() {
                     <div {...tint(occ.discipline.color, "my-3 ml-4 w-[3px] flex-none rounded-full bg-dc")} />
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
                       <div className="w-[56px] flex-none">
-                        <p className="text-[15.5px] leading-5 font-semibold tabular-nums">{occ.slot.start || "—"}</p>
+                        <p className="text-[15.5px] leading-5 font-semibold tabular-nums">{occ.slot.start || "-"}</p>
                         <p className="text-[12.5px] text-label-3 tabular-nums">{occ.slot.end}</p>
                       </div>
                       <div className="min-w-0 flex-1">

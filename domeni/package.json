@@ -10,7 +10,8 @@
     "test": "vitest run",
     "predev": "node scripts/copy-pdf-assets.mjs",
     "prebuild": "node scripts/copy-pdf-assets.mjs",
-    "stripe:setup": "node scripts/stripe-setup.mjs"
+    "stripe:setup": "node scripts/stripe-setup.mjs",
+    "build:native": "node scripts/build-native.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",

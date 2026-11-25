@@ -62,7 +62,7 @@ export async function libraryExcerpts(terms: string[], limit = 6): Promise<AiSou
       if (score > 0) {
         out.push({
           score,
-          source: { title: `${book.title}${book.author ? ` — ${book.author}` : ""}, p. ${index + 1}`, date: "", text: page.slice(0, 2500) },
+          source: { title: `${book.title}${book.author ? `, ${book.author}` : ""}, p. ${index + 1}`, date: "", text: page.slice(0, 2500) },
         });
       }
     });

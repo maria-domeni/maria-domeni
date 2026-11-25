@@ -198,7 +198,7 @@ function round2(n: number): number {
 
 /** Formata nota com vírgula: 7,5 */
 export function formatGrade(n: number | null): string {
-  if (n === null) return "—";
+  if (n === null) return "-";
   return n.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
 }
 

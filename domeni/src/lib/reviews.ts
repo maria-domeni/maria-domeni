@@ -48,7 +48,7 @@ export function planReviews(
 
 /**
  * Marca uma revisão como feita. Se foi Difícil e o reforço está ligado,
- * agenda um reforço — a não ser que já exista outra revisão da mesma aula
+ * agenda um reforço, a não ser que já exista outra revisão da mesma aula
  * chegando dentro desse prazo.
  */
 export function completeReview(

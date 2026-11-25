@@ -110,7 +110,7 @@ function SignIn() {
             />
           </Field>
           {mode === "codigo" && sent ? (
-            <Field label="Código de 6 dígitos" hint="Confira também a caixa de spam. O código vale por 1 hora.">
+            <Field label="Código que chegou no seu e-mail" hint="Confira também a caixa de spam. O código vale por 1 hora.">
               <TextInput
                 inputMode="numeric"
                 autoComplete="one-time-code"

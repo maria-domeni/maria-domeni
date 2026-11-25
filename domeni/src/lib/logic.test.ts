@@ -255,7 +255,7 @@ describe("revisão espaçada", () => {
     ).toBe("facil");
   });
 
-  it("ordena a fila: Difícil, nunca revisada, Médio, Fácil — a mais atrasada antes", () => {
+  it("ordena a fila: Difícil, nunca revisada, Médio, Fácil, a mais atrasada antes", () => {
     const mk = (lessonId: string, step: number, dueDate: string, over: Partial<Review> = {}): Review => ({
       id: `${lessonId}-${step}`,
       lessonId,

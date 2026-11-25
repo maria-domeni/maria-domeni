@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Domeni</string>
+    <string name="title_activity_main">Domeni</string>
+    <string name="package_name">app.domeni</string>
+    <string name="custom_url_scheme">app.domeni</string>
+</resources>

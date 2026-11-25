@@ -638,7 +638,7 @@ function ReviewTab({
                   <div className="mt-3 sm:pl-[54px]">
                     <p className="mb-2 text-[13.5px] leading-[18px] text-label-2">
                       {delta > 0
-                        ? "Ainda não venceu. Marque só se já revisou — como foi?"
+                        ? "Ainda não venceu. Marque só se já revisou. Como foi?"
                         : "Revisou? Como foi?"}
                     </p>
                     <div className="grid grid-cols-3 gap-2">

@@ -296,7 +296,7 @@ export function AgentChat({
           {turns.length === 0 ? (
             <p className="rounded-2xl bg-accent-faint px-4 py-3 text-[15px] leading-[22px]">
               Sou especialista em {discipline.name}. Uso as suas anotações e a sua biblioteca como base; o que vier de
-              conhecimento geral eu marco como <b>complemento — confirmar com o professor</b>.
+              conhecimento geral eu marco como <b>complemento: confirmar com o professor</b>.
             </p>
           ) : null}
           {turns.map((turn, i) => (

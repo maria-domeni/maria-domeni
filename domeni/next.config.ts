@@ -41,9 +41,24 @@ const securityHeaders = [
   ...(isProduction ? [{ key: "Content-Security-Policy", value: contentSecurityPolicy }] : []),
 ];
 
+async function headers() {
+  return [
+    { source: "/:path*", headers: securityHeaders },
+    {
+      source: "/sw.js",
+      headers: [
+        { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+        { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+      ],
+    },
+  ];
+}
+
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-  partialPrefetching: true,
+  // App das lojas (Capacitor): só arquivos estáticos; o servidor fica no site publicado.
+  ...(native ? { output: "export" as const, distDir: ".next-native", pageExtensions: ["tsx"], images: { unoptimized: true }, trailingSlash: true } : {}),
+  cacheComponents: !native,
+  partialPrefetching: !native,
   poweredByHeader: false,
   turbopack: {
     rules: {
@@ -53,18 +68,7 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  async headers() {
-    return [
-      { source: "/:path*", headers: securityHeaders },
-      {
-        source: "/sw.js",
-        headers: [
-          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
-          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
-        ],
-      },
-    ];
-  },
+  ...(native ? {} : { headers }),
 };
 
 export default nextConfig;

@@ -1,82 +1,56 @@
 # Domeni
 
-Central de estudos da faculdade, feita para iPad com Apple Pencil, mas que também funciona no computador e no celular. É um app instalável (PWA), funciona sem internet e guarda os dados no próprio aparelho.
+Sua faculdade inteira num caderno só: cadernos com caneta (feito primeiro para iPad com Apple Pencil), PDFs, agenda, notas, faltas, revisões, estágio e horas, com IA que só roda quando a pessoa pede.
 
-## O que tem
+- **Site de vendas:** `/` (preços, lista de lançamento, perguntas), `/termos`, `/privacidade`, `/cancelamento`.
+- **App:** `/app` (PWA instalável, funciona sem internet, dados no aparelho).
+- **Lojas:** projetos Capacitor em `ios/` e `android/`.
 
-- **Cadernos**: um caderno por semestre e um por disciplina, com capa personalizável (cor, estampa, foto, etiqueta, elástico e adesivos).
-- **Página da aula**: folha infinita, sem quebra de página.
-  - Texto como no Notion: títulos, listas, checklist, cores, tamanhos, grifo, alinhamento e imagens.
-  - Caneta e marca-texto para a Apple Pencil, com borracha.
-  - Imagens, adesivos e post-its soltos que dá para arrastar. O texto fica no lugar.
-  - Gravação da aula com transcrição ao vivo (reconhecimento de voz do navegador, sem custo).
-  - Imprimir, salvar em PDF, baixar e compartilhar.
-- **Agenda**: mês e semana com aulas, provas, entregas e lembretes. Mostra os eventos do Google Agenda (pelo endereço iCal), tem link "Adicionar ao Google Agenda" e exporta em .ics.
-- **Contagem regressiva** para provas e entregas, na tela Hoje.
-- **Notas e faltas**: limite de faltas, aulas por dia, média e pesos são configurados por você (cada disciplina pode ter a sua regra). Estágios não entram na conta de faltas.
-- **Personagem**: um bonequinho personalizável (rosto, cabelo, roupa, acessórios, nome e jeito de falar). Fica no canto da tela e avisa sobre faltas, notas, provas, revisões, leituras e horas. Responde buscas nas suas anotações de todos os semestres e na biblioteca. Esses avisos e buscas são calculados no aparelho, sem IA.
-- **Biblioteca**: estante com livros físicos e PDFs, leitor, progresso de leitura e busca por palavra dentro dos PDFs.
-- **Estudar**: flashcards com repetição espaçada, questões, simulado, jogo da memória e as revisões das aulas em 1, 7 e 30 dias.
-- **Estágio**: diário de campo, horas e relatórios, com aviso fixo de sigilo.
-- **Horas**: atividades complementares e de extensão, com a meta que você definir.
-- **Música**: tocador do Spotify que continua tocando enquanto você navega.
-- **Aparência**: 7 estilos prontos (Rosé, Lavanda, Matcha, Caderno, Minimal, Noite e Café), claro e escuro, tom do papel, cor livre, 10 fontes, fundo quadriculado ou pontilhado e tipo de folha.
+Para colocar no ar e vender, comece por **[docs/00-comece-aqui.md](docs/00-comece-aqui.md)**.
 
-## IA (só quando você pede)
+## Planos
 
-Nada de IA roda sozinho nem em segundo plano. Cada recurso tem o seu botão:
+| | Grátis | Plus |
+| --- | --- | --- |
+| Cadernos, caneta, PDFs, agenda, notas, faltas, revisões | sim | sim |
+| IA (ações por mês) | 5 (com conta) | 150 + 15 pesquisas a fundo |
+| Sincronização entre aparelhos e backup na nuvem | | sim (até 3 GB de arquivos) |
+| Preço | R$ 0 | R$ 19,90/mês ou R$ 179,90/ano |
 
-- resumo e resumo aesthetic;
-- flashcards e questões;
-- jogo;
-- aprofundar um tema, com pesquisa na internet;
-- explicar um conceito;
-- agente de cada disciplina;
-- pergunta ao personagem;
-- organizar a transcrição;
-- agente de relatório de estágio, treinado no formato do relatório psicológico (I a V, referências e anexos).
+Preços e cotas: `src/lib/pricing.ts` (cotas também por variável de ambiente).
 
-As regras da IA são:
+## Como funciona por dentro
 
-- basear-se nas suas fontes;
-- marcar conhecimento geral como "complemento — confirmar com o professor";
-- nunca inventar citação, página ou referência;
-- nunca registrar dados de pessoa atendida.
+| Parte | Tecnologia | Onde |
+| --- | --- | --- |
+| App e site | Next.js 16, React 19, Tailwind 4 | `src/app`, `src/screens`, `src/components` |
+| Dados no aparelho | IndexedDB (Dexie), com marcação de mudanças para sincronizar | `src/lib/db.ts`, `src/lib/cloud/track.ts` |
+| Contas, cotas, sincronização | Supabase (Postgres com Row Level Security, Auth por código no e-mail, Storage) | `supabase/migrations`, `src/lib/cloud`, `src/server` |
+| IA | API da Anthropic, só no servidor; Haiku 5.5 para assinantes, modelo à escolha da dona | `src/app/api/ia`, `src/server/prompts.ts` |
+| Pagamentos no site | Stripe Checkout, portal e webhooks | `src/app/api/assinatura`, `src/app/api/stripe` |
+| Pagamentos nas lojas | RevenueCat (App Store e Google Play) | `src/lib/cloud/native.ts`, `src/app/api/revenuecat` |
+| Lista de espera | Supabase + Brevo | `src/app/api/lista` |
 
-A IA usa a API da Anthropic. A chave fica só no servidor. Para ligar, configure no servidor (por exemplo, nas variáveis de ambiente da Vercel):
+Sem as variáveis de ambiente, o app funciona como antes: tudo local, sem conta. Veja `.env.example`.
 
-| Variável | O que é |
-| --- | --- |
-| `ANTHROPIC_API_KEY` | Chave da API da Anthropic (console.anthropic.com). É cobrada à parte do Claude Pro. |
-| `DOMENI_ACCESS_CODE` | Uma senha que você inventa. Coloque a mesma em Ajustes › IA. Sem ela, ninguém usa os seus créditos. |
-
-O gasto estimado do mês aparece em Ajustes › IA.
-
-## Desenvolvimento
+## Comandos
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
-npm test        # testes da lógica (faltas, notas, agenda, backup…)
+npm run dev            # desenvolvimento em http://localhost:3000 (app em /app)
+npm test               # testes (lógica, sincronização, webhooks)
 npm run lint
-npm run build   # build de produção + service worker para uso offline
+npm run build          # produção (gera também o service worker)
+npm run stripe:setup   # cria produto, preços, portal e webhook no Stripe
+NEXT_PUBLIC_API_BASE=https://seudominio npm run build:native   # app das lojas (pasta out + cap sync)
 ```
 
-Tecnologia:
+O banco: rode `supabase/migrations/0001_domeni.sql` no SQL Editor do Supabase.
 
-- Next.js 16, React 19, Tailwind CSS 4 e TypeScript;
-- Dexie (IndexedDB) para os dados;
-- Tiptap para o texto, perfect-freehand para a caneta e pdf.js para os PDFs;
-- SDK da Anthropic no servidor.
+## Regras que o app segue
 
-## Privacidade
-
-Os dados ficam no seu aparelho. Para levar a outro aparelho ou guardar, use o backup em Ajustes › Seus dados. Ele inclui fotos, PDFs e gravações, mas não inclui o código da IA.
-
-O servidor só recebe o que você manda para a IA quando toca num botão. Também recebe o endereço do Google Agenda, que ele busca e repassa sem guardar.
-
-## Próximas fases
-
-- Contas, sincronização entre aparelhos e assinatura, para vender o app.
-- Notificações com o app fechado (push).
-- Importação do Notion e do Teams.
+- IA só quando a pessoa toca num botão; nada em segundo plano gastando créditos.
+- A IA parte das fontes da pessoa, marca o que é complemento e não inventa referência.
+- Nenhuma regra de faculdade inventada: média, pesos e faltas são configuráveis.
+- No estágio, aviso fixo para nunca guardar nome ou dado que identifique a pessoa atendida.
+- A chave da Anthropic e as chaves secretas ficam só no servidor.

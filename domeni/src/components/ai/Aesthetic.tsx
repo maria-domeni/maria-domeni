@@ -220,7 +220,7 @@ export function AestheticSheet({ data }: { data: AestheticData }) {
 
         {data.complement.length > 0 ? (
           <section className="rounded-2xl border-2 border-[#f2c94c] bg-[#fffbea] p-4 md:col-span-2">
-            <Label color={1}>⚠️ Complemento — confirmar com o professor</Label>
+            <Label color={1}>⚠️ Complemento: confirmar com o professor</Label>
             <ul className="mt-2 space-y-1 text-[14.5px] leading-[1.5]">
               {data.complement.map((item, i) => (
                 <li key={i}>• {inline(item, `c${i}`)}</li>

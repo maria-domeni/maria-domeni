@@ -114,7 +114,7 @@ export default function DisciplineScreen({ id, tab }: { id: string; tab: Discipl
         <Stat label="Aulas" value={String(lessons.length)} />
         <Stat
           label="Faltas"
-          value={absences.limit !== null ? `${absences.used}/${absences.limit}` : discipline.kind === "estagio" ? "—" : String(absences.used)}
+          value={absences.limit !== null ? `${absences.used}/${absences.limit}` : discipline.kind === "estagio" ? "-" : String(absences.used)}
           tone={absences.level === "risco" || absences.level === "estourou" ? "red" : absences.level === "atencao" ? "yellow" : undefined}
           onClick={() => go("faltas")}
         />
@@ -572,7 +572,7 @@ function GradeRow({ grade, professors, max }: { grade: Grade; professors: string
       <TextInput
         inputMode="decimal"
         value={value}
-        placeholder="—"
+        placeholder="-"
         onChange={(e) => setValue(e.target.value.replace(/[^\d,.]/g, ""))}
         onBlur={() => {
           if (!invalid) void updateGrade(grade.id, { value: parseDecimal(value) });
@@ -586,7 +586,7 @@ function GradeRow({ grade, professors, max }: { grade: Grade; professors: string
         aria-label="Professor"
         className="hidden h-11 rounded-[14px] bg-fill px-2 text-[14px] sm:block"
       >
-        <option value="">—</option>
+        <option value="">-</option>
         {professors.map((p) => (
           <option key={p} value={p}>
             {p}
